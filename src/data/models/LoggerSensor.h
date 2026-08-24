@@ -1,0 +1,41 @@
+#pragma once
+
+#include "utils/AppConstants.h"
+#include "utils/SensorConstants.h"
+
+#include <QString>
+#include <QVector>
+#include <optional>
+
+namespace CentralLogger::Data {
+
+struct LoggerSensor
+{
+    qint64               id = 0;
+    qint64               loggerId = 0;
+    int                  edgeSensorId = 0;
+    QString              sensorType = Sensor::kTypeUnknown; // ANALOG|DI|DO|UNKNOWN
+    QString              name;
+    QString              unit;
+    std::optional<double> minThreshold;
+    std::optional<double> maxThreshold;
+    /// Display precision for ANALOG values (synced from edge GET /config
+    /// `decimals`; range 0–6, default 4). Ignored for DI/DO (shown ON/OFF).
+    int                  decimals = Defaults::kDecimalsDefault;
+    bool                 active = true;
+    /// Edge PK of primary parent analog (from GET /config `parent_id`); null = top-level.
+    std::optional<int>   parentEdgeSensorId;
+    /// DI status code for reports / attach-DI (00–03 or custom); ANALOG usually empty.
+    QString              diType;
+    /// All analog parent edge IDs when a DI is linked to multiple analogs.
+    /// Stored as JSON array in DB column `all_parent_ids`.
+    /// Empty = use parentEdgeSensorId only.
+    QVector<int>         allParentIds;
+};
+
+} // namespace CentralLogger::Data
+
+// Audit H-A: snapshotApplied crosses thread boundaries carrying
+// QVector<LoggerSensor> — declare the metatype for queued signals.
+#include <QMetaType>
+Q_DECLARE_METATYPE(QVector<CentralLogger::Data::LoggerSensor>)

@@ -1,0 +1,215 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing release tag (e.g. v0.1.0)"
+        required: true
+        type: string
+
+concurrency:
+  group: build-release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  QT_VERSION: "6.11.2"
+  QT_MODULES: qtserialbus qtserialport qtgraphs qttasktree qtquick3d qtshadertools
+  AQT_SOURCE: git+https://github.com/miurahr/aqtinstall.git@8c3695d4a4e1ceabf6a74dc6c79681656dc6b74b
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+      version: ${{ steps.meta.outputs.version }}
+    steps:
+      - name: Resolve tag and version
+        id: meta
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TAG="${{ github.event.inputs.tag }}"
+          else
+            TAG="${GITHUB_REF_NAME}"
+          fi
+          if [[ ! "${TAG}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid tag (need vMAJOR.MINOR.PATCH): ${TAG}" >&2
+            exit 1
+          fi
+          VERSION="${TAG#v}"
+          echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+
+  build-deb:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Sync CMake project version
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: python3 packaging/linux/sync_cmake_version.py
+
+      - name: Install system packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential libgl1-mesa-dev libfontconfig1-dev libdbus-1-dev libxkbcommon-dev \
+            libegl1 libgl1 libglib2.0-0 libxkbcommon0 libxkbcommon-x11-0 \
+            libdbus-1-3 libfontconfig1 libxcb-cursor0 libxcb-icccm4 \
+            libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 \
+            libxcb-shape0 libxcb-sync1 libxcb-xfixes0 libxcb-xkb1 \
+            patchelf dpkg-dev
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4.3.1
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: linux
+          target: desktop
+          arch: linux_gcc_64
+          modules: ${{ env.QT_MODULES }}
+          dir: ${{ runner.workspace }}
+          install-deps: false
+          aqtsource: ${{ env.AQT_SOURCE }}
+          cache: true
+          cache-key-prefix: qt6112-linux
+
+      - name: Build .deb
+        run: |
+          chmod +x packaging/linux/cpack_deb.sh
+          packaging/linux/cpack_deb.sh
+
+      - name: Upload .deb artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: deb-package
+          path: dist/central-logger-app_${{ needs.prepare.outputs.version }}_amd64.deb
+          if-no-files-found: error
+          retention-days: 14
+
+  build-exe:
+    needs: prepare
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Exclude Windows Store Python stub from PATH
+        shell: pwsh
+        run: |
+          $filtered = ($env:PATH -split ';' | Where-Object { $_ -and $_ -notmatch 'WindowsApps' })
+          echo "PATH=$($filtered -join ';')" >> $env:GITHUB_ENV
+
+      - name: Setup CMake and Ninja
+        uses: lukka/get-cmake@d520f901a2ed42124ad7f4b06593b60dd648072e # v3.x
+        with:
+          cmakeVersion: "~3.28.0"
+          ninjaVersion: latest
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Sync CMake project version
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: python packaging/linux/sync_cmake_version.py
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4.3.1
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: windows
+          target: desktop
+          arch: win64_mingw
+          modules: ${{ env.QT_MODULES }}
+          tools: tools_mingw1310 tools_ifw
+          dir: ${{ runner.workspace }}
+          install-deps: false
+          add-tools-to-path: true
+          aqtsource: ${{ env.AQT_SOURCE }}
+          cache: true
+          cache-key-prefix: qt6112-win
+
+      - name: Configure and build Release
+        shell: pwsh
+        run: |
+          cmake -S . -B build-release-win -G Ninja `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_PREFIX_PATH="$env:QT_ROOT_DIR"
+          cmake --build build-release-win -j
+
+      # Audit M-11: Windows job previously built but never ran tests.
+      - name: Test
+        shell: pwsh
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: ctest --test-dir build-release-win --output-on-failure
+
+      - name: Build QTIFW installer
+        shell: pwsh
+        env:
+          CL_PROJECT_ROOT: ${{ github.workspace }}
+          CL_QT_DIR: ${{ env.QT_ROOT_DIR }}
+          CL_BUILD_DIR: ${{ github.workspace }}/build-release-win
+          CL_MINGW_DIR: ${{ env.IQTA_TOOLS }}/mingw1310_64
+        run: ${{ github.workspace }}/packaging/windows/build_installer.ps1
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: exe-package
+          path: packaging/windows/installer_build/CentralLoggerSetup.exe
+          if-no-files-found: error
+          retention-days: 14
+
+  release:
+    needs: [prepare, build-deb, build-exe]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: List release files
+        run: find release-assets -type f -ls
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ needs.prepare.outputs.tag }}
+          name: Central Logger ${{ needs.prepare.outputs.version }}
+          generate_release_notes: true
+          make_latest: true
+          overwrite_files: true
+          body: |
+            ## Central Logger ${{ needs.prepare.outputs.version }}
+
+            | Platform | File | Install |
+            |----------|------|---------|
+            | Ubuntu / Debian amd64 | `central-logger-app_*_amd64.deb` | `sudo apt install ./central-logger-app_*.deb` |
+            | Windows x64 | `CentralLoggerSetup.exe` | Run the QTIFW offline installer |
+
+            Built from tag `${{ needs.prepare.outputs.tag }}`.
+          files: |
+            release-assets/**/*.deb
+            release-assets/**/CentralLoggerSetup.exe
