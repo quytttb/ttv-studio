@@ -11,13 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(QT_VERSION_REQUIRED "6.11" CACHE STRING "Minimum Qt version")
 set(QML_MODULE_VERSION  "1.0"  CACHE STRING "QML module URI version for qt_add_qml_module")
 
-# Maintenance Tool IDs (Qt 6.11.2, linux_gcc_64) — see README.md § Qt components
-#   Essentials: qt.qt6.6112.linux_gcc_64  (Quick, Qml, Sql, Network, Test, …)
-#   Modbus:     qtserialbus + qtserialport (SerialBus dependency)
-#   Charts UI:  qtgraphs + qtquick3d + qtshadertools (Graphs/Quick3D; not qtcharts — deprecated in 6.11)
-#   Qml base:   qttasktree (Qt 6.11 Qml asset downloader dependency)
-#
-# The patch version (6.11.2) and the install path must agree. See
+# The patch version (6.11.x) and the install path must agree. See
 # packaging/linux/{install_qt_aqt.sh,ci_configure.sh,resolve_qt_prefix.sh}
 # and packaging/windows/{install_qt_aqt.ps1,build_installer.ps1} — update
 # both sides together.
@@ -25,10 +19,6 @@ find_package(Qt6 ${QT_VERSION_REQUIRED} REQUIRED COMPONENTS
     Quick
     QuickControls2
     Qml
-    Sql
-    Network
-    SerialBus
-    Graphs
     Svg
     Test
 )
@@ -53,20 +43,15 @@ include(${CMAKE_SOURCE_DIR}/cmake/TtvStudioTest.cmake)
 
 # Aggregate a `qmllint` target across every QML module so CI can lint every
 # `.qml` file in one shot via `cmake --build build --target qmllint`.
-# `qt_add_qml_module(...)` below creates per-module `<target>_qmllint`
-# siblings; we fold them into one alias.
 add_custom_target(qmllint)
-foreach(_module IN ITEMS ttv_studio_components ttv_studio_theme ttv_studio_app)
+foreach(_module IN ITEMS ttv_studio_components ttv_studio_app)
     if(TARGET "${_module}_qmllint")
         add_dependencies(qmllint "${_module}_qmllint")
     endif()
 endforeach()
 # Qt 6.11 qmllint / Qt Creator expect QML module output under the URI target path
-# (TtvStudio.Core → …/TtvStudio/Core). Static qt_add_qml_module targets
-# otherwise default to CMAKE_CURRENT_BINARY_DIR only (e.g. build/.../src/core).
-# Required: source tree (src/...) deviates from URI layout (TtvStudio/...),
-# so point the build-tree QML root explicitly; without it qmllint/qmlcachegen
-# cannot resolve cross-module imports in this layout.
+# (TtvStudio.Core → …/TtvStudio/Core). Static qt_add_qml_module targets otherwise
+# default to CMAKE_CURRENT_BINARY_DIR only (e.g. build/.../src/core).
 set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" CACHE PATH
     "QML build-tree root; qt_add_qml_module appends URI path segments")
 
@@ -78,12 +63,9 @@ set(LOGGERKIT_QML_MODULE_VERSION ${QML_MODULE_VERSION})
 add_subdirectory(shared/logger-ui-kit)
 
 # Qt recommended layout — see cmake-get-started.html
-# Layers: utils → data → network (Modbus / REST) → core (C++ singletons) → components (reusable QML) → app (shell)
+# Layers: utils → components (reusable QML) → app (shell). Pipeline/domain code
+# (providers, job engine, media) will be added here as new layers.
 add_subdirectory(src/utils)
-add_subdirectory(src/data)
-add_subdirectory(src/network)
-add_subdirectory(src/core)
-add_subdirectory(src/theme)
 add_subdirectory(src/components)
 add_subdirectory(src/app)
 

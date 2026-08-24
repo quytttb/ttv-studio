@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 
-import TtvStudio.Theme
 import LoggerKit.Theme
 import LoggerKit.Components
 

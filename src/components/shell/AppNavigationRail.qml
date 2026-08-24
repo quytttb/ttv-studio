@@ -4,14 +4,13 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Window
 
-import TtvStudio.Theme
 import LoggerKit.Theme
 
 // Fixed 80px Material-style navigation rail (icon above label per destination).
 Item {
     id: rail
 
-    property string currentView: "dashboard"
+    property string currentView: "render"
 
     signal navigate(string view)
 
@@ -59,25 +58,17 @@ Item {
             spacing: AppTheme.navItemSpacing
 
             NavItem {
-                viewName: "dashboard"
-                label: qsTr("Dashboard")
-                iconName: "viewDashboard"
-                active: rail.currentView === "dashboard"
+                viewName: "render"
+                label: qsTr("Render")
+                iconName: "playArrow"
+                active: rail.currentView === "render"
                 onNavigate: view => rail.navigate(view)
             }
             NavItem {
-                viewName: "loggers"
-                label: qsTr("Loggers")
-                iconName: "server"
-                active: rail.currentView === "loggers"
-                     || rail.currentView === "logger-detail"
-                onNavigate: view => rail.navigate(view)
-            }
-            NavItem {
-                viewName: "history"
-                label: qsTr("History")
-                iconName: "history"
-                active: rail.currentView === "history"
+                viewName: "redub"
+                label: qsTr("Redub")
+                iconName: "restartAlt"
+                active: rail.currentView === "redub"
                 onNavigate: view => rail.navigate(view)
             }
             NavItem {
@@ -91,20 +82,9 @@ Item {
 
         Item { Layout.fillHeight: true }
 
-        ColumnLayout {
-            Layout.fillWidth: true
+        WindowControls {
+            Layout.alignment: Qt.AlignHCenter
             Layout.bottomMargin: 16
-            spacing: AppTheme.sectionSpacing
-
-            ThemeToggle {
-                Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: AppTheme.railWidth
-                Layout.preferredHeight: 52
-            }
-
-            WindowControls {
-                Layout.alignment: Qt.AlignHCenter
-            }
         }
     }
 }

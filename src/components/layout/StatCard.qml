@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import TtvStudio.Theme
 import LoggerKit.Theme
 
 // M3 stat card — elevation 0, surfaceContainerLow + elevatedBorder.

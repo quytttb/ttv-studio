@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Window
 
-import TtvStudio.Theme
 import LoggerKit.Theme
 import LoggerKit.Components
 

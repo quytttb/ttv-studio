@@ -1,9 +1,14 @@
 # Desktop shell — QML module URI TtvStudio.App.
-# Binary "ttv_studio", target "app" (so the OUTPUT_NAME does not collide
+# Binary "ttv-studio", target "app" (so the OUTPUT_NAME does not collide
 # with the QML module folder).
 
 qt_add_executable(app
     main.cpp
+)
+
+# ThemeSetup.h ships with the shared kit (LoggerKit.Theme).
+target_include_directories(app PRIVATE
+    ${CMAKE_SOURCE_DIR}/shared/logger-ui-kit/src/theme
 )
 
 qt_add_qml_module(app
@@ -11,27 +16,14 @@ qt_add_qml_module(app
     VERSION ${QML_MODULE_VERSION}
     QML_FILES
         qml/Main.qml
-        qml/FatalStartup.qml
-        qml/views/DashboardView.qml
-        qml/views/LoggersView.qml
-        qml/views/LoggerDetailView.qml
-        qml/views/HistoryView.qml
-        qml/views/SettingsView.qml
     DEPENDENCIES
         LoggerKit.Theme
         LoggerKit.Components
-        ttv_studio_core
-        ttv_studio_theme
         ttv_studio_components
 )
 
-# ThemeSetup.h now ships with the shared kit (LoggerKit.Theme).
-target_include_directories(app PRIVATE
-    ${CMAKE_SOURCE_DIR}/shared/logger-ui-kit/src/theme
-)
-
 set_target_properties(app PROPERTIES
-    OUTPUT_NAME ttv_studio
+    OUTPUT_NAME ttv-studio
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -43,18 +35,10 @@ target_link_libraries(app
     PRIVATE
         Qt6::Quick
         Qt6::QuickControls2
-        Qt6::Network
-        Qt6::SerialBus
-        Qt6::Graphs
-        Qt6::Svg
-        ttv_studio_coreplugin
         ttv_studio_componentsplugin
-        ttv_studio_themeplugin
         logger_ui_kit_themeplugin
         logger_ui_kit_componentsplugin
         LoggerKit::theme_setup
-        data
-        network
         utils
 )
 
@@ -62,9 +46,6 @@ target_link_libraries(app
 # qt_generate_deploy_app_script (Qt6Core) does NOT deploy QML imports on Linux — it only
 # deploys shared libs and C++ plugins.  qt_generate_deploy_qml_app_script (Qt6Qml) is the
 # correct function for QML apps; it deploys runtime deps + QML modules in one shot.
-# (Qt docs mark qt_generate_deploy_qml_app_script "deprecated since 6.8 in favour of
-# qt_generate_deploy_app_script", but the qtbase source of the latter never calls
-# qt_deploy_qml_imports on Linux — confirmed in Qt6CoreMacros.cmake lines 3954-3962.)
 qt_generate_deploy_qml_app_script(
     TARGET app
     OUTPUT_SCRIPT deploy_script
@@ -76,15 +57,10 @@ install(TARGETS app
 )
 
 # Deploy Qt runtime (libs, plugins, QML modules) into the private prefix.
-# qt_generate_deploy_app_script also writes a qt.conf beside the binary with
-# "Prefix = .." so Qt resolves its own plugins without QT_PLUGIN_PATH and
-# without touching /usr/plugins (which would collide with the system Qt).
 install(SCRIPT ${deploy_script})
 
 # System-integration files use absolute destinations so they land under
 # /usr/share and /usr/bin regardless of CPACK_PACKAGING_INSTALL_PREFIX.
-# This keeps the Qt bundle fully isolated in /opt/ttv-studio while still
-# giving the desktop environment and PATH the hooks they need.
 install(PROGRAMS ${CMAKE_SOURCE_DIR}/packaging/linux/ttv-studio
     DESTINATION /usr/bin
 )
