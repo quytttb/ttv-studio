@@ -5,7 +5,7 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 import QtGraphs
 
-import CentralLogger.Theme
+import TtvStudio.Theme
 import LoggerKit.Theme
 
 // Floating panel for Qt Graphs charts — snap to nearest point via snapAt(mouseX, mouseY).

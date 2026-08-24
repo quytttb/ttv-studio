@@ -6,7 +6,7 @@
 #include <QDateTime>
 #include <QString>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 struct LoggerInfo
 {
@@ -28,4 +28,4 @@ struct LoggerInfo
     QDateTime createdAt;           // UTC; populated by DB default on insert
 };
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

@@ -4,7 +4,7 @@
 #include <QHostAddress>
 #include <QRegularExpression>
 
-namespace CentralLogger::Utils {
+namespace TtvStudio::Utils {
 
 namespace {
 
@@ -95,4 +95,4 @@ bool HostValidator::isValidHost(const QString &host) {
   return isValidHostname(s);
 }
 
-} // namespace CentralLogger::Utils
+} // namespace TtvStudio::Utils

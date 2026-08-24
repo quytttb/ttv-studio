@@ -205,7 +205,7 @@ function Invoke-DoRelease {
     Write-Host "Pushing $tag..."
     git push $Remote HEAD
     git push $Remote $tag
-    Write-Host "Done. GitHub Actions will build .deb + CentralLoggerSetup.exe and create the Release."
+    Write-Host "Done. GitHub Actions will build .deb + TtvStudioSetup.exe and create the Release."
     Show-GitHubUrls
 }
 
@@ -226,7 +226,7 @@ function Show-Help {
     Write-Host @"
 
 ================================================================
-  Help - Deploy / Release (Central Logger)
+  Help - Deploy / Release (TTV Studio)
 ================================================================
 
   Current version: $ver  ->  git tag: $tag
@@ -292,7 +292,7 @@ function Show-DeployMenu {
     while ($true) {
         Write-Host ""
         Write-Host "========================================"
-        Write-Host "  Central Logger - Deploy / Release"
+        Write-Host "  TTV Studio - Deploy / Release"
         Write-Host "========================================"
         Write-StatusLine
         Write-Host ""

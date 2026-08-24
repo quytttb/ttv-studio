@@ -16,7 +16,7 @@
 #include <QTest>
 #include <QVector>
 
-using namespace CentralLogger::Data;
+using namespace TtvStudio::Data;
 
 namespace {
 

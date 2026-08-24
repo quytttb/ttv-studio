@@ -4,7 +4,7 @@
 #include <QString>
 #include <QVariant>
 
-namespace CentralLogger::Utils {
+namespace TtvStudio::Utils {
 
 /// Parses an ISO 8601 UTC timestamp (with or without milliseconds).
 /// Handles the Qt edge case where fromString may return LocalTime spec when
@@ -18,4 +18,4 @@ QString isoUtc(const QDateTime &dt);
 /// Use when binding to a nullable SQL column.
 QVariant isoUtcOrNull(const QDateTime &dt);
 
-} // namespace CentralLogger::Utils
+} // namespace TtvStudio::Utils

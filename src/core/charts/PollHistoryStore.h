@@ -11,7 +11,7 @@
 
 #include <deque>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 /// One data point in the trending ring buffer.
 struct TrendingPoint {
@@ -84,4 +84,4 @@ private:
   QHash<qint64, QHash<int, int>> m_sensorDecimals;
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

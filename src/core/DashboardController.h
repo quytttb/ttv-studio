@@ -19,17 +19,17 @@
 class QJSEngine;
 class QQmlEngine;
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 class Database;
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data
 
-namespace CentralLogger::Network {
+namespace TtvStudio::Network {
 class ModbusBridge;
 class ModbusService;
 struct PollSnapshot;
-} // namespace CentralLogger::Network
+} // namespace TtvStudio::Network
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 class AppState;
 class SettingsController;
@@ -41,17 +41,17 @@ class SettingsController;
 /// that controller calls back into afterMutation()/logEvent() here to refresh
 /// the dashboard's models after a CRUD operation.
 ///
-/// Registered as a QML singleton (`CentralLogger.Core.DashboardController`).
+/// Registered as a QML singleton (`TtvStudio.Core.DashboardController`).
 class DashboardController : public QObject
 {
     Q_OBJECT
     QML_ELEMENT
     QML_SINGLETON
 
-    Q_PROPERTY(CentralLogger::Core::LoggerListModel *loggers READ loggers CONSTANT)
-    Q_PROPERTY(CentralLogger::Core::SensorMonitoringTableModel *sensorTable
+    Q_PROPERTY(TtvStudio::Core::LoggerListModel *loggers READ loggers CONSTANT)
+    Q_PROPERTY(TtvStudio::Core::SensorMonitoringTableModel *sensorTable
                    READ sensorTable CONSTANT)
-    Q_PROPERTY(CentralLogger::Core::RecentEventsModel *recentEvents
+    Q_PROPERTY(TtvStudio::Core::RecentEventsModel *recentEvents
                    READ recentEvents CONSTANT)
     Q_PROPERTY(QVariantList readingsChartPlotPoints READ readingsChartPlotPoints
                    NOTIFY readingsChartChanged)
@@ -123,7 +123,7 @@ public slots:
     /// so it has to be public; not intended for direct QML use.
     /// Audit H-A: @p catalogRows is the catalog fetched on the bridge thread;
     /// the UI path no longer issues its own catalog SELECT.
-    void onSnapshotApplied(const CentralLogger::Network::PollSnapshot &snapshot,
+    void onSnapshotApplied(const TtvStudio::Network::PollSnapshot &snapshot,
                            int sensorCount,
                            const QVector<Data::LoggerSensor> &catalogRows);
 
@@ -172,4 +172,4 @@ private:
     bool                   m_chartQueryRunning = false; // H-E coalesce guard
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

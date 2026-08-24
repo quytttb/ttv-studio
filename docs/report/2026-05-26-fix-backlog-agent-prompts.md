@@ -1,4 +1,4 @@
-# Gửi agent fix backlog — Central Logger C++
+# Gửi agent fix backlog — TTV Studio C++
 
 **SoT bug:** [`2026-05-26-deep-audit.md`](2026-05-26-deep-audit.md) (§4–§6).
 
@@ -14,7 +14,7 @@ Mỗi lần gửi agent: copy **một** prompt bên dưới + đính kèm:
 **Không làm:** FE-017 (tray/frameless), FE-014 (REST live merge), D-2 (trừ khi user yêu cầu + ADR).
 
 ```bash
-cmake --build build/Desktop-Debug --target central_logger -j
+cmake --build build/Desktop-Debug --target ttv_studio -j
 cd build/Desktop-Debug && ctest --output-on-failure
 ```
 
@@ -36,7 +36,7 @@ cd build/Desktop-Debug && ctest --output-on-failure
 ## Batch 1 — Data & vận hành (D-1, M-10, M-13, L-14, L-23)
 
 ```
-Sửa backlog Batch 1 — Central Logger C++ (Qt 6.11).
+Sửa backlog Batch 1 — TTV Studio C++ (Qt 6.11).
 
 Đọc: AGENTS.md, docs/thiet_ke_db.md, docs/report/2026-05-26-deep-audit.md
 (§6 D-1; §4 M-10, M-13; §5 L-14, L-23)
@@ -76,7 +76,7 @@ Cuối task — sửa docs/report/2026-05-26-deep-audit.md:
 ## Batch 2 — REST / Modbus / Core Medium
 
 ```
-Sửa backlog Batch 2 — Central Logger C++.
+Sửa backlog Batch 2 — TTV Studio C++.
 
 Đọc: AGENTS.md, docs/contracts/, docs/report/2026-05-26-deep-audit.md
 (M-1, M-2, M-3, M-5, M-7, M-8, M-9, M-14)
@@ -105,7 +105,7 @@ Build + ctest pass. Cập nhật deep-audit.md như Batch 1.
 ## Batch 3 — QML / UX
 
 ```
-Sửa backlog Batch 3 — QML/UI Central Logger.
+Sửa backlog Batch 3 — QML/UI TTV Studio.
 
 Đọc: AGENTS.md, docs/report/2026-05-26-deep-audit.md
 (M-17, M-18, M-22, M-23, L-15, L-16, L-17, L-18, L-19)
@@ -169,7 +169,7 @@ Không commit trừ khi user yêu cầu.
 ## Prompt — Deep audit lại (read-only)
 
 ```
-Deep audit READ-ONLY — Central Logger C++.
+Deep audit READ-ONLY — TTV Studio C++.
 
 Đọc: AGENTS.md, HANDOFF.md, thiet_ke_db.md, docs/contracts/, docs/report/2026-05-26-deep-audit.md
 

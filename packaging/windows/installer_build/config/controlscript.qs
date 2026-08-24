@@ -1,5 +1,5 @@
 /**
- * Control script for the Central Logger installer.
+ * Control script for the TTV Studio installer.
  *
  * Problem solved: Qt IFW refuses to install into a directory that already
  * contains an installation (it shows "The directory you selected already
@@ -35,7 +35,7 @@ Controller.prototype.TargetDirectoryPageCallback = function()
     var answer = QMessageBox.question(
         "cl.upgrade.confirm",
         qsTr("Existing Installation Found"),
-        qsTr("An existing installation of Central Logger was found in:\n\n%1\n\n"
+        qsTr("An existing installation of TTV Studio was found in:\n\n%1\n\n"
              + "It must be removed before the new version can be installed. "
              + "Do you want to uninstall it now and continue?").arg(targetDir),
         QMessageBox.Yes | QMessageBox.No);
@@ -56,7 +56,7 @@ Controller.prototype.TargetDirectoryPageCallback = function()
             "cl.upgrade.failed",
             qsTr("Uninstall Failed"),
             qsTr("The previous version could not be removed automatically.\n"
-                 + "Please uninstall Central Logger manually (run "
+                 + "Please uninstall TTV Studio manually (run "
                  + "maintenancetool.exe in %1 or use Windows Settings), "
                  + "then run this installer again.").arg(targetDir));
     }

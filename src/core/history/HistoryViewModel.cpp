@@ -23,11 +23,11 @@
 
 #include <memory>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 namespace {
 
-using CentralLogger::Defaults::kHistorySearchLimit;
+using TtvStudio::Defaults::kHistorySearchLimit;
 
 QVariantMap filterItem(qint64 id, const QString &name)
 {
@@ -64,7 +64,7 @@ HistorySearchResult executeHistorySearch(HistorySearchParams params)
     const QString connName = QStringLiteral("history_search_%1").arg(
         reinterpret_cast<quintptr>(QThread::currentThreadId()));
 
-    QSqlDatabase db = QSqlDatabase::addDatabase(QLatin1String(CentralLogger::Data::Db::kSqliteDriver), connName);
+    QSqlDatabase db = QSqlDatabase::addDatabase(QLatin1String(TtvStudio::Data::Db::kSqliteDriver), connName);
     db.setDatabaseName(params.dbPath);
     if (!db.open()) {
         result.error = db.lastError().text();
@@ -199,8 +199,8 @@ void HistoryViewModel::search(const QString &fromDate, const QString &toDate, qi
         }
     }
 
-    const QDate fromDate2 = QDate::fromString(fromDate, QLatin1String(CentralLogger::Format::kDateDdMmYyyy));
-    const QDate toDate2   = QDate::fromString(toDate,   QLatin1String(CentralLogger::Format::kDateDdMmYyyy));
+    const QDate fromDate2 = QDate::fromString(fromDate, QLatin1String(TtvStudio::Format::kDateDdMmYyyy));
+    const QDate toDate2   = QDate::fromString(toDate,   QLatin1String(TtvStudio::Format::kDateDdMmYyyy));
     const QDateTime fromDt = fromDate2.isValid()
         ? QDateTime(fromDate2, QTime(0, 0), tz).toUTC()
         : QDateTime();
@@ -339,13 +339,13 @@ void HistoryViewModel::exportCsv(const QUrl &fileUrl)
 
     for (const auto &r : rows) {
         out << csvEscape(r.recordedAt.toLocalTime()
-                              .toString(QLatin1String(CentralLogger::Format::kDateTimeDdMmYyyyHms))) << ','
+                              .toString(QLatin1String(TtvStudio::Format::kDateTimeDdMmYyyyHms))) << ','
             << csvEscape(r.loggerName) << ','
             << csvEscape(r.sensorName) << ','
             << csvEscape(r.unit) << ','
-            << QString::number(r.value, 'f', qBound(CentralLogger::Defaults::kDecimalsMin,
+            << QString::number(r.value, 'f', qBound(TtvStudio::Defaults::kDecimalsMin,
                                                    r.decimals,
-                                                   CentralLogger::Defaults::kDecimalsMax)) << ','
+                                                   TtvStudio::Defaults::kDecimalsMax)) << ','
             << HistoryTableModel::statusText(r) << '\n';
     }
 
@@ -400,4 +400,4 @@ void HistoryViewModel::rememberQuery(qint64 loggerId, qint64 sensorId,
     m_lastQueryToUtc     = toUtc;
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

@@ -5,7 +5,7 @@
 #include <QDateTime>
 #include <QString>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 /// One row returned by SensorReadingRepository::searchHistory().
 /// Combines sensor_reading data with logger_sensor metadata.
@@ -24,4 +24,4 @@ struct HistoryRow
     qint64    sensorId = 0;
 };
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

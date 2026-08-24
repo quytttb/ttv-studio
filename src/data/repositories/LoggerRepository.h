@@ -8,7 +8,7 @@
 #include <QVector>
 #include <optional>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 /// `LoggerInfo` plus a denormalized count of catalog rows owned by the
 /// logger. Returned by `findAllWithSensorCounts()` so list models can render
@@ -60,4 +60,4 @@ private:
     QSqlDatabase m_db;
 };
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

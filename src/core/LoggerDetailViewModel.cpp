@@ -22,7 +22,7 @@
 
 #include <QtDebug>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 namespace {
 Data::Database             *g_db        = nullptr;
@@ -208,7 +208,7 @@ void LoggerDetailViewModel::fetchReadingsDebug()
         return;
     }
     if (!m_hasApiToken) {
-        setError(QString::fromUtf8(CentralLogger::Format::kErrRestTokenEmpty));
+        setError(QString::fromUtf8(TtvStudio::Format::kErrRestTokenEmpty));
         return;
     }
     setBusy(true);
@@ -234,7 +234,7 @@ void LoggerDetailViewModel::downloadReport(const QUrl &fileUrl)
     }
     if (!m_hasApiToken) {
         emit reportDownloaded(false, QString{},
-                              QString::fromUtf8(CentralLogger::Format::kErrRestTokenEmpty));
+                              QString::fromUtf8(TtvStudio::Format::kErrRestTokenEmpty));
         return;
     }
     if (savePath.isEmpty()) {
@@ -256,7 +256,7 @@ void LoggerDetailViewModel::onReadingsDebug(qint64 loggerId, bool ok, int httpSt
     setReadingsDebug(rawJson);
     if (!ok) {
         setError(errorMessage.isEmpty()
-            ? QString(QLatin1String(CentralLogger::Format::kErrHttpFmt)).arg(httpStatus)
+            ? QString(QLatin1String(TtvStudio::Format::kErrHttpFmt)).arg(httpStatus)
             : errorMessage);
     }
     emit readingsDebugReady(ok);
@@ -274,10 +274,10 @@ void LoggerDetailViewModel::onReportDownloaded(qint64 loggerId, bool ok,
             const QString absPath = QFileInfo(savePath).absoluteFilePath();
             g_dashboard->logEvent(
                 loggerId,
-                CentralLogger::Sensor::kEventTypeInfo,
+                TtvStudio::Sensor::kEventTypeInfo,
                 DesktopService::reportSavedMessagePrefix() + absPath);
         } else {
-            g_dashboard->logEvent(loggerId, CentralLogger::Sensor::kEventTypeWarning,
+            g_dashboard->logEvent(loggerId, TtvStudio::Sensor::kEventTypeWarning,
                                   QStringLiteral("Report download failed: %1").arg(errorMessage));
         }
     }
@@ -354,8 +354,8 @@ QVariantMap LoggerDetailViewModel::snapTrendingChart(double mouseX,
                                                      double plotW,
                                                      double plotH) const
 {
-    const double xMin = m_chartAxisRange.value(CentralLogger::Ui::kChartXMin).toDouble();
-    const double xMax = m_chartAxisRange.value(CentralLogger::Ui::kChartXMax).toDouble();
+    const double xMin = m_chartAxisRange.value(TtvStudio::Ui::kChartXMin).toDouble();
+    const double xMax = m_chartAxisRange.value(TtvStudio::Ui::kChartXMax).toDouble();
     return Core::snapTrendingChart(m_trendingSeries,
                                   xMin,
                                   xMax,
@@ -367,4 +367,4 @@ QVariantMap LoggerDetailViewModel::snapTrendingChart(double mouseX,
                                   mouseY);
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

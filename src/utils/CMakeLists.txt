@@ -33,4 +33,4 @@ target_link_libraries(utils
         Qt6::Network
 )
 
-add_library(central_logger::utils ALIAS utils)
+add_library(ttv_studio::utils ALIAS utils)

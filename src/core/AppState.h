@@ -8,11 +8,11 @@
 class QJSEngine;
 class QQmlEngine;
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 class Database;
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 /// Read-only aggregate of dashboard stats. Wired in Task 2 from the
 /// loggers/events repositories; ModbusBridge will refresh it in Task 4.
@@ -72,4 +72,4 @@ private:
     QString m_statusText    = QStringLiteral("Ready");
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

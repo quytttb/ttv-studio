@@ -14,10 +14,10 @@
 
 #include "Version_generated.h"
 
-namespace CentralLogger::Version {
+namespace TtvStudio::Version {
 
 inline constexpr int kSchemaVersion    = 6;
 inline constexpr int kApiVersion       = 1;
 inline constexpr int kModbusMapVersion = 1;
 
-} // namespace CentralLogger::Version
+} // namespace TtvStudio::Version

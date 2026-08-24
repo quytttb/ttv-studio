@@ -36,13 +36,13 @@
 #include <QtConcurrent>
 #include <QSqlQuery>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
-using CentralLogger::Utils::displayLevelForEvent;
-using CentralLogger::Utils::kChartDisplayPointCount;
-using CentralLogger::Defaults::kPurgeIntervalMs;
-using CentralLogger::Defaults::kVacuumChunkPages;
-using CentralLogger::Defaults::kMaxVacuumIterations;
+using TtvStudio::Utils::displayLevelForEvent;
+using TtvStudio::Utils::kChartDisplayPointCount;
+using TtvStudio::Defaults::kPurgeIntervalMs;
+using TtvStudio::Defaults::kVacuumChunkPages;
+using TtvStudio::Defaults::kMaxVacuumIterations;
 
 namespace {
 
@@ -68,7 +68,7 @@ PurgeResult executeRetentionPurge(const QString &dbPath, const QDateTime &cutoff
 
   const QString connName = QStringLiteral("retention_purge_%1").arg(
       reinterpret_cast<quintptr>(QThread::currentThreadId()));
-  QSqlDatabase db = QSqlDatabase::addDatabase(QLatin1String(CentralLogger::Data::Db::kSqliteDriver), connName);
+  QSqlDatabase db = QSqlDatabase::addDatabase(QLatin1String(TtvStudio::Data::Db::kSqliteDriver), connName);
   db.setDatabaseName(dbPath);
   if (!db.open()) {
     result.error = db.lastError().text();
@@ -125,7 +125,7 @@ QVector<ReadingBucketPoint> executeChartQuery(const QString &dbPath,
 {
   const QString connName = QStringLiteral("chart_query_%1").arg(
       reinterpret_cast<quintptr>(QThread::currentThreadId()));
-  QSqlDatabase db = QSqlDatabase::addDatabase(QLatin1String(CentralLogger::Data::Db::kSqliteDriver), connName);
+  QSqlDatabase db = QSqlDatabase::addDatabase(QLatin1String(TtvStudio::Data::Db::kSqliteDriver), connName);
   db.setDatabaseName(dbPath);
   if (!db.open()) {
     db = QSqlDatabase();
@@ -271,14 +271,14 @@ void DashboardController::refreshReadingsChart() {
     data.reserve(points.size());
     for (const auto &pt : points) {
       QVariantMap m;
-      m.insert(QLatin1String(CentralLogger::Ui::kChartLabel), pt.label);
-      m.insert(QLatin1String(CentralLogger::Ui::kChartBucketMs), pt.bucketMs);
-      m.insert(QLatin1String(CentralLogger::Ui::kChartCount), pt.count);
+      m.insert(QLatin1String(TtvStudio::Ui::kChartLabel), pt.label);
+      m.insert(QLatin1String(TtvStudio::Ui::kChartBucketMs), pt.bucketMs);
+      m.insert(QLatin1String(TtvStudio::Ui::kChartCount), pt.count);
       data.append(m);
     }
     const auto presentation =
         buildReadingsChartPresentation(data, kChartDisplayPointCount,
-                                      CentralLogger::Defaults::kChartDefaultBucketMin, tz);
+                                      TtvStudio::Defaults::kChartDefaultBucketMin, tz);
     m_readingsChartPlotPoints = presentation.plotPoints;
     m_readingsChartAxis = presentation.axis;
     m_readingsChartHasData = false;
@@ -294,7 +294,7 @@ void DashboardController::refreshReadingsChart() {
   if (inMemory) {
     // :memory: DBs are per-connection; query synchronously on the main conn.
     ChartQueryService svc(m_db->connection());
-    applyPoints(svc.readingCountsLast24h(CentralLogger::Defaults::kChartDefaultBucketMin, tz));
+    applyPoints(svc.readingCountsLast24h(TtvStudio::Defaults::kChartDefaultBucketMin, tz));
     m_chartQueryRunning = false;
     return;
   }
@@ -309,7 +309,7 @@ void DashboardController::refreshReadingsChart() {
           });
   QFuture<QVector<ReadingBucketPoint>> future =
       QtConcurrent::run(executeChartQuery, dbPath, tz,
-                       CentralLogger::Defaults::kChartDefaultBucketMin);
+                       TtvStudio::Defaults::kChartDefaultBucketMin);
   watcher->setFuture(future);
 }
 
@@ -325,7 +325,7 @@ void DashboardController::purgeOldData() {
 
   // Determine retention days: prefer the live SettingsController value,
   // fall back to reading from the DB directly.
-  int retentionDays = CentralLogger::Defaults::kDefaultRetentionDays;
+  int retentionDays = TtvStudio::Defaults::kDefaultRetentionDays;
   if (m_settings) {
     retentionDays = m_settings->dataRetentionDays();
   } else {
@@ -437,7 +437,7 @@ void DashboardController::syncModbusRegistry() {
   }
   QMetaObject::invokeMethod(
       m_modbus, "syncLoggers", Qt::QueuedConnection,
-      Q_ARG(QVector<CentralLogger::Network::LoggerRuntimeConfig>, configs));
+      Q_ARG(QVector<TtvStudio::Network::LoggerRuntimeConfig>, configs));
 }
 
 void DashboardController::onSnapshotApplied(
@@ -446,8 +446,8 @@ void DashboardController::onSnapshotApplied(
   const qint64 loggerId = snapshot.loggerId;
   const bool online = snapshot.success;
   const QString newStatus =
-      online ? QLatin1String(CentralLogger::Sensor::kLoggerOnline)
-             : QLatin1String(CentralLogger::Sensor::kLoggerOffline);
+      online ? QLatin1String(TtvStudio::Sensor::kLoggerOnline)
+             : QLatin1String(TtvStudio::Sensor::kLoggerOffline);
 
   // Snapshot the previous status before patching the list model — once
   // updateLoggerRow runs the row reflects the new state.
@@ -472,10 +472,10 @@ void DashboardController::onSnapshotApplied(
     QHash<int, QString> nameMap;
     QHash<int, int> decimalsMap;
     for (const auto &row : catalogRows) {
-      if (row.sensorType == CentralLogger::Sensor::kTypeAnalog) {
+      if (row.sensorType == TtvStudio::Sensor::kTypeAnalog) {
         nameMap.insert(row.edgeSensorId,
                        row.name.isEmpty()
-                           ? QString(QLatin1String(CentralLogger::Sensor::kFallbackNameFmt)).arg(row.edgeSensorId)
+                           ? QString(QLatin1String(TtvStudio::Sensor::kFallbackNameFmt)).arg(row.edgeSensorId)
                            : row.name);
         decimalsMap.insert(row.edgeSensorId, row.decimals);
       }
@@ -519,7 +519,7 @@ void DashboardController::maybeLogStatusTransition(qint64 loggerId,
     // initial connection succeed. Skip Offline — the DB default is
     // already 'offline' and logging it would generate spurious events
     // for every unreachable logger at startup.
-    if (newStatus != CentralLogger::Sensor::kLoggerOnline)
+    if (newStatus != TtvStudio::Sensor::kLoggerOnline)
       return;
     // Fall through to log the Online event below.
   }
@@ -541,13 +541,13 @@ void DashboardController::maybeLogStatusTransition(qint64 loggerId,
   Data::EventRepository events(m_db->connection());
   Data::SystemEvent ev;
   ev.loggerId = loggerId;
-  if (newStatus == CentralLogger::Sensor::kLoggerOnline) {
-    ev.eventType = CentralLogger::Sensor::kEventTypeOnline;
-    ev.level = CentralLogger::Sensor::kLevelInfo;
+  if (newStatus == TtvStudio::Sensor::kLoggerOnline) {
+    ev.eventType = TtvStudio::Sensor::kEventTypeOnline;
+    ev.level = TtvStudio::Sensor::kLevelInfo;
     ev.message = QStringLiteral("Logger %1 is online").arg(label);
   } else {
-    ev.eventType = CentralLogger::Sensor::kEventTypeOffline;
-    ev.level = CentralLogger::Sensor::kLevelWarning;
+    ev.eventType = TtvStudio::Sensor::kEventTypeOffline;
+    ev.level = TtvStudio::Sensor::kLevelWarning;
     ev.message = QStringLiteral("Logger %1 went offline").arg(label);
   }
   if (events.insert(ev)) {
@@ -605,12 +605,12 @@ QVariantMap DashboardController::snapReadingsChart(double mouseX, double mouseY,
                                                    double plotW,
                                                    double plotH) const {
   const double xMin =
-      m_readingsChartAxis.value(CentralLogger::Ui::kChartXMin).toDouble();
+      m_readingsChartAxis.value(TtvStudio::Ui::kChartXMin).toDouble();
   const double xMax =
-      m_readingsChartAxis.value(CentralLogger::Ui::kChartXMax).toDouble();
+      m_readingsChartAxis.value(TtvStudio::Ui::kChartXMax).toDouble();
   return Core::snapReadingsChart(m_readingsChartPlotPoints, xMin, xMax, plotX,
                                  plotY, plotW, plotH, mouseX, mouseY,
-                                 CentralLogger::Defaults::kChartDefaultBucketMin);
+                                 TtvStudio::Defaults::kChartDefaultBucketMin);
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

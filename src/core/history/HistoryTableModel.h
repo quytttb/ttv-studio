@@ -6,7 +6,7 @@
 #include <QVector>
 #include <QtQmlIntegration/qqmlintegration.h>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 /// Read-only table model for the History view. Rows are a vector of
 /// HistoryRow from SensorReadingRepository::searchHistory(). Thread-safe
@@ -72,4 +72,4 @@ private:
     QVector<Data::HistoryRow> m_rows;
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

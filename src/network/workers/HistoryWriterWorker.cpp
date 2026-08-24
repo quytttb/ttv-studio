@@ -10,7 +10,7 @@
 #include <QtDebug>
 #include <QtGlobal>
 
-namespace CentralLogger::Network {
+namespace TtvStudio::Network {
 
 HistoryWriterWorker::HistoryWriterWorker(QObject *parent)
     : QObject(parent)
@@ -54,7 +54,7 @@ void HistoryWriterWorker::start()
 
     m_connectionName = QStringLiteral("history_writer");
 
-    m_db = QSqlDatabase::addDatabase(QLatin1String(CentralLogger::Data::Db::kSqliteDriver), m_connectionName);
+    m_db = QSqlDatabase::addDatabase(QLatin1String(TtvStudio::Data::Db::kSqliteDriver), m_connectionName);
     m_db.setDatabaseName(m_databasePath);
     if (!m_db.open()) {
         qWarning() << "HistoryWriterWorker: cannot open database:" << m_db.lastError().text();
@@ -203,4 +203,4 @@ void HistoryWriterWorker::flushBatch(QList<PollSnapshot> &batch)
     batch.clear();
 }
 
-} // namespace CentralLogger::Network
+} // namespace TtvStudio::Network

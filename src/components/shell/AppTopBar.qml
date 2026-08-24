@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Window
 
-import CentralLogger.Theme
+import TtvStudio.Theme
 import LoggerKit.Theme
 
 // Per-view toolbar host (no page title — navigation rail shows the screen).

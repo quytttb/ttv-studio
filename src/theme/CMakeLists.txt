@@ -5,8 +5,8 @@
 set_source_files_properties(OperationalStatus.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 set_source_files_properties(AttachDiType.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 
-qt_add_qml_module(central_logger_theme
-    URI CentralLogger.Theme
+qt_add_qml_module(ttv_studio_theme
+    URI TtvStudio.Theme
     VERSION ${QML_MODULE_VERSION}
     STATIC
     QML_FILES
@@ -16,4 +16,4 @@ qt_add_qml_module(central_logger_theme
         LoggerKit.Theme
 )
 
-add_library(central_logger::theme ALIAS central_logger_theme)
+add_library(ttv_studio::theme ALIAS ttv_studio_theme)

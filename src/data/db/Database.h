@@ -3,7 +3,7 @@
 #include <QSqlDatabase>
 #include <QString>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 /// Single entry point for the SQLite (QSQLITE) connection used by the
 /// repository layer. See docs/adr/0001-db.md and docs/thiet_ke_db.md.
@@ -34,13 +34,13 @@ public:
 
     QString connectionName() const { return m_connectionName; }
 
-    /// `~/.central-logger/central-logger.db`
+    /// `~/.ttv-studio/ttv-studio.db`
     static QString defaultPath();
 
     /// SQLite in-memory path for unit tests (`:memory:`).
     static QString memoryPath() { return QStringLiteral(":memory:"); }
 
-    static QString defaultConnectionName() { return QStringLiteral("central_logger"); }
+    static QString defaultConnectionName() { return QStringLiteral("ttv_studio"); }
 
     /// Current `PRAGMA user_version` baked into the application.
     static int schemaVersion();
@@ -66,4 +66,4 @@ private:
     QString m_connectionName;
 };
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

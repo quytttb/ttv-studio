@@ -34,4 +34,4 @@ target_link_libraries(network
         data
 )
 
-add_library(central_logger::network ALIAS network)
+add_library(ttv_studio::network ALIAS network)

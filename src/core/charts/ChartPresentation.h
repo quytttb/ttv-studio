@@ -6,7 +6,7 @@
 #include <QVariantList>
 #include <QVariantMap>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 /// Visible window + axis for Dashboard readings chart (FE-002).
 struct ReadingsChartPresentation
@@ -50,4 +50,4 @@ QVariantMap snapTrendingChart(const QVariantList &trendingSeries,
                               double mouseX,
                               double mouseY);
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

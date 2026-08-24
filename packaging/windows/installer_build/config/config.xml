@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Installer>
-    <Name>Central Logger</Name>
+    <Name>TTV Studio</Name>
     <Version>1.0.0</Version>
-    <Title>Central Logger Setup</Title>
-    <Publisher>4M Technologies</Publisher>
-    <StartMenuDir>Central Logger</StartMenuDir>
-    <TargetDir>@RootDir@/CentralLogger</TargetDir>
+    <Title>TTV Studio Setup</Title>
+    <Publisher>quytttb</Publisher>
+    <StartMenuDir>TTV Studio</StartMenuDir>
+    <TargetDir>@RootDir@/TtvStudio</TargetDir>
     <WizardStyle>Modern</WizardStyle>
     <WizardDefaultWidth>850</WizardDefaultWidth>
     <WizardDefaultHeight>500</WizardDefaultHeight>

@@ -1,7 +1,7 @@
 #include "AppDefaults.h"
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 AppDefaults::AppDefaults(QObject *parent) : QObject(parent) {}
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

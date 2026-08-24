@@ -4,7 +4,7 @@
 #include "utils/SensorConstants.h"
 #include "utils/UiConstants.h"
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 LoggerListModel::LoggerListModel(QObject *parent)
     : QAbstractTableModel(parent)
@@ -36,7 +36,7 @@ QVariant LoggerListModel::data(const QModelIndex &index, int role) const
         case HostColumn:        return row.info.host;
         case ModbusPortColumn:  return row.info.modbusPort;
         case SensorCountColumn: return row.sensorCount;
-        case StatusColumn:      return row.info.status == CentralLogger::Sensor::kLoggerOnline
+        case StatusColumn:      return row.info.status == TtvStudio::Sensor::kLoggerOnline
                                         ? tr("Online") : tr("Offline");
         case ActionsColumn:     return QString{};
         default:                return {};
@@ -57,7 +57,7 @@ QVariant LoggerListModel::data(const QModelIndex &index, int role) const
     case ApiPortRole:      return row.info.apiPort;
     case StatusRole:       return row.info.status;
     case SensorCountRole:  return row.sensorCount;
-    case OnlineRole:       return row.info.status == CentralLogger::Sensor::kLoggerOnline;
+    case OnlineRole:       return row.info.status == TtvStudio::Sensor::kLoggerOnline;
     case PollingRole:      return live.polling;
     case AnyAlarmRole:     return live.anyAlarm;
     case RtuConnectedRole: return live.rtuConnected;
@@ -84,21 +84,21 @@ QVariant LoggerListModel::headerData(int section, Qt::Orientation orientation, i
 QHash<int, QByteArray> LoggerListModel::roleNames() const
 {
     return {
-        { Qt::DisplayRole,  CentralLogger::Ui::kRoleDisplay },  // HorizontalHeaderView + per-column TableView cells
-        { IdRole,           CentralLogger::Ui::kRoleId },
-        { LoggerIdRole,     CentralLogger::Ui::kRoleLoggerId },  // QML-safe alias — 'id' is reserved keyword
-        { StationCodeRole,  CentralLogger::Ui::kRoleStationCode },
-        { NameRole,         CentralLogger::Ui::kRoleName },
-        { HostRole,         CentralLogger::Ui::kRoleHost },
-        { ModbusPortRole,   CentralLogger::Ui::kRoleModbusPort },
-        { ModbusUnitIdRole, CentralLogger::Ui::kRoleModbusUnitId },
-        { ApiPortRole,      CentralLogger::Ui::kRoleApiPort },
-        { StatusRole,       CentralLogger::Ui::kRoleStatus },
-        { SensorCountRole,  CentralLogger::Ui::kRoleSensorCount },
-        { OnlineRole,       CentralLogger::Ui::kRoleOnline },
-        { PollingRole,      CentralLogger::Ui::kRolePolling },
-        { AnyAlarmRole,     CentralLogger::Ui::kRoleAnyAlarm },
-        { RtuConnectedRole, CentralLogger::Ui::kRoleRtuConnected },
+        { Qt::DisplayRole,  TtvStudio::Ui::kRoleDisplay },  // HorizontalHeaderView + per-column TableView cells
+        { IdRole,           TtvStudio::Ui::kRoleId },
+        { LoggerIdRole,     TtvStudio::Ui::kRoleLoggerId },  // QML-safe alias — 'id' is reserved keyword
+        { StationCodeRole,  TtvStudio::Ui::kRoleStationCode },
+        { NameRole,         TtvStudio::Ui::kRoleName },
+        { HostRole,         TtvStudio::Ui::kRoleHost },
+        { ModbusPortRole,   TtvStudio::Ui::kRoleModbusPort },
+        { ModbusUnitIdRole, TtvStudio::Ui::kRoleModbusUnitId },
+        { ApiPortRole,      TtvStudio::Ui::kRoleApiPort },
+        { StatusRole,       TtvStudio::Ui::kRoleStatus },
+        { SensorCountRole,  TtvStudio::Ui::kRoleSensorCount },
+        { OnlineRole,       TtvStudio::Ui::kRoleOnline },
+        { PollingRole,      TtvStudio::Ui::kRolePolling },
+        { AnyAlarmRole,     TtvStudio::Ui::kRoleAnyAlarm },
+        { RtuConnectedRole, TtvStudio::Ui::kRoleRtuConnected },
     };
 }
 
@@ -173,4 +173,4 @@ void LoggerListModel::updateLoggerRow(qint64 loggerId,
     }
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

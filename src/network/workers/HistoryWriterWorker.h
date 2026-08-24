@@ -11,7 +11,7 @@
 #include <QWaitCondition>
 #include <atomic>
 
-namespace CentralLogger::Network {
+namespace TtvStudio::Network {
 
 class ModbusBridge;
 
@@ -51,7 +51,7 @@ signals:
 
 public slots:
     void start();
-    void enqueue(CentralLogger::Network::PollSnapshot snapshot);
+    void enqueue(TtvStudio::Network::PollSnapshot snapshot);
     void shutdown();
 
 private:
@@ -74,4 +74,4 @@ private:
     std::atomic<int>     m_flushIntervalMs{kDefaultFlushIntervalS * Defaults::kMsPerSecond};
 };
 
-} // namespace CentralLogger::Network
+} // namespace TtvStudio::Network

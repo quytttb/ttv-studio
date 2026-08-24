@@ -7,8 +7,8 @@
 #include <QTemporaryDir>
 #include <QTest>
 
-using namespace CentralLogger::Network;
-using namespace CentralLogger::Data;
+using namespace TtvStudio::Network;
+using namespace TtvStudio::Data;
 
 class TestRestConfigServiceReport : public QObject
 {

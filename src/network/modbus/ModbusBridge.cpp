@@ -14,7 +14,7 @@
 #include <QThread>
 #include <QtDebug>
 
-namespace CentralLogger::Network {
+namespace TtvStudio::Network {
 
 ModbusBridge::ModbusBridge(QObject *parent)
     : QObject(parent)
@@ -36,7 +36,7 @@ void ModbusBridge::start()
             const QString connName =
                 QStringLiteral("modbus_live_%1")
                     .arg(reinterpret_cast<quintptr>(QThread::currentThreadId()));
-            m_dedicatedConn = QSqlDatabase::addDatabase(QLatin1String(CentralLogger::Data::Db::kSqliteDriver), connName);
+            m_dedicatedConn = QSqlDatabase::addDatabase(QLatin1String(TtvStudio::Data::Db::kSqliteDriver), connName);
             m_dedicatedConn.setDatabaseName(m_databasePath);
             if (!m_dedicatedConn.open()) {
                 qWarning() << "ModbusBridge: cannot open dedicated connection:"
@@ -92,11 +92,11 @@ ModbusBridge::CatalogCacheEntry &ModbusBridge::catalogCacheFor(qint64 loggerId,
         if (!s.active || s.id <= 0) {
             continue;
         }
-        if (s.sensorType == CentralLogger::Sensor::kTypeAnalog) {
+        if (s.sensorType == TtvStudio::Sensor::kTypeAnalog) {
             entry.analogIds.insert(s.edgeSensorId, s.id);
-        } else if (s.sensorType == CentralLogger::Sensor::kTypeDi) {
+        } else if (s.sensorType == TtvStudio::Sensor::kTypeDi) {
             entry.diIds.insert(s.edgeSensorId, s.id);
-        } else if (s.sensorType == CentralLogger::Sensor::kTypeDo) {
+        } else if (s.sensorType == TtvStudio::Sensor::kTypeDo) {
             entry.doIds.insert(s.edgeSensorId, s.id);
         }
     }
@@ -129,7 +129,7 @@ void ModbusBridge::applyLiveSnapshot(const PollSnapshot &snapshot)
         : QDateTime::currentDateTimeUtc();
 
     if (!snapshot.success) {
-        loggers.updateStatus(snapshot.loggerId, CentralLogger::Sensor::kLoggerOffline);
+        loggers.updateStatus(snapshot.loggerId, TtvStudio::Sensor::kLoggerOffline);
         const int sensorCount = catalog.listByLoggerId(snapshot.loggerId).size();
         emit snapshotApplied(snapshot, sensorCount,
                              QVector<Data::LoggerSensor>{});
@@ -143,7 +143,7 @@ void ModbusBridge::applyLiveSnapshot(const PollSnapshot &snapshot)
     }
 
     loggers.updateStatusAndLastSeen(snapshot.loggerId,
-                                    CentralLogger::Sensor::kLoggerOnline,
+                                    TtvStudio::Sensor::kLoggerOnline,
                                     now);
 
     // Audit M-2: ensureExists is only needed for sensors the cache does not
@@ -156,7 +156,7 @@ void ModbusBridge::applyLiveSnapshot(const PollSnapshot &snapshot)
             }
             const qint64 id = catalog.ensureExists(snapshot.loggerId,
                                                    sample.edgeSensorId,
-                                                   CentralLogger::Sensor::kTypeAnalog);
+                                                   TtvStudio::Sensor::kTypeAnalog);
             if (id > 0) {
                 cached.analogIds.insert(sample.edgeSensorId, id);
             }
@@ -273,7 +273,7 @@ QVector<Data::SensorReading> ModbusBridge::buildReadings(const PollSnapshot &sna
         qint64 sensorId = cache.analogIds.value(sample.edgeSensorId, 0);
         if (sensorId <= 0) {
             sensorId = catalog.ensureExists(snapshot.loggerId, sample.edgeSensorId,
-                                            CentralLogger::Sensor::kTypeAnalog);
+                                            TtvStudio::Sensor::kTypeAnalog);
             if (sensorId > 0) {
                 cache.analogIds.insert(sample.edgeSensorId, sensorId);
             }
@@ -292,14 +292,14 @@ QVector<Data::SensorReading> ModbusBridge::buildReadings(const PollSnapshot &sna
         if (!sensor.active || sensor.id <= 0) {
             continue;
         }
-        if (sensor.sensorType == CentralLogger::Sensor::kTypeDi) {
+        if (sensor.sensorType == TtvStudio::Sensor::kTypeDi) {
             const int bit = sensor.edgeSensorId;
             if (bit < 0 || bit >= snapshot.diBits.size()) {
                 continue;
             }
             appendIfChanged(sensor.id, snapshot.diBits.at(bit) ? 1.0 : 0.0,
                             true, false, false);
-        } else if (sensor.sensorType == CentralLogger::Sensor::kTypeDo) {
+        } else if (sensor.sensorType == TtvStudio::Sensor::kTypeDo) {
             const int bit = sensor.edgeSensorId;
             if (bit < 0 || bit >= snapshot.doBits.size()) {
                 continue;
@@ -342,4 +342,4 @@ void ModbusBridge::applyBatch(const QList<PollSnapshot> &batch, QSqlDatabase db)
     }
 }
 
-} // namespace CentralLogger::Network
+} // namespace TtvStudio::Network

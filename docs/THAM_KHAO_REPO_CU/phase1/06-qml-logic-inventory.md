@@ -5,7 +5,7 @@ Mỗi function được ghi rõ mục đích, đầu vào/đầu ra, và đề x
 
 ---
 
-## `src/central_logger/ui/logic/LoggerDetailLogic.js`
+## `src/ttv_studio/ui/logic/LoggerDetailLogic.js`
 
 Import bởi: `LoggerDetailView.qml`
 
@@ -126,7 +126,7 @@ Import bởi: `LoggerDetailView.qml`
 
 ---
 
-## `src/central_logger/ui/logic/LoggerFormLogic.js`
+## `src/ttv_studio/ui/logic/LoggerFormLogic.js`
 
 Import bởi: `LoggerFormDialog.qml`
 
@@ -211,7 +211,7 @@ Import bởi: `LoggerFormDialog.qml`
 
 ---
 
-## `src/central_logger/ui/components/common/StatusBadges.js`
+## `src/ttv_studio/ui/components/common/StatusBadges.js`
 
 Import bởi: `SensorStatusBadge.qml`
 

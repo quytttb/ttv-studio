@@ -7,7 +7,7 @@
 // Strings are declared as `inline constexpr char[]` so they can be passed
 // directly to `QStringLiteral` (which requires literal arguments).
 
-namespace CentralLogger::Data::Db {
+namespace TtvStudio::Data::Db {
 
 // --- Table names ------------------------------------------------------------
 inline constexpr char kTableLoggerInfo[]     = "logger_info";
@@ -82,4 +82,4 @@ inline constexpr char kBindRecordedAt[]         = ":recorded_at";
 inline constexpr char kSqliteDriver[]    = "QSQLITE";
 inline constexpr char kSchemaResource[]  = ":/db/schema/001_initial.sql";
 
-} // namespace CentralLogger::Data::Db
+} // namespace TtvStudio::Data::Db

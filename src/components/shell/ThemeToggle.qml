@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 
-import CentralLogger.Core
+import TtvStudio.Core
 
 // Rail-bottom outlined circular theme toggle (light_mode / dark_mode, no label).
 Item {

@@ -14,15 +14,15 @@ class QJSEngine;
 class QQmlEngine;
 class QTimer;
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 class Database;
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data
 
-namespace CentralLogger::Network {
+namespace TtvStudio::Network {
 class RestConfigService;
-} // namespace CentralLogger::Network
+} // namespace TtvStudio::Network
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 class DashboardController;
 
@@ -30,7 +30,7 @@ class DashboardController;
 /// DashboardController so the dashboard stays focused on live state (Modbus
 /// polling, charts, events) while this owns the form/CRUD lifecycle.
 ///
-/// Registered as a QML singleton (`CentralLogger.Core.LoggerFormController`).
+/// Registered as a QML singleton (`TtvStudio.Core.LoggerFormController`).
 /// Mutations delegate dashboard refresh/event logging back to
 /// DashboardController (wired via setDashboardController in main.cpp).
 class LoggerFormController : public QObject
@@ -185,7 +185,7 @@ private:
     int         m_probedRevision = -1;
     QJsonObject m_probedConfigObject;
     int         m_probedModbusUnitId = -1;
-    QVector<CentralLogger::Data::LoggerSensor> m_probedSensors;
+    QVector<TtvStudio::Data::LoggerSensor> m_probedSensors;
 
     qint64 m_formLoadLoggerId = -1;
     bool   m_formSaveInProgress = false;
@@ -210,4 +210,4 @@ private:
     void finishPendingApply(bool ok, const QString &errorMessage);
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

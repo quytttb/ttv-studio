@@ -3,9 +3,9 @@
 
 #include <QTest>
 
-using CentralLogger::Core::PollHistoryStore;
-using CentralLogger::Network::AnalogSample;
-using CentralLogger::Network::PollSnapshot;
+using TtvStudio::Core::PollHistoryStore;
+using TtvStudio::Network::AnalogSample;
+using TtvStudio::Network::PollSnapshot;
 
 class TestPollHistoryStore : public QObject
 {

@@ -7,7 +7,7 @@ Mỗi mục có `Evidence` (file + dòng code hoặc test ID) và `Hướng cả
 
 ## P-01 — GIL + asyncio threading complexity / Phức tạp luồng Python
 
-**Evidence:** `src/central_logger/controllers/modbus_bridge.py` — `threading.Thread` chạy `asyncio.run()` riêng; `_snapshotForUi = Signal(object, object)` với `Qt.ConnectionType.QueuedConnection` để đưa kết quả về main thread. `dashboard_controller.py:381` dùng `asyncio.run_coroutine_threadsafe(coro, loop)` cho REST probe.
+**Evidence:** `src/ttv_studio/controllers/modbus_bridge.py` — `threading.Thread` chạy `asyncio.run()` riêng; `_snapshotForUi = Signal(object, object)` với `Qt.ConnectionType.QueuedConnection` để đưa kết quả về main thread. `dashboard_controller.py:381` dùng `asyncio.run_coroutine_threadsafe(coro, loop)` cho REST probe.
 
 **Triệu chứng:** Python GIL + asyncio event loop chạy trên thread riêng → khó debug race condition; GIL không loại bỏ hoàn toàn overhead context-switch.
 
@@ -87,7 +87,7 @@ Mỗi mục có `Evidence` (file + dòng code hoặc test ID) và `Hướng cả
 
 ## P-09 — Docs drift: AGENT.md vs actual pattern / Tài liệu cũ không khớp code thực
 
-**Evidence:** Root `AGENT.md` mô tả: "Controllers expose to QML via `setContextProperty`" — nhưng code thực (`main.py`) chỉ dùng context property cho `TrayCtl` và `logoUrl`; tất cả controllers dùng `@QmlElement` + `import CentralLogger.Core 1.0`. `.agent/SKILL_MVVM_INTEGRATION.md` cũng dùng context property pattern cũ trong example.
+**Evidence:** Root `AGENT.md` mô tả: "Controllers expose to QML via `setContextProperty`" — nhưng code thực (`main.py`) chỉ dùng context property cho `TrayCtl` và `logoUrl`; tất cả controllers dùng `@QmlElement` + `import TtvStudio.Core 1.0`. `.agent/SKILL_MVVM_INTEGRATION.md` cũng dùng context property pattern cũ trong example.
 
 **Triệu chứng:** Onboarding confusion; agent hoặc developer mới có thể implement sai pattern.
 

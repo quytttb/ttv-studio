@@ -8,14 +8,14 @@
 #include <QStringLiteral>
 #include <QVariant>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 namespace {
 
 // Column order kept in lockstep with the SELECT lists below so we can read
 // rows by positional index (which avoids the qt.sql.qsqlquery "unknown field
 // name" warnings emitted by q.value(QString) on prepared queries).
-using CentralLogger::Data::Db::kColumnsLoggerInfo;
+using TtvStudio::Data::Db::kColumnsLoggerInfo;
 constexpr auto kColumns = kColumnsLoggerInfo;
 
 enum Col {
@@ -37,9 +37,9 @@ enum Col {
     ColCreatedAt,
 };
 
-using CentralLogger::Utils::isoUtc;
-using CentralLogger::Utils::isoUtcOrNull;
-using CentralLogger::Utils::parseUtc;
+using TtvStudio::Utils::isoUtc;
+using TtvStudio::Utils::isoUtcOrNull;
+using TtvStudio::Utils::parseUtc;
 
 LoggerInfo rowToModel(const QSqlQuery &q)
 {
@@ -84,23 +84,23 @@ bool LoggerRepository::insert(LoggerInfo &info, QString *errorOut)
         "  :station_code, :name, :host, :modbus_port, :modbus_unit_id,"
         "  :central_poll_interval_s, :timeout_s, :enabled, :api_port, :api_token,"
         "  :last_revision, :status, :last_seen, :note"
-        ")").arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerInfo)));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindStationCode),           info.stationCode);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindName),                   info.name);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindHost),                   info.host);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindModbusPort),            info.modbusPort);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindModbusUnitId),         info.modbusUnitId);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindCentralPollIntervalS), info.centralPollIntervalS);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindTimeoutS),              info.timeoutS);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindEnabled),                info.enabled ? 1 : 0);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindApiPort),               info.apiPort);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindApiToken),
+        ")").arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerInfo)));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindStationCode),           info.stationCode);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindName),                   info.name);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindHost),                   info.host);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindModbusPort),            info.modbusPort);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindModbusUnitId),         info.modbusUnitId);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindCentralPollIntervalS), info.centralPollIntervalS);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindTimeoutS),              info.timeoutS);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindEnabled),                info.enabled ? 1 : 0);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindApiPort),               info.apiPort);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindApiToken),
                 info.apiToken.isEmpty() ? QVariant(QMetaType(QMetaType::QString))
                                         : QVariant(info.apiToken));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLastRevision),          info.lastRevision);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindStatus),                 info.status);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLastSeen),              isoUtcOrNull(info.lastSeen));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindNote),
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLastRevision),          info.lastRevision);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindStatus),                 info.status);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLastSeen),              isoUtcOrNull(info.lastSeen));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindNote),
                 info.note.isNull() ? QVariant(QMetaType(QMetaType::QString))
                                    : QVariant(info.note));
 
@@ -123,8 +123,8 @@ std::optional<LoggerInfo> LoggerRepository::findById(qint64 id, QString *errorOu
     QSqlQuery q(m_db);
     q.prepare(QStringLiteral("SELECT %1 FROM %2 WHERE id = :id")
                   .arg(QString::fromLatin1(kColumns),
-                       QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerInfo)));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindId), id);
+                       QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerInfo)));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindId), id);
     if (!q.exec()) {
         setErr(errorOut, q);
         return std::nullopt;
@@ -141,7 +141,7 @@ std::optional<LoggerInfo> LoggerRepository::findByStationCode(const QString &sta
     QSqlQuery q(m_db);
     q.prepare(QStringLiteral("SELECT %1 FROM %2 WHERE station_code = :code")
                   .arg(QString::fromLatin1(kColumns),
-                       QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerInfo)));
+                       QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerInfo)));
     q.bindValue(QStringLiteral(":code"), stationCode);
     if (!q.exec()) {
         setErr(errorOut, q);
@@ -159,7 +159,7 @@ QVector<LoggerInfo> LoggerRepository::findAll(QString *errorOut) const
     QSqlQuery q(m_db);
     if (!q.exec(QStringLiteral("SELECT %1 FROM %2 ORDER BY id")
                     .arg(QString::fromLatin1(kColumns),
-                         QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerInfo)))) {
+                         QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerInfo)))) {
         setErr(errorOut, q);
         return result;
     }
@@ -173,7 +173,7 @@ int LoggerRepository::countTotal(QString *errorOut) const
 {
     QSqlQuery q(m_db);
     if (!q.exec(QStringLiteral("SELECT COUNT(*) FROM %1")
-                    .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerInfo)))
+                    .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerInfo)))
         || !q.next()) {
         setErr(errorOut, q);
         return -1;
@@ -185,8 +185,8 @@ int LoggerRepository::countOnline(QString *errorOut) const
 {
     QSqlQuery q(m_db);
     if (!q.exec(QStringLiteral("SELECT COUNT(*) FROM %1 WHERE status = '%2'")
-                    .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerInfo),
-                         CentralLogger::Sensor::kLoggerOnline))
+                    .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerInfo),
+                         TtvStudio::Sensor::kLoggerOnline))
         || !q.next()) {
         setErr(errorOut, q);
         return -1;
@@ -211,8 +211,8 @@ QVector<LoggerListRow> LoggerRepository::findAllWithSensorCounts(QString *errorO
         "  (SELECT COUNT(*) FROM %1 s WHERE s.logger_id = l.id) AS sensor_count "
         "FROM %2 l "
         "ORDER BY l.id")
-        .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerSensor),
-             QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerInfo));
+        .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerSensor),
+             QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerInfo));
     if (!q.exec(sql)) {
         setErr(errorOut, q);
         return result;
@@ -246,26 +246,26 @@ bool LoggerRepository::update(const LoggerInfo &info, QString *errorOut)
         "  last_seen = :last_seen,"
         "  note = :note "
         "WHERE id = :id")
-        .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerInfo)));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindStationCode),           info.stationCode);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindName),                   info.name);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindHost),                   info.host);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindModbusPort),            info.modbusPort);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindModbusUnitId),         info.modbusUnitId);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindCentralPollIntervalS), info.centralPollIntervalS);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindTimeoutS),              info.timeoutS);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindEnabled),                info.enabled ? 1 : 0);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindApiPort),               info.apiPort);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindApiToken),
+        .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerInfo)));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindStationCode),           info.stationCode);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindName),                   info.name);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindHost),                   info.host);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindModbusPort),            info.modbusPort);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindModbusUnitId),         info.modbusUnitId);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindCentralPollIntervalS), info.centralPollIntervalS);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindTimeoutS),              info.timeoutS);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindEnabled),                info.enabled ? 1 : 0);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindApiPort),               info.apiPort);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindApiToken),
                 info.apiToken.isEmpty() ? QVariant(QMetaType(QMetaType::QString))
                                         : QVariant(info.apiToken));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLastRevision),          info.lastRevision);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindStatus),                 info.status);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLastSeen),              isoUtcOrNull(info.lastSeen));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindNote),
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLastRevision),          info.lastRevision);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindStatus),                 info.status);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLastSeen),              isoUtcOrNull(info.lastSeen));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindNote),
                 info.note.isNull() ? QVariant(QMetaType(QMetaType::QString))
                                    : QVariant(info.note));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindId),                     info.id);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindId),                     info.id);
 
     if (!q.exec()) {
         setErr(errorOut, q);
@@ -282,10 +282,10 @@ bool LoggerRepository::updateStatusAndLastSeen(qint64 id,
     QSqlQuery q(m_db);
     q.prepare(QStringLiteral(
         "UPDATE %1 SET status = :status, last_seen = :last_seen WHERE id = :id")
-        .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerInfo)));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindStatus),    status);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLastSeen), isoUtcOrNull(lastSeenUtc));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindId),        id);
+        .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerInfo)));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindStatus),    status);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLastSeen), isoUtcOrNull(lastSeenUtc));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindId),        id);
     if (!q.exec()) {
         setErr(errorOut, q);
         return false;
@@ -298,9 +298,9 @@ bool LoggerRepository::updateStatus(qint64 id, const QString &status, QString *e
     QSqlQuery q(m_db);
     q.prepare(QStringLiteral(
         "UPDATE %1 SET status = :status WHERE id = :id")
-        .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerInfo)));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindStatus), status);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindId),     id);
+        .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerInfo)));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindStatus), status);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindId),     id);
     if (!q.exec()) {
         setErr(errorOut, q);
         return false;
@@ -312,8 +312,8 @@ bool LoggerRepository::remove(qint64 id, QString *errorOut)
 {
     QSqlQuery q(m_db);
     q.prepare(QStringLiteral("DELETE FROM %1 WHERE id = :id")
-                   .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerInfo)));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindId), id);
+                   .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerInfo)));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindId), id);
     if (!q.exec()) {
         setErr(errorOut, q);
         return false;
@@ -321,4 +321,4 @@ bool LoggerRepository::remove(qint64 id, QString *errorOut)
     return q.numRowsAffected() > 0;
 }
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

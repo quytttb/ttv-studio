@@ -1,4 +1,4 @@
-# Handoff — Central Logger
+# Handoff — TTV Studio
 
 ## Repo này là gì
 
@@ -19,7 +19,7 @@ Stack: **Qt 6 + C++ + QML + CMake** — greenfield, **không** port source/tests
 
 ## Tham khảo repo cũ (`docs/THAM_KHAO_REPO_CU/`)
 
-Toàn bộ deliverable **Phase 1** (khảo sát app PySide6 `central-logger-app`) nằm tại:
+Toàn bộ deliverable **Phase 1** (khảo sát app PySide6 `ttv-studio-app`) nằm tại:
 
 [`docs/THAM_KHAO_REPO_CU/phase1/`](docs/THAM_KHAO_REPO_CU/phase1/)
 
@@ -43,7 +43,7 @@ Toàn bộ deliverable **Phase 1** (khảo sát app PySide6 `central-logger-app`
 
 - **MVVM:** Repository/Service (C++) + ViewModel (`Q_PROPERTY` / `Q_INVOKABLE`) + View (QML)
 - **Không** logic nghiệp vụ trong QML `.js`
-- **Module QML:** `CentralLogger.Core` — `qt_add_qml_module`
+- **Module QML:** `TtvStudio.Core` — `qt_add_qml_module`
 - **Modbus poll:** FC03 (header + analog) → FC02 (DI) → FC01 (DO) — [`modbus-map-v1.md`](docs/contracts/modbus-map-v1.md)
 - **REST:** `GET/POST /config`, reports; `/readings` **chỉ debug** (1 lần bấm, xem JSON gốc — không feed UI live)
 - **DB:** SQLite qua **`QSqlDatabase` / `QSQLITE`** (`Qt6::Sql`) — [`docs/thiet_ke_db.md`](docs/thiet_ke_db.md), ADR [`docs/adr/0001-db.md`](docs/adr/0001-db.md)
@@ -75,7 +75,7 @@ Toàn bộ deliverable **Phase 1** (khảo sát app PySide6 `central-logger-app`
 ## Trạng thái repo
 
 - **Task 1 (data layer):** SQLite schema + repositories cho `logger_info` / `logger_sensor` / `sensor_reading` / `system_event` / `app_settings`; test `test_database_repositories`.
-- **Task 2 (app shell):** Module `CentralLogger.Core` (`AppState`, `SettingsController`) + `CentralLogger.Components` (navigation rail, top bar, page header) + `CentralLogger.App` shell, Material light/dark theme.
+- **Task 2 (app shell):** Module `TtvStudio.Core` (`AppState`, `SettingsController`) + `TtvStudio.Components` (navigation rail, top bar, page header) + `TtvStudio.App` shell, Material light/dark theme.
 - **Task 3 (logger CRUD):** `LoggerListModel` (`QAbstractListModel`) + `DashboardController` facade với add/update/remove/get + form dialog; test `test_dashboard_controller`.
 - **Task 4 (Modbus poll + auto-create catalog):**
   - `src/network/` static lib với `ModbusMapParser` (header-only), `ModbusPollPlan::planPollReads`, `ModbusService` worker (`QThread` + `QModbusTcpClient`), `ModbusBridge` persist trên main thread.
@@ -85,7 +85,7 @@ Toàn bộ deliverable **Phase 1** (khảo sát app PySide6 `central-logger-app`
   - Test mới `test_modbus_map_parser` (header, ABCD, FC02 unpack, chunking 14/15/16/30 + DI/DO).
 - **Task 5 (REST config fetch/apply + readings debug):**
   - `src/network/rest/` thêm `RestConfigParser` (header-only: `parseConfigResponse`, `parseApplyResponse`, `formatRestError`, `prettyJson`) và `RestConfigService` (`QNetworkAccessManager`, `GET/POST /api/v1/config`, `GET /api/v1/readings` chỉ một-shot debug).
-  - `LoggerDetailViewModel` (singleton-by-registry) trong `CentralLogger.Core`: `rawConfig` + `currentRevision` RAM, `lastRevision` từ DB, fetch → upsert `logger_sensor` + persist `last_revision`, apply dùng `effectiveConfigRevision`, debug readings hiện raw JSON.
+  - `LoggerDetailViewModel` (singleton-by-registry) trong `TtvStudio.Core`: `rawConfig` + `currentRevision` RAM, `lastRevision` từ DB, fetch → upsert `logger_sensor` + persist `last_revision`, apply dùng `effectiveConfigRevision`, debug readings hiện raw JSON.
   - `LoggerDetailView.qml`: toolbar Fetch / Apply / Debug + `BusyIndicator` + dialog scrollable readonly JSON, debug button disable khi `apiToken` rỗng.
   - `main.cpp` dựng `RestConfigService` trên main thread, `LoggerDetailViewModel::registerServices(...)` trước khi load QML.
   - Test mới `test_rest_config_parser` (sensor root vs nested, revision, apply, 401/409/422/404 error mapping, pretty JSON).

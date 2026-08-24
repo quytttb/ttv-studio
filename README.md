@@ -1,4 +1,4 @@
-# Central Logger (Qt 6 C++)
+# TTV Studio (Qt 6 C++)
 
 Desktop app quản lý Data Logger qua Modbus TCP + REST.
 
@@ -35,7 +35,7 @@ export CMAKE_PREFIX_PATH=~/Qt/6.11.2/gcc_64${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_P
 
 cmake -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
-./build/bin/central_logger
+./build/bin/ttv_studio
 ```
 
 Trên máy chỉ có Qt **6.10** từ apt: vẫn có thể thử build nếu hạ `REQUIRES` tạm thời — toolchain chuẩn của repo là **6.11**.
@@ -45,12 +45,12 @@ Cấu trúc CMake theo [Qt CMake Get Started](https://doc.qt.io/qt-6/cmake-get-s
 ### Qt Creator
 
 1. Mở `CMakeLists.txt` → kit **Desktop** → build dir `build/Desktop-Debug` (hoặc tương đương).
-2. **Run configuration:** chọn target **`app`** (executable `central_logger`), không phải test.
+2. **Run configuration:** chọn target **`app`** (executable `ttv_studio`), không phải test.
 3. **Deploy:** dùng **Default** (không deploy) — **không** chọn *Application Manager* / *Install Application Manager package*.  
    Nếu Run báo `appman-controller` does not exist: **Projects → Run → Deploy** → chọn cấu hình **Default** (index 0), bỏ *Application Manager*.
 4. Sau khi đổi `CMakeLists.txt` (vd. `QT_QML_OUTPUT_DIRECTORY`): **Run CMake** rồi **Rebuild**.
 
-Chạy ngoài IDE: `./build/Desktop-Debug/bin/central_logger` (hoặc `./build/bin/central_logger` tùy build dir).
+Chạy ngoài IDE: `./build/Desktop-Debug/bin/ttv_studio` (hoặc `./build/bin/ttv_studio` tùy build dir).
 
 ### Test
 
@@ -65,7 +65,7 @@ Chi tiết Linux + Windows + phát hành: [`packaging/README.md`](packaging/READ
 | Workflow | Khi chạy | Kết quả |
 |----------|----------|---------|
 | `ci.yml` | push / PR `main` | `cmake` Debug + `ctest` |
-| `dev-build.yml` | push `main` | artifact `.deb` + `CentralLoggerSetup.exe` |
+| `dev-build.yml` | push `main` | artifact `.deb` + `TtvStudioSetup.exe` |
 | `build-release.yml` | tag `v*.*.*` | GitHub Release |
 
 **Release (bump → tag → push):** `./packaging/linux/deploy.sh` hoặc `.\packaging\windows\deploy.ps1`

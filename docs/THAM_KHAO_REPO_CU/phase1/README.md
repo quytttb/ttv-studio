@@ -1,4 +1,4 @@
-# Phase 1 — Feature Survey & Analysis (Central Logger)
+# Phase 1 — Feature Survey & Analysis (TTV Studio)
 
 ## Mục đích
 

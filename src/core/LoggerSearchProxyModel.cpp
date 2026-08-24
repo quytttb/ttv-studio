@@ -1,7 +1,7 @@
 #include "LoggerSearchProxyModel.h"
 #include "LoggerListModel.h"
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 LoggerSearchProxyModel::LoggerSearchProxyModel(QObject *parent)
     : QSortFilterProxyModel(parent)
@@ -33,4 +33,4 @@ bool LoggerSearchProxyModel::filterAcceptsRow(int sourceRow,
         || host.contains(m_filterText, Qt::CaseInsensitive);
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

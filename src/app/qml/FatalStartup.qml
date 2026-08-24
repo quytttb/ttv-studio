@@ -3,8 +3,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls.Material
 
-import CentralLogger.Components
-import CentralLogger.Theme
+import TtvStudio.Components
+import TtvStudio.Theme
 import LoggerKit.Theme
 
 // Shown when Database::open() fails before Main.qml loads.
@@ -21,7 +21,7 @@ ApplicationWindow {
     minimumWidth: 400
     minimumHeight: 280
     visible: true
-    title: qsTr("Central Logger")
+    title: qsTr("TTV Studio")
 
     Material.theme: Material.Dark
     Material.accent: AppTheme.accent
@@ -35,9 +35,9 @@ ApplicationWindow {
 
     readonly property string dialogMessage:
         errorKind === "newer_than_app"
-            ? qsTr("This database was created by a newer version of Central Logger. "
+            ? qsTr("This database was created by a newer version of TTV Studio. "
                    + "Update the application or remove the database file and restart.")
-            : qsTr("Central Logger could not open the local database.")
+            : qsTr("TTV Studio could not open the local database.")
 
     readonly property string dialogDetail: {
         let lines = []

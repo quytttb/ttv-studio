@@ -7,11 +7,11 @@
 #include <QVector>
 #include <QtQmlIntegration/qqmlintegration.h>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 class Database;
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 /// Read model that mirrors `logger_info` joined with a denormalized sensor
 /// count. Owns 6 display columns (Name, Host, Modbus port, Sensor count,
@@ -93,4 +93,4 @@ private:
     QVector<LiveState> m_live;
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

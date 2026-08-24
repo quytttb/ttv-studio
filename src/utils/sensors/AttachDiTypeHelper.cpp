@@ -4,14 +4,14 @@
 
 #include <QLatin1String>
 
-namespace CentralLogger::Utils {
+namespace TtvStudio::Utils {
 
 namespace {
 
-using CentralLogger::Sensor::kAttachCodeCalibrating;
-using CentralLogger::Sensor::kAttachCodeError;
-using CentralLogger::Sensor::kAttachCodeMaintenance;
-using CentralLogger::Sensor::kAttachCodeMonitoring;
+using TtvStudio::Sensor::kAttachCodeCalibrating;
+using TtvStudio::Sensor::kAttachCodeError;
+using TtvStudio::Sensor::kAttachCodeMaintenance;
+using TtvStudio::Sensor::kAttachCodeMonitoring;
 
 bool isStandardCode(const QString &code) {
   const QString c = AttachDiTypeHelper::normalizeCode(code);
@@ -78,4 +78,4 @@ int AttachDiTypeHelper::sortRank(const QString &code) {
   return 4;
 }
 
-} // namespace CentralLogger::Utils
+} // namespace TtvStudio::Utils

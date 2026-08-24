@@ -16,7 +16,7 @@
 // directly to `QStringLiteral` (which requires literal arguments at the call
 // site).
 
-namespace CentralLogger::Sensor {
+namespace TtvStudio::Sensor {
 
 // --- Sensor types ----------------------------------------------------------
 inline constexpr char kTypeAnalog[]  = "ANALOG";
@@ -75,4 +75,4 @@ inline constexpr char kEventTypeAlarm[]   = "Alarm";
 inline constexpr char kEventTypeOnline[]  = "Online";
 inline constexpr char kEventTypeOffline[] = "Offline";
 
-} // namespace CentralLogger::Sensor
+} // namespace TtvStudio::Sensor

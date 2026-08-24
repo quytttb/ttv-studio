@@ -7,7 +7,7 @@
 #include <QVector>
 #include <optional>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 class SensorCatalogRepository
 {
@@ -55,4 +55,4 @@ private:
     QSqlDatabase m_db;
 };
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

@@ -6,7 +6,7 @@
 #include <QVector>
 #include <cstring>
 
-using namespace CentralLogger::Network;
+using namespace TtvStudio::Network;
 
 namespace {
 

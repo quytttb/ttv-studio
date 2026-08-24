@@ -6,10 +6,10 @@
 #include <QSqlQuery>
 #include <QTest>
 
-using CentralLogger::Data::Database;
-using CentralLogger::Data::SensorReading;
-using CentralLogger::Data::SensorReadingRepository;
-using CentralLogger::Data::SettingsRepository;
+using TtvStudio::Data::Database;
+using TtvStudio::Data::SensorReading;
+using TtvStudio::Data::SensorReadingRepository;
+using TtvStudio::Data::SettingsRepository;
 
 class TestRetentionPurge : public QObject
 {

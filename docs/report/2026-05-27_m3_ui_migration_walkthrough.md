@@ -49,7 +49,7 @@ Full Material Design 3 migration executed exactly per plan (4 phases + final ver
 
 ### Phase 3 — Logger Detail + Charts + Polish
 - **LoggerDetailView.qml**:
-  - Added `CentralLogger.Theme` import.
+  - Added `TtvStudio.Theme` import.
   - Sensor table status pills: full switch replaced with `AppColors.successContainer/errorContainer/warningContainer/surfaceContainer` + matching border/text (success/error/warning/outline). ~30+ `Material.color(..., Shade*)` eliminated.
   - StatusBadge inline component: defaults now use `AppColors.success` / `outline`; overrides preserved for RTU/Alarm (Teal/Red).
   - Graphs: added reactive `GraphsTheme` (colorScheme Light/Dark bound to `AppTheme.isLightTheme`, `backgroundColor: surfaceContainerLowest`, series Teal/Indigo + muted).

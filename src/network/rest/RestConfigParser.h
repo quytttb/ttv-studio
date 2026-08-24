@@ -14,14 +14,14 @@
 
 #include <algorithm>
 
-namespace CentralLogger::Network::RestConfigParser {
+namespace TtvStudio::Network::RestConfigParser {
 
 /// Result of parsing a `GET /config` response. `revision` is -1 when the
 /// payload doesn't carry one (caller should keep the previous value).
 struct ConfigPayload
 {
     int                                  revision = -1;
-    QVector<CentralLogger::Data::LoggerSensor> sensors;
+    QVector<TtvStudio::Data::LoggerSensor> sensors;
     QJsonObject                          configObject; // `config` subtree for POST replay
     /// Edge Modbus TCP unit ID from `config.modbus_tcp_unit_id` (-1 if absent).
     int                                  modbusTcpUnitId = -1;
@@ -62,12 +62,12 @@ inline std::optional<double> readOptDouble(const QJsonObject &o, const char *key
 inline QString normaliseType(const QString &raw)
 {
     const QString upper = raw.trimmed().toUpper();
-    if (upper == CentralLogger::Sensor::kTypeAnalog
-     || upper == CentralLogger::Sensor::kTypeDi
-     || upper == CentralLogger::Sensor::kTypeDo) {
+    if (upper == TtvStudio::Sensor::kTypeAnalog
+     || upper == TtvStudio::Sensor::kTypeDi
+     || upper == TtvStudio::Sensor::kTypeDo) {
         return upper;
     }
-    return CentralLogger::Sensor::kTypeUnknown;
+    return TtvStudio::Sensor::kTypeUnknown;
 }
 
 /// Walks an array of sensor objects and converts each to a LoggerSensor.
@@ -81,7 +81,7 @@ inline QVector<Data::LoggerSensor> readSensors(qint64 loggerId, const QJsonArray
         Data::LoggerSensor s;
         s.loggerId     = loggerId;
         s.sensorType   = normaliseType(readStr(obj, "sensor_type"));
-        if (s.sensorType == CentralLogger::Sensor::kTypeDi || s.sensorType == CentralLogger::Sensor::kTypeDo) {
+        if (s.sensorType == TtvStudio::Sensor::kTypeDi || s.sensorType == TtvStudio::Sensor::kTypeDo) {
             s.edgeSensorId = readInt(obj, "register_address", -1);
             if (s.edgeSensorId < 0) {
                 s.edgeSensorId = readInt(obj, "sensor_id", -1);
@@ -101,9 +101,9 @@ inline QVector<Data::LoggerSensor> readSensors(qint64 loggerId, const QJsonArray
         s.minThreshold = readOptDouble(obj, "min_threshold");
         s.maxThreshold = readOptDouble(obj, "max_threshold");
         // Display precision (ANALOG). Edge field optional → default kDecimalsDefault, clamp [kDecimalsMin, kDecimalsMax].
-        s.decimals     = std::clamp(readInt(obj, "decimals", CentralLogger::Defaults::kDecimalsDefault),
-                                    CentralLogger::Defaults::kDecimalsMin,
-                                    CentralLogger::Defaults::kDecimalsMax);
+        s.decimals     = std::clamp(readInt(obj, "decimals", TtvStudio::Defaults::kDecimalsDefault),
+                                    TtvStudio::Defaults::kDecimalsMin,
+                                    TtvStudio::Defaults::kDecimalsMax);
         const auto activeVal = obj.value(QLatin1String("active"));
         s.active             = activeVal.isBool() ? activeVal.toBool() : true;
         const int parentId   = readInt(obj, "parent_id", -1);
@@ -114,7 +114,7 @@ inline QVector<Data::LoggerSensor> readSensors(qint64 loggerId, const QJsonArray
         if (!diType.isEmpty()) {
             s.diType = diType;
         }
-        if (s.sensorType == CentralLogger::Sensor::kTypeDi) {
+        if (s.sensorType == TtvStudio::Sensor::kTypeDi) {
             if (parentId >= 0) {
                 s.allParentIds.append(parentId);
             }
@@ -257,31 +257,31 @@ inline QString formatRestError(int httpStatus, const QByteArray &body, const QSt
 
     if (httpStatus == 0) {
         return transportError.isEmpty()
-            ? QLatin1String(CentralLogger::Format::kErrLoggerUnreachable)
-            : QString(QLatin1String(CentralLogger::Format::kErrLoggerUnreachableFmt)).arg(transportError);
+            ? QLatin1String(TtvStudio::Format::kErrLoggerUnreachable)
+            : QString(QLatin1String(TtvStudio::Format::kErrLoggerUnreachableFmt)).arg(transportError);
     }
     if (httpStatus == 401) {
         if (lower.contains(QLatin1String("not configured"))) {
-            return QString::fromUtf8(CentralLogger::Format::kErrRestTokenEmpty);
+            return QString::fromUtf8(TtvStudio::Format::kErrRestTokenEmpty);
         }
         if (lower.contains(QLatin1String("invalid bearer"))
          || lower.contains(QLatin1String("invalid token"))) {
-            return QString::fromUtf8(CentralLogger::Format::kErrRestTokenMismatch);
+            return QString::fromUtf8(TtvStudio::Format::kErrRestTokenMismatch);
         }
-        return QLatin1String(CentralLogger::Format::kErrRestUnauthorized);
+        return QLatin1String(TtvStudio::Format::kErrRestUnauthorized);
     }
     if (httpStatus == 404) {
-        return QLatin1String(CentralLogger::Format::kErrApiNotAvailable);
+        return QLatin1String(TtvStudio::Format::kErrApiNotAvailable);
     }
     if (httpStatus == 409
      || (httpStatus == 422 && detail::isRevisionConflict422(body, lower))) {
-        return QLatin1String(CentralLogger::Format::kErrRevisionConflict);
+        return QLatin1String(TtvStudio::Format::kErrRevisionConflict);
     }
     if (httpStatus == 422) {
         if (detail::isMissingConfigFields422(body)) {
-            return QLatin1String(CentralLogger::Format::kErrMissingFields);
+            return QLatin1String(TtvStudio::Format::kErrMissingFields);
         }
-        return QLatin1String(CentralLogger::Format::kErrEdgeRejected422);
+        return QLatin1String(TtvStudio::Format::kErrEdgeRejected422);
     }
 
     // Generic fallback: try to surface `errors[0].message` if present.
@@ -293,17 +293,17 @@ inline QString formatRestError(int httpStatus, const QByteArray &body, const QSt
             if (first.isObject()) {
                 const auto msg = first.toObject().value(QLatin1String("message")).toString();
                 if (!msg.isEmpty()) {
-                    return QString(QLatin1String(CentralLogger::Format::kErrHttpBodyFmt)).arg(httpStatus).arg(msg);
+                    return QString(QLatin1String(TtvStudio::Format::kErrHttpBodyFmt)).arg(httpStatus).arg(msg);
                 }
             }
         }
         const auto detail = doc.object().value(QLatin1String("detail")).toString();
         if (!detail.isEmpty()) {
-            return QString(QLatin1String(CentralLogger::Format::kErrHttpBodyFmt)).arg(httpStatus).arg(detail);
+            return QString(QLatin1String(TtvStudio::Format::kErrHttpBodyFmt)).arg(httpStatus).arg(detail);
         }
     }
 
-    return QString(QLatin1String(CentralLogger::Format::kErrHttpFmt)).arg(httpStatus);
+    return QString(QLatin1String(TtvStudio::Format::kErrHttpFmt)).arg(httpStatus);
 }
 
 /// Maps HTTP errors for `GET /reports/latest`. A 404 on this route (after Bearer
@@ -317,9 +317,9 @@ inline QString formatReportDownloadError(int httpStatus, const QByteArray &body,
         if (lower.contains(QLatin1String("report"))
             || lower.contains(QLatin1String("not found"))
             || body.trimmed().isEmpty()) {
-            return QLatin1String(CentralLogger::Format::kErrNoLatestReport);
+            return QLatin1String(TtvStudio::Format::kErrNoLatestReport);
         }
-        return QLatin1String(CentralLogger::Format::kErrReportEndpointMissing);
+        return QLatin1String(TtvStudio::Format::kErrReportEndpointMissing);
     }
     return formatRestError(httpStatus, body, transportError);
 }
@@ -335,4 +335,4 @@ inline QString prettyJson(const QByteArray &body)
     return QString::fromUtf8(doc.toJson(QJsonDocument::Indented));
 }
 
-} // namespace CentralLogger::Network::RestConfigParser
+} // namespace TtvStudio::Network::RestConfigParser

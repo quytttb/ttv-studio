@@ -8,13 +8,13 @@
 #include <QSqlDatabase>
 #include <QtTest>
 
-using CentralLogger::Data::Database;
-using CentralLogger::Data::LoggerRepository;
-using CentralLogger::Data::SensorCatalogRepository;
-using CentralLogger::Data::SensorReadingRepository;
-using CentralLogger::Network::AnalogSample;
-using CentralLogger::Network::ModbusBridge;
-using CentralLogger::Network::PollSnapshot;
+using TtvStudio::Data::Database;
+using TtvStudio::Data::LoggerRepository;
+using TtvStudio::Data::SensorCatalogRepository;
+using TtvStudio::Data::SensorReadingRepository;
+using TtvStudio::Network::AnalogSample;
+using TtvStudio::Network::ModbusBridge;
+using TtvStudio::Network::PollSnapshot;
 
 class TestModbusBridgeBatch : public QObject
 {
@@ -31,7 +31,7 @@ void TestModbusBridgeBatch::applyBatch_insertsMultipleSnapshotsInOneTransaction(
     QVERIFY(db.open(QStringLiteral("test_bridge_batch"), Database::memoryPath(), &err));
 
     LoggerRepository loggers(db.connection());
-    CentralLogger::Data::LoggerInfo info;
+    TtvStudio::Data::LoggerInfo info;
     info.stationCode = QStringLiteral("ST01");
     info.name        = QStringLiteral("Station 1");
     info.host        = QStringLiteral("192.168.1.1");

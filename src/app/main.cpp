@@ -30,19 +30,19 @@
 #include <QThread>
 #include <QtDebug>
 
-using CentralLogger::Core::AppState;
-using CentralLogger::Core::DashboardController;
-using CentralLogger::Core::LoggerFormController;
-using CentralLogger::Core::LoggerDetailViewModel;
-using CentralLogger::Core::SettingsController;
-using CentralLogger::Data::Database;
-using CentralLogger::Network::LoggerRuntimeConfig;
-using CentralLogger::Network::HistoryWriterWorker;
-using CentralLogger::Network::ModbusBridge;
-using CentralLogger::Network::ModbusDataDispatcher;
-using CentralLogger::Network::ModbusService;
-using CentralLogger::Network::PollSnapshot;
-using CentralLogger::Network::RestConfigService;
+using TtvStudio::Core::AppState;
+using TtvStudio::Core::DashboardController;
+using TtvStudio::Core::LoggerFormController;
+using TtvStudio::Core::LoggerDetailViewModel;
+using TtvStudio::Core::SettingsController;
+using TtvStudio::Data::Database;
+using TtvStudio::Network::LoggerRuntimeConfig;
+using TtvStudio::Network::HistoryWriterWorker;
+using TtvStudio::Network::ModbusBridge;
+using TtvStudio::Network::ModbusDataDispatcher;
+using TtvStudio::Network::ModbusService;
+using TtvStudio::Network::PollSnapshot;
+using TtvStudio::Network::RestConfigService;
 
 // ---------------------------------------------------------------------------
 // File-based message handler
@@ -53,7 +53,7 @@ namespace {
 QFile  *g_logFile  = nullptr;
 QMutex  g_logMutex;
 QString g_logPath;                // full path for rotation
-// kLogMaxBytes / kLogKeepBackups live in CentralLogger::Defaults.
+// kLogMaxBytes / kLogKeepBackups live in TtvStudio::Defaults.
 
 void fileMessageHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
@@ -74,10 +74,10 @@ void fileMessageHandler(QtMsgType type, const QMessageLogContext &, const QStrin
     if (g_logFile && g_logFile->isOpen()) {
         // M-12 (audit P2 #19): rotate during the run, not only at startup,
         // so a 24/7 session cannot grow the log file without bound.
-        if (g_logFile->size() + line.size() > CentralLogger::Defaults::kLogMaxBytes) {
+        if (g_logFile->size() + line.size() > TtvStudio::Defaults::kLogMaxBytes) {
             g_logFile->close();
-            QFile::remove(g_logPath + QStringLiteral(".%1").arg(CentralLogger::Defaults::kLogKeepBackups));
-            for (int i = CentralLogger::Defaults::kLogKeepBackups - 1; i >= 1; --i) {
+            QFile::remove(g_logPath + QStringLiteral(".%1").arg(TtvStudio::Defaults::kLogKeepBackups));
+            for (int i = TtvStudio::Defaults::kLogKeepBackups - 1; i >= 1; --i) {
                 QFile::rename(g_logPath + QStringLiteral(".%1").arg(i),
                               g_logPath + QStringLiteral(".%1").arg(i + 1));
             }
@@ -102,15 +102,15 @@ QString initFileLogging()
     const QString dataDir =
         QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QDir().mkpath(dataDir);
-    const QString logPath = dataDir + QStringLiteral("/central-logger.log");
+    const QString logPath = dataDir + QStringLiteral("/ttv-studio.log");
     g_logPath = logPath;
 
     // Startup rotation (startup fallback kept for oversized leftovers).
     {
         QFileInfo fi(logPath);
-        if (fi.exists() && fi.size() > CentralLogger::Defaults::kLogMaxBytes) {
-            QFile::remove(logPath + QStringLiteral(".%1").arg(CentralLogger::Defaults::kLogKeepBackups));
-            for (int i = CentralLogger::Defaults::kLogKeepBackups - 1; i >= 1; --i) {
+        if (fi.exists() && fi.size() > TtvStudio::Defaults::kLogMaxBytes) {
+            QFile::remove(logPath + QStringLiteral(".%1").arg(TtvStudio::Defaults::kLogKeepBackups));
+            for (int i = TtvStudio::Defaults::kLogKeepBackups - 1; i >= 1; --i) {
                 QFile::rename(logPath + QStringLiteral(".%1").arg(i),
                               logPath + QStringLiteral(".%1").arg(i + 1));
             }
@@ -151,12 +151,12 @@ int main(int argc, char *argv[])
     app.installNativeEventFilter(&framelessHelper);
 
     app.setWindowIcon(QIcon(QStringLiteral(":/qt/qml/LoggerKit/Components/resources/icons/brand_4m_technologies_blue.svg")));
-    QCoreApplication::setOrganizationName(QStringLiteral("4M Technologies"));
-    QCoreApplication::setOrganizationDomain(QStringLiteral("4mtech.vn"));
-    QCoreApplication::setApplicationName(QStringLiteral("Central Logger"));
+    QCoreApplication::setOrganizationName(QStringLiteral("quytttb"));
+    QCoreApplication::setOrganizationDomain(QStringLiteral("io.github.quytttb"));
+    QCoreApplication::setApplicationName(QStringLiteral("TTV Studio"));
 
     const QString logFilePath = initFileLogging();
-    qInfo() << "Central Logger starting — log:" << logFilePath;
+    qInfo() << "TTV Studio starting — log:" << logFilePath;
 
     // Font path matches qt_add_qml_module(RESOURCES) alias in the generated qrc.
     const QString iconFontPath =
@@ -175,9 +175,9 @@ int main(int argc, char *argv[])
 
     // Snapshot and runtime-config travel across thread boundaries via
     // queued signals; the meta-system needs them registered.
-    qRegisterMetaType<PollSnapshot>("CentralLogger::Network::PollSnapshot");
+    qRegisterMetaType<PollSnapshot>("TtvStudio::Network::PollSnapshot");
     qRegisterMetaType<QVector<LoggerRuntimeConfig>>(
-        "QVector<CentralLogger::Network::LoggerRuntimeConfig>");
+        "QVector<TtvStudio::Network::LoggerRuntimeConfig>");
 
     Database database;
     QString dbError;
@@ -207,7 +207,7 @@ int main(int argc, char *argv[])
             &app,
             []() { QCoreApplication::exit(1); },
             Qt::QueuedConnection);
-        engine.loadFromModule(QStringLiteral("CentralLogger.App"), QStringLiteral("FatalStartup"));
+        engine.loadFromModule(QStringLiteral("TtvStudio.App"), QStringLiteral("FatalStartup"));
         return app.exec();
     }
 
@@ -295,8 +295,8 @@ int main(int argc, char *argv[])
     LoggerFormController::setInstance(&loggerForm);
 
     LoggerDetailViewModel::registerServices(&database, &restConfig, &appState, &dashboard);
-    CentralLogger::Core::HistoryViewModel::registerDatabase(&database);
-    CentralLogger::Core::HistoryViewModel::registerHistoryWriter(&historyWorker);
+    TtvStudio::Core::HistoryViewModel::registerDatabase(&database);
+    TtvStudio::Core::HistoryViewModel::registerHistoryWriter(&historyWorker);
 
     QObject::connect(&app, &QCoreApplication::aboutToQuit, [&]() {
         QMetaObject::invokeMethod(&modbusService, "shutdown",
@@ -321,7 +321,7 @@ int main(int argc, char *argv[])
         &app,
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
-    engine.loadFromModule("CentralLogger.App", "Main");
+    engine.loadFromModule("TtvStudio.App", "Main");
 
     return app.exec();
 }

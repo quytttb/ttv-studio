@@ -11,17 +11,17 @@
 
 #include <limits>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 namespace {
 
-const QString kLabelKey    = QLatin1String(CentralLogger::Ui::kChartLabel);
-const QString kBucketMsKey = QLatin1String(CentralLogger::Ui::kChartBucketMs);
-const QString kCountKey    = QLatin1String(CentralLogger::Ui::kChartCount);
-const QString kPointsKey   = QLatin1String(CentralLogger::Ui::kChartPoints);
-const QString kXKey        = QLatin1String(CentralLogger::Ui::kChartX);
-const QString kYKey        = QLatin1String(CentralLogger::Ui::kChartY);
-const QString kTimeKey     = QLatin1String(CentralLogger::Ui::kChartTime);
+const QString kLabelKey    = QLatin1String(TtvStudio::Ui::kChartLabel);
+const QString kBucketMsKey = QLatin1String(TtvStudio::Ui::kChartBucketMs);
+const QString kCountKey    = QLatin1String(TtvStudio::Ui::kChartCount);
+const QString kPointsKey   = QLatin1String(TtvStudio::Ui::kChartPoints);
+const QString kXKey        = QLatin1String(TtvStudio::Ui::kChartX);
+const QString kYKey        = QLatin1String(TtvStudio::Ui::kChartY);
+const QString kTimeKey     = QLatin1String(TtvStudio::Ui::kChartTime);
 
 int nearestBucketIndex(const QVariantList &plotPoints, qint64 tsMs)
 {
@@ -79,9 +79,9 @@ ReadingsChartPresentation buildReadingsChartPresentation(const QVariantList &all
     if (visiblePointCount < 1)
         visiblePointCount = 1;
     if (bucketMinutes < 1)
-        bucketMinutes = CentralLogger::Defaults::kChartDefaultBucketMin;
+        bucketMinutes = TtvStudio::Defaults::kChartDefaultBucketMin;
 
-    const qint64 bucketMs = static_cast<qint64>(bucketMinutes) * 60 * CentralLogger::Defaults::kMsPerSecond;
+    const qint64 bucketMs = static_cast<qint64>(bucketMinutes) * 60 * TtvStudio::Defaults::kMsPerSecond;
     const QTimeZone useTz = tz.isValid() ? tz : QTimeZone::systemTimeZone();
 
     QHash<qint64, QVariantMap> byBucket;
@@ -108,7 +108,7 @@ ReadingsChartPresentation buildReadingsChartPresentation(const QVariantList &all
             row.insert(kCountKey, 0);
         row.insert(kLabelKey,
                    QDateTime::fromMSecsSinceEpoch(bucketStart, useTz)
-                       .toString(QLatin1String(CentralLogger::Format::kTimeHhMm)));
+                       .toString(QLatin1String(TtvStudio::Format::kTimeHhMm)));
         }
         yMax = qMax(yMax, row.value(kCountKey).toInt());
         out.plotPoints.append(row);
@@ -120,9 +120,9 @@ ReadingsChartPresentation buildReadingsChartPresentation(const QVariantList &all
         out.plotPoints.last().toMap().value(kBucketMsKey).toDouble()
         + static_cast<double>(bucketMs);
 
-    out.axis = {{QLatin1String(CentralLogger::Ui::kChartXMin), xMin},
-                {QLatin1String(CentralLogger::Ui::kChartXMax), xMax},
-                {QLatin1String(CentralLogger::Ui::kChartYMax), static_cast<double>(yMax) * 1.1}};
+    out.axis = {{QLatin1String(TtvStudio::Ui::kChartXMin), xMin},
+                {QLatin1String(TtvStudio::Ui::kChartXMax), xMax},
+                {QLatin1String(TtvStudio::Ui::kChartYMax), static_cast<double>(yMax) * 1.1}};
 
     return out;
 }
@@ -157,14 +157,14 @@ QVariantMap snapReadingsChart(const QVariantList &plotPoints,
 
     QVariantList valueRows;
     QVariantMap valueRow;
-    valueRow.insert(QLatin1String(CentralLogger::Ui::kChartText),
+    valueRow.insert(QLatin1String(TtvStudio::Ui::kChartText),
                     QStringLiteral("Readings: %1 / %2 min").arg(count).arg(bucketMinutes));
     valueRows.append(valueRow);
 
     QVariantMap hit;
-    hit.insert(QLatin1String(CentralLogger::Ui::kChartPosition), position);
-    hit.insert(QLatin1String(CentralLogger::Ui::kChartCaptionText), row.value(kLabelKey));
-    hit.insert(QLatin1String(CentralLogger::Ui::kChartValueRows), valueRows);
+    hit.insert(QLatin1String(TtvStudio::Ui::kChartPosition), position);
+    hit.insert(QLatin1String(TtvStudio::Ui::kChartCaptionText), row.value(kLabelKey));
+    hit.insert(QLatin1String(TtvStudio::Ui::kChartValueRows), valueRows);
     return hit;
 }
 
@@ -194,10 +194,10 @@ QVariantMap computeTrendingAxisRange(const QVariantList &series)
 
     if (yMin > yMax) {
         const qint64 nowMs = QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
-        return {{QLatin1String(CentralLogger::Ui::kChartYMin), 0.0},
-                {QLatin1String(CentralLogger::Ui::kChartYMax), 1.0},
-                {QLatin1String(CentralLogger::Ui::kChartXMin), static_cast<double>(nowMs)},
-                {QLatin1String(CentralLogger::Ui::kChartXMax), static_cast<double>(nowMs + 1)}};
+        return {{QLatin1String(TtvStudio::Ui::kChartYMin), 0.0},
+                {QLatin1String(TtvStudio::Ui::kChartYMax), 1.0},
+                {QLatin1String(TtvStudio::Ui::kChartXMin), static_cast<double>(nowMs)},
+                {QLatin1String(TtvStudio::Ui::kChartXMax), static_cast<double>(nowMs + 1)}};
     }
 
     const double yRange = yMax - yMin;
@@ -214,10 +214,10 @@ QVariantMap computeTrendingAxisRange(const QVariantList &series)
         xMax += xPad;
     }
 
-    return {{QLatin1String(CentralLogger::Ui::kChartYMin), yMin - yPad},
-            {QLatin1String(CentralLogger::Ui::kChartYMax), yMax + yPad},
-            {QLatin1String(CentralLogger::Ui::kChartXMin), xMin},
-            {QLatin1String(CentralLogger::Ui::kChartXMax), xMax}};
+    return {{QLatin1String(TtvStudio::Ui::kChartYMin), yMin - yPad},
+            {QLatin1String(TtvStudio::Ui::kChartYMax), yMax + yPad},
+            {QLatin1String(TtvStudio::Ui::kChartXMin), xMin},
+            {QLatin1String(TtvStudio::Ui::kChartXMax), xMax}};
 }
 
 QVariantMap snapTrendingChart(const QVariantList &trendingSeries,
@@ -257,16 +257,16 @@ QVariantMap snapTrendingChart(const QVariantList &trendingSeries,
         const QVariantMap pt = pts.at(idx).toMap();
         if (caption.isEmpty())
             caption = pt.value(kTimeKey).toString();
-        const int decimals = qBound(CentralLogger::Defaults::kDecimalsMin,
-                                    series.value(QLatin1String(CentralLogger::Ui::kChartDecimals),
-                                                 CentralLogger::Defaults::kDecimalsDefault).toInt(),
-                                    CentralLogger::Defaults::kDecimalsMax);
+        const int decimals = qBound(TtvStudio::Defaults::kDecimalsMin,
+                                    series.value(QLatin1String(TtvStudio::Ui::kChartDecimals),
+                                                 TtvStudio::Defaults::kDecimalsDefault).toInt(),
+                                    TtvStudio::Defaults::kDecimalsMax);
         QVariantMap row;
-        row.insert(QLatin1String(CentralLogger::Ui::kChartText),
+        row.insert(QLatin1String(TtvStudio::Ui::kChartText),
                    QStringLiteral("%1: %2")
-                       .arg(series.value(QLatin1String(CentralLogger::Ui::kChartLabel)).toString())
+                       .arg(series.value(QLatin1String(TtvStudio::Ui::kChartLabel)).toString())
                        .arg(QString::number(pt.value(kYKey).toDouble(), 'f', decimals)));
-        row.insert(QLatin1String(CentralLogger::Ui::kChartSeriesIndex), valueRows.size());
+        row.insert(QLatin1String(TtvStudio::Ui::kChartSeriesIndex), valueRows.size());
         valueRows.append(row);
 
         if (valueRows.size() == 1) {
@@ -283,10 +283,10 @@ QVariantMap snapTrendingChart(const QVariantList &trendingSeries,
     position.insert(kYKey, anchorY);
 
     QVariantMap hit;
-    hit.insert(QLatin1String(CentralLogger::Ui::kChartPosition), position);
-    hit.insert(QLatin1String(CentralLogger::Ui::kChartCaptionText), caption);
-    hit.insert(QLatin1String(CentralLogger::Ui::kChartValueRows), valueRows);
+    hit.insert(QLatin1String(TtvStudio::Ui::kChartPosition), position);
+    hit.insert(QLatin1String(TtvStudio::Ui::kChartCaptionText), caption);
+    hit.insert(QLatin1String(TtvStudio::Ui::kChartValueRows), valueRows);
     return hit;
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

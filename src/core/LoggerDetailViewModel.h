@@ -11,15 +11,15 @@
 #include <QVariantMap>
 #include <QtQmlIntegration/qqmlintegration.h>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 class Database;
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data
 
-namespace CentralLogger::Network {
+namespace TtvStudio::Network {
 class RestConfigService;
-} // namespace CentralLogger::Network
+} // namespace TtvStudio::Network
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 class AppState;
 class DashboardController;
@@ -37,7 +37,7 @@ class LoggerDetailViewModel : public QObject
     Q_PROPERTY(bool    hasApiToken       READ hasApiToken                                   NOTIFY hasApiTokenChanged)
     Q_PROPERTY(QString lastModbusError  READ lastModbusError                               NOTIFY lastModbusErrorChanged)
     Q_PROPERTY(QString readingsDebugJson READ readingsDebugJson                             NOTIFY readingsDebugJsonChanged)
-    Q_PROPERTY(CentralLogger::Core::SensorMonitoringTableModel *sensorTable
+    Q_PROPERTY(TtvStudio::Core::SensorMonitoringTableModel *sensorTable
                    READ sensorTable CONSTANT)
     Q_PROPERTY(bool online       READ online       NOTIFY liveStateChanged)
     Q_PROPERTY(bool polling      READ polling      NOTIFY liveStateChanged)
@@ -146,4 +146,4 @@ private:
     QVector<Data::LoggerSensor> m_configCatalog;
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

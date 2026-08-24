@@ -1,4 +1,4 @@
-# Provisioning QR v1 (`central-logger-provision/v1`)
+# Provisioning QR v1 (`ttv-studio-provision/v1`)
 
 Pairing **Central App** with a **data-logger** on the factory LAN without exposing the REST Bearer token via `GET /config`.
 
@@ -6,7 +6,7 @@ Pairing **Central App** with a **data-logger** on the factory LAN without exposi
 
 ```json
 {
-  "schema": "central-logger-provision/v1",
+  "schema": "ttv-studio-provision/v1",
   "api_token": "<rest_api_token from edge>",
   "host": "192.168.1.50",
   "api_port": 8080,

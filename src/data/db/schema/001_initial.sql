@@ -1,4 +1,4 @@
--- Central Logger — SQLite schema (user_version = 6)
+-- TTV Studio — SQLite schema (user_version = 6)
 -- Reference: docs/thiet_ke_db.md
 -- Engine: SQLite (QSQLITE) — see docs/adr/0001-db.md
 

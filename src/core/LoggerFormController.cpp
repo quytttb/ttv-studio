@@ -22,9 +22,9 @@
 #include <QSqlError>
 #include <QTimer>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
-using CentralLogger::Utils::HostValidator;
+using TtvStudio::Utils::HostValidator;
 
 namespace {
 
@@ -109,7 +109,7 @@ qint64 LoggerFormController::addLogger(const QString &stationCode,
 
   setError(QString{});
   if (m_dashboard) {
-    m_dashboard->logEvent(loggerId, CentralLogger::Sensor::kEventTypeInfo,
+    m_dashboard->logEvent(loggerId, TtvStudio::Sensor::kEventTypeInfo,
                           QStringLiteral("Logger added: %1").arg(code));
     m_dashboard->afterMutation();
   }
@@ -164,7 +164,7 @@ bool LoggerFormController::updateLogger(qint64 id, const QString &stationCode,
 
   setError(QString{});
   if (m_dashboard) {
-    m_dashboard->logEvent(id, CentralLogger::Sensor::kEventTypeInfo,
+    m_dashboard->logEvent(id, TtvStudio::Sensor::kEventTypeInfo,
                           QStringLiteral("Logger updated: %1").arg(code));
     m_dashboard->afterMutation();
   }
@@ -195,7 +195,7 @@ bool LoggerFormController::removeLogger(qint64 id) {
   if (m_dashboard) {
     // App-wide event (logger_id = NULL) so the FK CASCADE doesn't wipe it
     // along with the row we just removed.
-    m_dashboard->logEvent(0, CentralLogger::Sensor::kEventTypeInfo,
+    m_dashboard->logEvent(0, TtvStudio::Sensor::kEventTypeInfo,
                           QStringLiteral("Logger removed: %1")
                               .arg(existing->stationCode));
     m_dashboard->afterMutation();
@@ -236,7 +236,7 @@ QVariantMap LoggerFormController::getLoggerFormData(qint64 id) const {
 
 bool LoggerFormController::ensureDatabase() {
   if (!m_db || !m_db->isOpen()) {
-    setError(QLatin1String(CentralLogger::Format::kErrDatabaseNotOpen));
+    setError(QLatin1String(TtvStudio::Format::kErrDatabaseNotOpen));
     return false;
   }
   return true;
@@ -297,7 +297,7 @@ void LoggerFormController::probeConfig(const QString &host, int apiPort,
   if (!m_restConfig) {
     qWarning().noquote() << "[probe] aborted: REST service not available";
     emit probeConfigResult(false,
-                           QLatin1String(CentralLogger::Format::kErrRestUnavailable));
+                           QLatin1String(TtvStudio::Format::kErrRestUnavailable));
     return;
   }
   if (!HostValidator::isValidHost(host)) {
@@ -356,7 +356,7 @@ QString LoggerFormController::probedStationCode() const {
 void LoggerFormController::loadConfigForForm(int loggerId) {
   if (!m_restConfig) {
     emit configLoadForFormFinished(
-        false, QLatin1String(CentralLogger::Format::kErrRestUnavailable));
+        false, QLatin1String(TtvStudio::Format::kErrRestUnavailable));
     return;
   }
   if (loggerId < 0) {
@@ -379,7 +379,7 @@ void LoggerFormController::onConfigFetchedForForm(qint64 loggerId, bool ok,
   if (!ok) {
     clearProbedConfig();
     const QString msg = errorMessage.isEmpty()
-                            ? QString(QLatin1String(CentralLogger::Format::kErrHttpFmt)).arg(httpStatus)
+                            ? QString(QLatin1String(TtvStudio::Format::kErrHttpFmt)).arg(httpStatus)
                             : errorMessage;
     emit configLoadForFormFinished(false, msg);
     return;
@@ -606,7 +606,7 @@ void LoggerFormController::saveLoggerFromForm(
   // any, will land later via formSaveFinished (already emitted below for
   // the synchronous no-POST path) and configApplyFailed.
   if (m_dashboard) {
-    m_dashboard->logEvent(savedId, CentralLogger::Sensor::kEventTypeInfo,
+    m_dashboard->logEvent(savedId, TtvStudio::Sensor::kEventTypeInfo,
                           isAdd ? QStringLiteral("Logger added: %1").arg(code)
                                 : QStringLiteral("Logger updated: %1").arg(code));
     m_dashboard->afterMutation();
@@ -680,7 +680,7 @@ void LoggerFormController::onConfigAppliedPending(qint64 loggerId, bool ok,
   }
   finishPendingApply(ok,
                      errorMessage.isEmpty() && !ok
-                         ? QString(QLatin1String(CentralLogger::Format::kErrHttpFmt)).arg(httpStatus)
+                         ? QString(QLatin1String(TtvStudio::Format::kErrHttpFmt)).arg(httpStatus)
                          : errorMessage);
 }
 
@@ -706,7 +706,7 @@ void LoggerFormController::finishPendingApply(bool ok,
                << "(logger already saved to local DB)";
     if (m_dashboard) {
       m_dashboard->logEvent(
-          loggerId, CentralLogger::Sensor::kEventTypeWarning,
+          loggerId, TtvStudio::Sensor::kEventTypeWarning,
           QStringLiteral("Config push to device failed: %1").arg(errorMessage));
     }
   }
@@ -806,4 +806,4 @@ QVariantMap LoggerFormController::buildEditPatch(const QVariantMap &original,
   return patch;
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

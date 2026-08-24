@@ -3,7 +3,7 @@
 #include <QString>
 #include <QStringList>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 /// One merged row built from `logger_sensor` catalog + `PollSnapshot`.
 /// See docs/thiet_ke_db.md §3.3.
@@ -28,4 +28,4 @@ struct SensorLiveRow
     bool    stale = false;
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

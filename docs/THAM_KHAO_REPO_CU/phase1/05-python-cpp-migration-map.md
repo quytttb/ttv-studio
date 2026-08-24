@@ -5,7 +5,7 @@ Sắp xếp theo **payoff** (CPU / latency / thread safety / Python↔QML crossi
 
 ## DB Schema (tóm tắt)
 
-Nguồn: legacy `central-logger-app` → `src/central_logger/db/models.py` (không copy file; schema tóm tắt dưới đây)
+Nguồn: legacy `ttv-studio-app` → `src/ttv_studio/db/models.py` (không copy file; schema tóm tắt dưới đây)
 
 ```
 logger_info
@@ -240,7 +240,7 @@ Token normalization (`strip`, `"Bearer "` prefix removal); small pure functions.
 
 | Pattern Python (hiện tại) | Pattern C++ (repo mới) |
 |--------------------------|------------------------|
-| `@QmlElement` + `QML_IMPORT_NAME = "CentralLogger.Core"` | `QML_ELEMENT` macro + `qt_add_qml_module(... URI "CentralLogger.Core" ...)` in CMakeLists.txt |
+| `@QmlElement` + `QML_IMPORT_NAME = "TtvStudio.Core"` | `QML_ELEMENT` macro + `qt_add_qml_module(... URI "TtvStudio.Core" ...)` in CMakeLists.txt |
 | `@QmlSingleton` `AppState` | `QML_SINGLETON` macro on C++ `AppState : QObject` |
 | `@Slot(...)` | `Q_SLOT` / `Q_INVOKABLE` |
 | `@Property(type, notify=signal)` | `Q_PROPERTY(type name READ ... WRITE ... NOTIFY ...)` |

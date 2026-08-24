@@ -13,13 +13,13 @@
 #include <QTimeZone>
 #include <QVariantMap>
 
-using CentralLogger::Core::DashboardController;
-using CentralLogger::Core::LoggerFormController;
-using CentralLogger::Core::RecentEventsModel;
-using CentralLogger::Data::Database;
-using CentralLogger::Data::EventRepository;
-using CentralLogger::Data::SystemEvent;
-using CentralLogger::Network::PollSnapshot;
+using TtvStudio::Core::DashboardController;
+using TtvStudio::Core::LoggerFormController;
+using TtvStudio::Core::RecentEventsModel;
+using TtvStudio::Data::Database;
+using TtvStudio::Data::EventRepository;
+using TtvStudio::Data::SystemEvent;
+using TtvStudio::Network::PollSnapshot;
 
 namespace {
 

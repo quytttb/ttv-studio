@@ -5,7 +5,7 @@
 
 #include <QString>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 struct AppSettings
 {
@@ -15,4 +15,4 @@ struct AppSettings
     int     historyFlushIntervalS = Defaults::kHistoryFlushIntervalS;
 };
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

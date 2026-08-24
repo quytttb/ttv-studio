@@ -1,4 +1,4 @@
-# Material 3 — Component guidelines (Central Logger)
+# Material 3 — Component guidelines (TTV Studio)
 
 SoT component chung: [`shared/logger-ui-kit/README.md`](../../shared/logger-ui-kit/README.md)
 (kit dùng chung với data-logger — không fork, không copy local).
@@ -43,7 +43,7 @@ Chung từ kit (`import LoggerKit.Components`): `AppButton` (kind enum), `UiIcon
 `ChartGraphsTheme`, `ChartGraphsView`, `ChartLinePointMarker`, `StatusChip` (generic),
 `ClipboardService`.
 
-App-specific (`import CentralLogger.Components`):
+App-specific (`import TtvStudio.Components`):
 
 | Folder | Contents |
 |--------|----------|
@@ -53,7 +53,7 @@ App-specific (`import CentralLogger.Components`):
 | `chart/` | `ChartTimeSeriesPanel` (bind `timezoneId` từ `SettingsController.systemTimezone`), `ChartHoverTooltip` |
 | `logger/` | `LoggerFormDialog`, `RecentEventListItem` |
 
-Domain singletons (`CentralLogger.Theme`): `OperationalStatus`, `AttachDiType`.
+Domain singletons (`TtvStudio.Theme`): `OperationalStatus`, `AttachDiType`.
 
 ## Notification policy
 

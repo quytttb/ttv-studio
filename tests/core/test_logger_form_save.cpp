@@ -20,9 +20,9 @@
 #include <QTcpSocket>
 #include <QTest>
 
-using namespace CentralLogger::Core;
-using namespace CentralLogger::Data;
-using namespace CentralLogger::Network;
+using namespace TtvStudio::Core;
+using namespace TtvStudio::Data;
+using namespace TtvStudio::Network;
 
 namespace {
 

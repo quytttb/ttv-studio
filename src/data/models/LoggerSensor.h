@@ -7,7 +7,7 @@
 #include <QVector>
 #include <optional>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 struct LoggerSensor
 {
@@ -33,9 +33,9 @@ struct LoggerSensor
     QVector<int>         allParentIds;
 };
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data
 
 // Audit H-A: snapshotApplied crosses thread boundaries carrying
 // QVector<LoggerSensor> — declare the metatype for queued signals.
 #include <QMetaType>
-Q_DECLARE_METATYPE(QVector<CentralLogger::Data::LoggerSensor>)
+Q_DECLARE_METATYPE(QVector<TtvStudio::Data::LoggerSensor>)

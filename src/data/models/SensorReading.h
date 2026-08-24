@@ -2,7 +2,7 @@
 
 #include <QDateTime>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 struct SensorReading
 {
@@ -16,4 +16,4 @@ struct SensorReading
     QDateTime recordedAt;            // UTC
 };
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

@@ -5,7 +5,7 @@
 #include <QSqlDatabase>
 #include <QString>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 /// Singleton row repository for `app_settings` (id = 1).
 class SettingsRepository
@@ -24,4 +24,4 @@ private:
     QSqlDatabase m_db;
 };
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

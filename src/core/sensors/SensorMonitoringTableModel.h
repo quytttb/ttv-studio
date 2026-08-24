@@ -6,7 +6,7 @@
 #include <QVector>
 #include <QtQmlIntegration/qqmlintegration.h>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 /// Read-only table model exposing one merged row per sensor for the
 /// currently-selected logger. Five columns, plus named roles for QML
@@ -78,4 +78,4 @@ private:
     QVector<SensorLiveRow>  m_rows;
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

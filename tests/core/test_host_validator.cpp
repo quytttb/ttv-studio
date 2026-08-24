@@ -2,7 +2,7 @@
 
 #include <QTest>
 
-using namespace CentralLogger::Utils;
+using namespace TtvStudio::Utils;
 
 class TestHostValidator : public QObject
 {

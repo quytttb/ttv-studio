@@ -1,11 +1,11 @@
 # CPack DEB — included from root CMakeLists.txt after all install() rules.
 set(CPACK_GENERATOR DEB)
-set(CPACK_PACKAGE_NAME central-logger-app)
-set(CPACK_PACKAGE_VENDOR "4M Technologies")
+set(CPACK_PACKAGE_NAME ttv-studio-app)
+set(CPACK_PACKAGE_VENDOR "quytttb")
 set(CPACK_PACKAGE_CONTACT "dev@local")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_${CPACK_PACKAGE_VERSION}_amd64")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Central Logger — Modbus TCP data logger desktop client")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "TTV Studio — Modbus TCP data logger desktop client")
 set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE amd64)
 set(CPACK_DEBIAN_PACKAGE_SECTION utils)
 # OFF: Qt deploy bundles optional SQL/ODBC plugins; shlibdeps fails on CI without libmysqlclient, libpq, …
@@ -20,6 +20,6 @@ libxcb-randr0, libxcb-render0, libxcb-render-util0, libxcb-shape0, \
 libxcb-shm0, libxcb-sync1, libxcb-util1, libxcb-xfixes0, libxcb-xkb1, \
 libwayland-client0"
 )
-set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/central-logger")
+set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/ttv-studio")
 
 include(CPack)

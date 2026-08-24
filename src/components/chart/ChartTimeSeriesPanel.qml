@@ -3,8 +3,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtGraphs
 
-import CentralLogger.Core
-import CentralLogger.Theme
+import TtvStudio.Core
+import TtvStudio.Theme
 import LoggerKit.Theme
 import LoggerKit.Components
 

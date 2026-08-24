@@ -8,12 +8,12 @@
 #include <QVariant>
 #include <QPair>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 namespace {
 
-using CentralLogger::Utils::isoUtc;
-using CentralLogger::Utils::parseUtc;
+using TtvStudio::Utils::isoUtc;
+using TtvStudio::Utils::parseUtc;
 
 void setErr(QString *out, const QSqlQuery &q)
 {
@@ -47,17 +47,17 @@ bool SensorReadingRepository::insertBatch(const QVector<SensorReading> &readings
         "  sensor_id, value, valid, alarm, stale, logger_timestamp, recorded_at"
         ") VALUES ("
         "  :sensor_id, :value, :valid, :alarm, :stale, :logger_timestamp, :recorded_at"
-        ")").arg(QString::fromLatin1(CentralLogger::Data::Db::kTableSensorReading)));
+        ")").arg(QString::fromLatin1(TtvStudio::Data::Db::kTableSensorReading)));
 
     for (const SensorReading &r : readings) {
         const QDateTime when = r.recordedAt.isValid() ? r.recordedAt : QDateTime::currentDateTimeUtc();
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindSensorId),        r.sensorId);
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindValue),            r.value);
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindValid),            r.valid ? 1 : 0);
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindAlarm),            r.alarm ? 1 : 0);
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindStale),            r.stale ? 1 : 0);
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLoggerTimestamp), r.loggerTimestamp);
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindRecordedAt),      isoUtc(when));
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindSensorId),        r.sensorId);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindValue),            r.value);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindValid),            r.valid ? 1 : 0);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindAlarm),            r.alarm ? 1 : 0);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindStale),            r.stale ? 1 : 0);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLoggerTimestamp), r.loggerTimestamp);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindRecordedAt),      isoUtc(when));
         if (!q.exec()) {
             setErr(errorOut, q);
             if (manageTransaction) {
@@ -88,8 +88,8 @@ int SensorReadingRepository::purgeOlderThan(const QDateTime &cutoffUtc,
 
     if (chunkSize <= 0) {
         q.prepare(QStringLiteral("DELETE FROM %1 WHERE recorded_at < :cutoff")
-                      .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableSensorReading)));
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindCutoff), cutoff);
+                      .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableSensorReading)));
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindCutoff), cutoff);
         if (!q.exec()) {
             setErr(errorOut, q);
             return -1;
@@ -101,11 +101,11 @@ int SensorReadingRepository::purgeOlderThan(const QDateTime &cutoffUtc,
         "DELETE FROM %1 WHERE id IN ("
         "SELECT id FROM %1 WHERE recorded_at < :cutoff "
         "ORDER BY recorded_at LIMIT :lim)")
-        .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableSensorReading)));
+        .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableSensorReading)));
     int deleted = 0;
     for (;;) {
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindCutoff), cutoff);
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLim), chunkSize);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindCutoff), cutoff);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLim), chunkSize);
         if (!q.exec()) {
             setErr(errorOut, q);
             return -1;
@@ -126,8 +126,8 @@ int SensorReadingRepository::countForSensor(qint64 sensorId, QString *errorOut) 
 {
     QSqlQuery q(m_db);
     q.prepare(QStringLiteral("SELECT COUNT(*) FROM %1 WHERE sensor_id = :sid")
-                   .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableSensorReading)));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindSid), sensorId);
+                   .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableSensorReading)));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindSid), sensorId);
     if (!q.exec() || !q.next()) {
         setErr(errorOut, q);
         return -1;
@@ -153,9 +153,9 @@ QVector<HistoryRow> SensorReadingRepository::searchHistory(
             "JOIN %3 li ON s.logger_id = li.id "
             "WHERE r.recorded_at >= :from "
             "  AND r.recorded_at <= :to")
-            .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableSensorReading),
-                 QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerSensor),
-                 QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerInfo));
+            .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableSensorReading),
+                 QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerSensor),
+                 QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerInfo));
     if (loggerId > 0) {
         sql += QStringLiteral(" AND s.logger_id = :logger_id");
     }
@@ -167,14 +167,14 @@ QVector<HistoryRow> SensorReadingRepository::searchHistory(
     QSqlQuery q(m_db);
     q.prepare(sql);
     if (loggerId > 0) {
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLoggerId), loggerId);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLoggerId), loggerId);
     }
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindFrom), isoUtc(fromUtc));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindTo),   isoUtc(toUtc));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindFrom), isoUtc(fromUtc));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindTo),   isoUtc(toUtc));
     if (sensorId > 0) {
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindSensorId), sensorId);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindSensorId), sensorId);
     }
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLim), limit);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLim), limit);
 
     if (!q.exec()) {
         setErr(errorOut, q);
@@ -213,9 +213,9 @@ int SensorReadingRepository::countHistory(qint64 loggerId,
             "JOIN %3 li ON s.logger_id = li.id "
             "WHERE r.recorded_at >= :from "
             "  AND r.recorded_at <= :to")
-            .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableSensorReading),
-                 QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerSensor),
-                 QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerInfo));
+            .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableSensorReading),
+                 QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerSensor),
+                 QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerInfo));
     if (loggerId > 0) {
         sql += QStringLiteral(" AND s.logger_id = :logger_id");
     }
@@ -226,12 +226,12 @@ int SensorReadingRepository::countHistory(qint64 loggerId,
     QSqlQuery q(m_db);
     q.prepare(sql);
     if (loggerId > 0) {
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLoggerId), loggerId);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLoggerId), loggerId);
     }
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindFrom), isoUtc(fromUtc));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindTo),   isoUtc(toUtc));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindFrom), isoUtc(fromUtc));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindTo),   isoUtc(toUtc));
     if (sensorId > 0) {
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindSensorId), sensorId);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindSensorId), sensorId);
     }
 
     if (!q.exec() || !q.next()) {
@@ -254,8 +254,8 @@ QVector<QPair<qint64, QString>> SensorReadingRepository::sensorsWithReadings(
             "INNER JOIN %2 r ON r.sensor_id = s.id "
             "WHERE s.logger_id = :logger_id "
             "ORDER BY s.name ASC")
-            .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerSensor),
-                 QString::fromLatin1(CentralLogger::Data::Db::kTableSensorReading));
+            .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerSensor),
+                 QString::fromLatin1(TtvStudio::Data::Db::kTableSensorReading));
     } else {
         sql = QStringLiteral(
             "SELECT DISTINCT s.id, li.name || ' — ' || s.name "
@@ -263,15 +263,15 @@ QVector<QPair<qint64, QString>> SensorReadingRepository::sensorsWithReadings(
             "INNER JOIN %2 r ON r.sensor_id = s.id "
             "JOIN %3 li ON s.logger_id = li.id "
             "ORDER BY li.name ASC, s.name ASC")
-            .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerSensor),
-                 QString::fromLatin1(CentralLogger::Data::Db::kTableSensorReading),
-                 QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerInfo));
+            .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerSensor),
+                 QString::fromLatin1(TtvStudio::Data::Db::kTableSensorReading),
+                 QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerInfo));
     }
 
     QSqlQuery q(m_db);
     q.prepare(sql);
     if (loggerId > 0) {
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLoggerId), loggerId);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLoggerId), loggerId);
     }
 
     if (!q.exec()) {
@@ -285,4 +285,4 @@ QVector<QPair<qint64, QString>> SensorReadingRepository::sensorsWithReadings(
     return result;
 }
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

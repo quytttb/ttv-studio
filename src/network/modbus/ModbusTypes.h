@@ -7,7 +7,7 @@
 #include <QVector>
 #include <cstdint>
 
-namespace CentralLogger::Network {
+namespace TtvStudio::Network {
 
 /// HR0..HR9 — fixed layout per docs/contracts/modbus-map-v1.md §1.
 struct ModbusHeader
@@ -19,7 +19,7 @@ struct ModbusHeader
     quint16  ndi           = 0; // HR5 — DI bit count
     quint16  ndo           = 0; // HR6 — DO bit count
 
-    bool isValid()         const { return mapVersion == CentralLogger::Version::kModbusMapVersion; }
+    bool isValid()         const { return mapVersion == TtvStudio::Version::kModbusMapVersion; }
     bool isPolling()       const { return (statusFlags & 0x01) != 0; }
     bool isRtuConnected()  const { return (statusFlags & 0x02) != 0; }
     bool isAnyAlarm()      const { return (statusFlags & 0x04) != 0; }
@@ -51,7 +51,7 @@ struct PollSnapshot
     QDateTime            measuredAt; // UTC, set by worker right after reads
 };
 
-} // namespace CentralLogger::Network
+} // namespace TtvStudio::Network
 
 #include <QMetaType>
-Q_DECLARE_METATYPE(CentralLogger::Network::PollSnapshot)
+Q_DECLARE_METATYPE(TtvStudio::Network::PollSnapshot)

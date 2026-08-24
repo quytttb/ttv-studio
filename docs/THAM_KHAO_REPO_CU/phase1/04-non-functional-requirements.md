@@ -81,7 +81,7 @@ Baseline từ app PySide6 hiện tại (đo 2026-05-23) và mục tiêu cho repo
 | Requirement | Hiện trạng | Target C++ |
 |-------------|------------|------------|
 | Debug mode | `CENTRAL_LOGGER_DEBUG=1` env → `logging.DEBUG` | `QT_LOGGING_RULES` env hoặc `QLoggingCategory` |
-| Log categories | `central_logger.services`, `central_logger.controllers` | `CentralLogger.Modbus`, `CentralLogger.Rest`, `CentralLogger.DB` categories |
+| Log categories | `ttv_studio.services`, `ttv_studio.controllers` | `TtvStudio.Modbus`, `TtvStudio.Rest`, `TtvStudio.DB` categories |
 | Log rotation | Không có | `QLoggingCategory` + optional file sink (`QFile`) |
 
 ---
@@ -90,7 +90,7 @@ Baseline từ app PySide6 hiện tại (đo 2026-05-23) và mục tiêu cho repo
 
 | Requirement | Giá trị |
 |-------------|---------|
-| Local DB required | ✓ SQLite tại `~/.central-logger/central-logger.db` |
+| Local DB required | ✓ SQLite tại `~/.ttv-studio/ttv-studio.db` |
 | Modbus không cần cloud | ✓ Core functionality offline |
 | REST optional per-logger | ✓ `api_token` empty → REST features disabled |
 | Multi-site sync | ✗ Out of scope v1 |

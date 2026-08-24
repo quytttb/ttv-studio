@@ -5,7 +5,7 @@
 #include "utils/SensorConstants.h"
 #include "utils/UiConstants.h"
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 namespace {
 
@@ -43,14 +43,14 @@ QVariant HistoryTableModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case TimeRole:      return r.recordedAt.toLocalTime()
-                            .toString(QLatin1String(CentralLogger::Format::kDateTimeDdMmYyyyHms));
+                            .toString(QLatin1String(TtvStudio::Format::kDateTimeDdMmYyyyHms));
     case LoggerRole:    return r.loggerName;
     case SensorRole:    return r.sensorName;
     case UnitRole:      return r.unit;
     case ValueRole:     return QString::number(r.value, 'f',
-                            qBound(CentralLogger::Defaults::kDecimalsMin,
+                            qBound(TtvStudio::Defaults::kDecimalsMin,
                                    r.decimals,
-                                   CentralLogger::Defaults::kDecimalsMax));
+                                   TtvStudio::Defaults::kDecimalsMax));
     case StatusRole:    return statusText(r);
     case ValidRole:     return r.valid;
     case AlarmRole:     return r.alarm;
@@ -72,17 +72,17 @@ QVariant HistoryTableModel::headerData(int section, Qt::Orientation orientation,
 QHash<int, QByteArray> HistoryTableModel::roleNames() const
 {
     return {
-        { Qt::DisplayRole, CentralLogger::Ui::kRoleDisplay },
-        { TimeRole,     CentralLogger::Ui::kRoleTime     },
-        { LoggerRole,   CentralLogger::Ui::kRoleLogger   },
-        { SensorRole,   CentralLogger::Ui::kRoleSensor   },
-        { UnitRole,     CentralLogger::Ui::kRoleUnit     },
-        { ValueRole,    CentralLogger::Ui::kRoleValue    },
-        { StatusRole,   CentralLogger::Ui::kRoleStatus   },
-        { ValidRole,    CentralLogger::Ui::kRoleValid    },
-        { AlarmRole,    CentralLogger::Ui::kRoleAlarm    },
-        { StaleRole,    CentralLogger::Ui::kRoleStale    },
-        { SensorIdRole, CentralLogger::Ui::kRoleSensorId },
+        { Qt::DisplayRole, TtvStudio::Ui::kRoleDisplay },
+        { TimeRole,     TtvStudio::Ui::kRoleTime     },
+        { LoggerRole,   TtvStudio::Ui::kRoleLogger   },
+        { SensorRole,   TtvStudio::Ui::kRoleSensor   },
+        { UnitRole,     TtvStudio::Ui::kRoleUnit     },
+        { ValueRole,    TtvStudio::Ui::kRoleValue    },
+        { StatusRole,   TtvStudio::Ui::kRoleStatus   },
+        { ValidRole,    TtvStudio::Ui::kRoleValid    },
+        { AlarmRole,    TtvStudio::Ui::kRoleAlarm    },
+        { StaleRole,    TtvStudio::Ui::kRoleStale    },
+        { SensorIdRole, TtvStudio::Ui::kRoleSensorId },
     };
 }
 
@@ -106,10 +106,10 @@ void HistoryTableModel::clear()
 
 QString HistoryTableModel::statusText(const Data::HistoryRow &r)
 {
-    if (!r.valid)  return QLatin1String(CentralLogger::Sensor::kStatusInvalid);
-    if (r.stale)   return QLatin1String(CentralLogger::Sensor::kStatusStale);
-    if (r.alarm)   return QLatin1String(CentralLogger::Sensor::kStatusAlarm);
-    return QLatin1String(CentralLogger::Sensor::kStatusOk);
+    if (!r.valid)  return QLatin1String(TtvStudio::Sensor::kStatusInvalid);
+    if (r.stale)   return QLatin1String(TtvStudio::Sensor::kStatusStale);
+    if (r.alarm)   return QLatin1String(TtvStudio::Sensor::kStatusAlarm);
+    return QLatin1String(TtvStudio::Sensor::kStatusOk);
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

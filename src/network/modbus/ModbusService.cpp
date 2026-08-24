@@ -11,15 +11,15 @@
 #include <QDateTime>
 #include <QtDebug>
 
-namespace CentralLogger::Network {
+namespace TtvStudio::Network {
 
 namespace {
 
-using CentralLogger::Defaults::kConnectTimeoutFallbackMs;
-using CentralLogger::Defaults::kConnectTimeoutMultiplier;
+using TtvStudio::Defaults::kConnectTimeoutFallbackMs;
+using TtvStudio::Defaults::kConnectTimeoutMultiplier;
 
 // kConnectTimeoutMultiplier / kConnectTimeoutFallbackMs live in
-// CentralLogger::Defaults (utils/AppConstants.h). See C-2 fix.
+// TtvStudio::Defaults (utils/AppConstants.h). See C-2 fix.
 
 QVector<quint16> regsFromUnit(const QModbusDataUnit &unit)
 {
@@ -450,4 +450,4 @@ void ModbusService::finishCycle(LoggerState &state, bool success, const QString 
     emit pollFinished(state.currentSnapshot);
 }
 
-} // namespace CentralLogger::Network
+} // namespace TtvStudio::Network

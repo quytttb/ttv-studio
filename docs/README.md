@@ -1,4 +1,4 @@
-# Tài liệu — Central Logger
+# Tài liệu — TTV Studio
 
 ## Spec chính thức (đọc trước)
 

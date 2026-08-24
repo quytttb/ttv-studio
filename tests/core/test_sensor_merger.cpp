@@ -4,11 +4,11 @@
 #include <QTest>
 #include <QVector>
 
-using CentralLogger::Core::SensorLiveRow;
-using CentralLogger::Core::SensorMerger;
-using CentralLogger::Data::LoggerSensor;
-using CentralLogger::Network::AnalogSample;
-using CentralLogger::Network::PollSnapshot;
+using TtvStudio::Core::SensorLiveRow;
+using TtvStudio::Core::SensorMerger;
+using TtvStudio::Data::LoggerSensor;
+using TtvStudio::Network::AnalogSample;
+using TtvStudio::Network::PollSnapshot;
 
 namespace {
 

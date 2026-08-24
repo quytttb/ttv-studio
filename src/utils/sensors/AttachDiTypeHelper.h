@@ -2,7 +2,7 @@
 
 #include <QString>
 
-namespace CentralLogger::Utils {
+namespace TtvStudio::Utils {
 
 /// Attach-DI `di_type` codes (00–03 + custom): normalize, labels, sort for
 /// merger/UI.
@@ -16,4 +16,4 @@ public:
   static int sortRank(const QString &code);
 };
 
-} // namespace CentralLogger::Utils
+} // namespace TtvStudio::Utils

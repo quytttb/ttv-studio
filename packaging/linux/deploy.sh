@@ -219,7 +219,7 @@ _do_release() {
   echo "Pushing ${tag}..."
   git push "${REMOTE}" HEAD
   git push "${REMOTE}" "${tag}"
-  echo "Done. GitHub Actions will build .deb + CentralLoggerSetup.exe and create the Release."
+  echo "Done. GitHub Actions will build .deb + TtvStudioSetup.exe and create the Release."
   _github_urls
 }
 
@@ -252,7 +252,7 @@ _show_help() {
   cat <<EOF
 
 ==============================================================
-  Help - Deploy / Release (Central Logger)
+  Help - Deploy / Release (TTV Studio)
 ==============================================================
 
   Current version: ${ver}  ->  git tag: ${tag}
@@ -264,7 +264,7 @@ _show_help() {
      Bump SemVer (patch/minor/major) -> commit CMakeLists.txt
      -> create tag v{version} -> push branch + tag to ${REMOTE}.
      Triggers the GitHub Actions "Build Release" workflow
-     (.deb Linux + CentralLoggerSetup.exe + GitHub Release).
+     (.deb Linux + TtvStudioSetup.exe + GitHub Release).
 
   2) Bump version only
      Edit the VERSION number in CMakeLists.txt; no commit/tag/push.
@@ -352,7 +352,7 @@ _show_menu() {
   while true; do
     echo ""
     echo "========================================"
-    echo "  Central Logger - Deploy / Release"
+    echo "  TTV Studio - Deploy / Release"
     echo "========================================"
     _status_line
     echo ""

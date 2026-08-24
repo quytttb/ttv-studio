@@ -8,7 +8,7 @@
 // directly to `QStringLiteral` (which requires literal arguments at the call
 // site).
 
-namespace CentralLogger::Format {
+namespace TtvStudio::Format {
 
 // --- Date / time formats (passed to QDateTime::toString) --------------------
 inline constexpr char kDateTimeDdMmYyyyHms[] = "dd/MM/yyyy HH:mm:ss";
@@ -32,7 +32,7 @@ inline constexpr char kErrLoggerUnreachableFmt[] = "Could not reach the logger: 
 
 inline constexpr char kErrRestUnauthorized[]      = "REST unauthorized (401)";
 inline constexpr char kErrRevisionConflict[]      = "Configuration changed on device. Connect again, then save.";
-inline constexpr char kErrMissingFields[]         = "Device rejected config request (missing fields). Update Central Logger.";
+inline constexpr char kErrMissingFields[]         = "Device rejected config request (missing fields). Update TTV Studio.";
 inline constexpr char kErrEdgeRejected422[]       = "Edge rejected payload (422). Check forbidden fields.";
 inline constexpr char kErrApiNotAvailable[]       = "Logger API not available. Update data-logger firmware.";
 
@@ -44,4 +44,4 @@ inline constexpr char kErrReportDataTooLarge[]    = "Report data exceeds 50 MB l
 inline constexpr char kErrHttpFmt[]     = "HTTP %1";
 inline constexpr char kErrHttpBodyFmt[] = "HTTP %1: %2";
 
-} // namespace CentralLogger::Format
+} // namespace TtvStudio::Format

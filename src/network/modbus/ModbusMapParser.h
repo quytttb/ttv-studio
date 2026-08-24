@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <cstring>
 
-namespace CentralLogger::Network::ModbusMapParser {
+namespace TtvStudio::Network::ModbusMapParser {
 
 /// Parse the 10 header registers per contract §1. Reads into ModbusHeader;
 /// the caller decides what to do when `isValid()` is false (drop snapshot).
@@ -102,4 +102,4 @@ inline QVector<bool> unpackDiscrete(const QVector<quint16> &regs, int bitCount)
     return unpackDiscrete(regs.constData(), regs.size(), bitCount);
 }
 
-} // namespace CentralLogger::Network::ModbusMapParser
+} // namespace TtvStudio::Network::ModbusMapParser

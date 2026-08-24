@@ -103,5 +103,5 @@ __pycache__/
 
 # --- Installer / Packaging ---
 /packaging/windows/installer_build/packages/*/data/
-packaging/windows/installer_build/CentralLoggerSetup.exe
+packaging/windows/installer_build/TtvStudioSetup.exe
 packaging/windows/convert_tool/build/

@@ -1,5 +1,5 @@
 ## Context
-Repo: Central Logger — Qt 6.11 / C++ / QML / CMake (desktop).
+Repo: TTV Studio — Qt 6.11 / C++ / QML / CMake (desktop).
 Đọc trước khi code:
 1. AGENTS.md
 2. HANDOFF.md
@@ -46,7 +46,7 @@ Implement:
 
 3. class Database
    - QSqlDatabase + QSQLITE
-   - Path mặc định ~/.central-logger/central-logger.db
+   - Path mặc định ~/.ttv-studio/ttv-studio.db
    - init(): tạo thư mục nếu cần, chạy 001_initial.sql khi DB mới
 
 4. Repositories (CRUD cơ bản + unit test)
@@ -66,11 +66,11 @@ Không BaseViewModel abstract hay DI framework.
 Báo cáo: file đã tạo, lệnh build/test. ADR DB: docs/adr/0001-db.md (đã chốt).
 
 
-### Task 2: App shell + QML module CentralLogger.Core
+### Task 2: App shell + QML module TtvStudio.Core
 
 Phụ thuộc: Database đã init được.
 
-1. qt_add_qml_module URI CentralLogger.Core (document trong CMake)
+1. qt_add_qml_module URI TtvStudio.Core (document trong CMake)
 2. AppState QML_SINGLETON: totalLoggers, onlineLoggers, alarmCount, statusText
 3. Main.qml: ApplicationWindow, sidebar 4 view placeholder (dashboard, loggers, logger-detail, settings), crossfade
 4. SettingsController: đọc/ghi app_settings (theme, timezone, retention, maintenance) qua SettingsRepository

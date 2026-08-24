@@ -1,4 +1,4 @@
-# Bugs Survey — Central Logger C++ (Independent Audit)
+# Bugs Survey — TTV Studio C++ (Independent Audit)
 
 **Ngày khảo sát:** 2026-06 (sau deep-audit 2026-05-26)  
 **Mục đích:** Tìm bugs liên quan **logic, data storage, UI, reports** theo yêu cầu user. Không fix. Chỉ báo cáo + evidence.  

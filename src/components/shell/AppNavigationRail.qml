@@ -4,7 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Window
 
-import CentralLogger.Theme
+import TtvStudio.Theme
 import LoggerKit.Theme
 
 // Fixed 80px Material-style navigation rail (icon above label per destination).

@@ -67,7 +67,7 @@ Body: {"detail":[{"type":"missing","loc":["body","api_version"],...},
 }
 ```
 
-Reference: `data-logger/openapi-v1.yaml` schema `ConfigRequest`; legacy Python client `central-logger-app/.../rest_config_client.py` `apply_config`.
+Reference: `data-logger/openapi-v1.yaml` schema `ConfigRequest`; legacy Python client `ttv-studio-app/.../rest_config_client.py` `apply_config`.
 
 ---
 
@@ -76,7 +76,7 @@ Reference: `data-logger/openapi-v1.yaml` schema `ConfigRequest`; legacy Python c
 Prerequisites: Qt **6.11** (Quick, Qml, Sql, Network, SerialBus, Graphs), CMake 3.16+, MSVC or MinGW per your usual setup.
 
 ```powershell
-cd C:\Projects\central_logger   # adjust path
+cd C:\Projects\ttv_studio   # adjust path
 cmake --preset windows          # or your project preset
 cmake --build --preset windows
 ```
@@ -88,7 +88,7 @@ cmake -S . -B build -DCMAKE_PREFIX_PATH="C:\Qt\6.11.0\msvc2019_64"
 cmake --build build --config Release
 ```
 
-Run binary: `build\src\app\Release\central_logger.exe` (path may vary).
+Run binary: `build\src\app\Release\ttv_studio.exe` (path may vary).
 
 ---
 
@@ -99,7 +99,7 @@ Run binary: `build\src\app\Release\central_logger.exe` (path may vary).
 3. Enter Host, API Port, Token → **Connect** → expect success / fields populated.
 4. Set **Station code** (e.g. `TRAM-1`) different from probed value if you need to force a config patch.
 5. **Save** → expect success (no red banner).
-6. Verify SQLite (default `~/.central-logger/central-logger.db` or app path):
+6. Verify SQLite (default `~/.ttv-studio/ttv-studio.db` or app path):
    - Row exists in `logger_info` with your `station_code`.
    - `last_revision` updated if edge returned `applied_revision`.
 7. Optional: **Events** view — after a failed push (simulate with wrong token), a **Warning** row with `logger_id` NULL may appear (global event) describing the failed push.

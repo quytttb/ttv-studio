@@ -2,7 +2,7 @@
 
 #include <QString>
 
-namespace CentralLogger::Utils {
+namespace TtvStudio::Utils {
 
 /// Validates logger `host` values per docs/thiet_ke_db.md.
 /// Accepts:
@@ -22,4 +22,4 @@ private:
   static bool looksLikeIpv4Literal(const QString &host);
 };
 
-} // namespace CentralLogger::Utils
+} // namespace TtvStudio::Utils

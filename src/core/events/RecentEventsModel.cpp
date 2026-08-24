@@ -4,9 +4,9 @@
 #include "utils/UiConstants.h"
 #include "utils/events/EventLevels.h"
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
-using CentralLogger::Utils::displayLevelForEvent;
+using TtvStudio::Utils::displayLevelForEvent;
 
 RecentEventsModel::RecentEventsModel(QObject *parent)
     : QAbstractListModel(parent) {}
@@ -50,14 +50,14 @@ QVariant RecentEventsModel::data(const QModelIndex &index, int role) const {
 
 QHash<int, QByteArray> RecentEventsModel::roleNames() const {
   return {
-      {IdRole,          CentralLogger::Ui::kRoleId},
-      {LoggerIdRole,    CentralLogger::Ui::kRoleLoggerId},
-      {LoggerNameRole,  CentralLogger::Ui::kRoleLoggerName},
-      {EventTypeRole,   CentralLogger::Ui::kRoleEventType},
-      {MessageRole,     CentralLogger::Ui::kRoleMessage},
-      {LevelRole,       CentralLogger::Ui::kRoleLevel},
-      {DisplayLevelRole, CentralLogger::Ui::kRoleDisplayLevel},
-      {CreatedAtRole,   CentralLogger::Ui::kRoleCreatedAt},
+      {IdRole,          TtvStudio::Ui::kRoleId},
+      {LoggerIdRole,    TtvStudio::Ui::kRoleLoggerId},
+      {LoggerNameRole,  TtvStudio::Ui::kRoleLoggerName},
+      {EventTypeRole,   TtvStudio::Ui::kRoleEventType},
+      {MessageRole,     TtvStudio::Ui::kRoleMessage},
+      {LevelRole,       TtvStudio::Ui::kRoleLevel},
+      {DisplayLevelRole, TtvStudio::Ui::kRoleDisplayLevel},
+      {CreatedAtRole,   TtvStudio::Ui::kRoleCreatedAt},
   };
 }
 
@@ -79,4 +79,4 @@ void RecentEventsModel::reload() {
   endResetModel();
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

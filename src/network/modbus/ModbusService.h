@@ -14,7 +14,7 @@ class QModbusReply;
 class QModbusTcpClient;
 class QTimer;
 
-namespace CentralLogger::Network {
+namespace TtvStudio::Network {
 
 /// Per-logger runtime config snapshot. Main thread populates this from
 /// LoggerInfo and sends it to the service via queued slots.
@@ -59,14 +59,14 @@ public:
 signals:
     /// Emitted at the end of every poll cycle (success or failure). Wire to
     /// ModbusDataDispatcher::onPollFinished via Qt::QueuedConnection.
-    void pollFinished(const CentralLogger::Network::PollSnapshot &snapshot);
+    void pollFinished(const TtvStudio::Network::PollSnapshot &snapshot);
 
 public slots:
     /// Replaces the registry with @p configs and (re)starts polling for the
     /// enabled rows. Closes connections for loggers not in @p configs.
-    void syncLoggers(const QVector<CentralLogger::Network::LoggerRuntimeConfig> &configs);
+    void syncLoggers(const QVector<TtvStudio::Network::LoggerRuntimeConfig> &configs);
 
-    void registerLogger(const CentralLogger::Network::LoggerRuntimeConfig &config);
+    void registerLogger(const TtvStudio::Network::LoggerRuntimeConfig &config);
     void unregisterLogger(qint64 loggerId);
 
     /// Stops timers + closes clients. Call before quitting the worker thread.
@@ -114,4 +114,4 @@ private:
     static constexpr int kStartupStaggerMs = 100;
 };
 
-} // namespace CentralLogger::Network
+} // namespace TtvStudio::Network

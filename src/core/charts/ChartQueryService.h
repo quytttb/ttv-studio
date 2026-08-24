@@ -8,7 +8,7 @@
 #include <QTimeZone>
 #include <QVector>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 /// One 5-minute bucket for the Dashboard readings-over-time chart.
 struct ReadingBucketPoint
@@ -44,4 +44,4 @@ private:
     QSqlDatabase m_db;
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

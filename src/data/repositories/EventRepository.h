@@ -7,7 +7,7 @@
 #include <QString>
 #include <QVector>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 /// `SystemEvent` augmented with the joined `logger_info.name` so list models
 /// can render the station label without an N+1 lookup. `loggerName` is
@@ -45,4 +45,4 @@ private:
     QSqlDatabase m_db;
 };
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

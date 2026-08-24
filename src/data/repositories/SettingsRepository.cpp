@@ -6,11 +6,11 @@
 #include <QSqlError>
 #include <QSqlQuery>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 namespace {
 
-using CentralLogger::Defaults::kHistoryFlushIntervalS;
+using TtvStudio::Defaults::kHistoryFlushIntervalS;
 
 void setErr(QString *out, const QSqlQuery &q)
 {
@@ -28,7 +28,7 @@ AppSettings SettingsRepository::get(QString *errorOut) const
     if (!q.exec(QStringLiteral(
             "SELECT theme, system_timezone, data_retention_days, history_flush_interval_s "
             "FROM %1 WHERE id = 1")
-            .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableAppSettings)))) {
+            .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableAppSettings)))) {
         setErr(errorOut, q);
         return result;
     }
@@ -55,11 +55,11 @@ bool SettingsRepository::update(const AppSettings &settings, QString *errorOut)
         "  data_retention_days = :retention,"
         "  history_flush_interval_s = :history_flush "
         "WHERE id = 1")
-        .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableAppSettings)));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindTheme),       settings.theme);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindTz),          settings.systemTimezone);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindRetention),   settings.dataRetentionDays);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindHistoryFlush), settings.historyFlushIntervalS);
+        .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableAppSettings)));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindTheme),       settings.theme);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindTz),          settings.systemTimezone);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindRetention),   settings.dataRetentionDays);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindHistoryFlush), settings.historyFlushIntervalS);
     if (!q.exec()) {
         setErr(errorOut, q);
         return false;
@@ -67,4 +67,4 @@ bool SettingsRepository::update(const AppSettings &settings, QString *errorOut)
     return q.numRowsAffected() > 0;
 }
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

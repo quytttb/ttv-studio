@@ -12,15 +12,15 @@
 #include <QVector>
 #include <QtQmlIntegration/qqmlintegration.h>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 class Database;
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data
 
-namespace CentralLogger::Network {
+namespace TtvStudio::Network {
 class HistoryWriterWorker;
-} // namespace CentralLogger::Network
+} // namespace TtvStudio::Network
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 /// Result of a background history SQL query (QThreadPool / QtConcurrent).
 struct HistorySearchResult
@@ -45,7 +45,7 @@ class HistoryViewModel : public QObject
     Q_PROPERTY(QVariantList sensorItems   READ sensorItems                                   NOTIFY sensorItemsChanged)
     Q_PROPERTY(bool    showLoggerColumn  READ showLoggerColumn                              NOTIFY showLoggerColumnChanged)
     Q_PROPERTY(bool    searchedOnce       READ searchedOnce                                  NOTIFY searchedOnceChanged)
-    Q_PROPERTY(CentralLogger::Core::HistoryTableModel *tableModel
+    Q_PROPERTY(TtvStudio::Core::HistoryTableModel *tableModel
                READ tableModel CONSTANT)
 
 public:
@@ -132,4 +132,4 @@ private:
     QDateTime m_lastQueryToUtc;
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

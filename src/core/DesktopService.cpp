@@ -6,7 +6,7 @@
 #include <QJSEngine>
 #include <QQmlEngine>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 DesktopService *DesktopService::create(QQmlEngine *engine, QJSEngine *)
 {
@@ -34,4 +34,4 @@ bool DesktopService::copyToClipboard(const QString &text)
     return true;
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

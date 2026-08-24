@@ -7,9 +7,9 @@
 class QJSEngine;
 class QQmlEngine;
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
-/// Clipboard helper exposed to QML (CentralLogger.Core.DesktopService).
+/// Clipboard helper exposed to QML (TtvStudio.Core.DesktopService).
 class DesktopService : public QObject
 {
     Q_OBJECT
@@ -31,4 +31,4 @@ private:
     explicit DesktopService(QObject *parent = nullptr) : QObject(parent) {}
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

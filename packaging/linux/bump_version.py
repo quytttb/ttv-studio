@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SemVer bump for project(central_logger VERSION ...) in CMakeLists.txt."""
+"""SemVer bump for project(ttv_studio VERSION ...) in CMakeLists.txt."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 CMAKE = ROOT / "CMakeLists.txt"
-_VERSION_RE = re.compile(r"(?m)^(project\(central_logger VERSION )([0-9.]+)")
+_VERSION_RE = re.compile(r"(?m)^(project\(ttv_studio VERSION )([0-9.]+)")
 
 
 def _parse_version(raw: str) -> tuple[int, int, int]:
@@ -40,7 +40,7 @@ def read_version() -> str:
     text = CMAKE.read_text(encoding="utf-8")
     m = _VERSION_RE.search(text)
     if not m:
-        raise RuntimeError("project(central_logger VERSION ...) not found in CMakeLists.txt")
+        raise RuntimeError("project(ttv_studio VERSION ...) not found in CMakeLists.txt")
     return m.group(2)
 
 
@@ -72,7 +72,7 @@ def bump(level: str) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="SemVer for central_logger (CMakeLists.txt)")
+    parser = argparse.ArgumentParser(description="SemVer for ttv_studio (CMakeLists.txt)")
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("show", help="print current VERSION")

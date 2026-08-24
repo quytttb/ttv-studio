@@ -15,16 +15,16 @@
 #include <QTimeZone>
 #include <QVector>
 
-using CentralLogger::Core::DashboardController;
-using CentralLogger::Core::LoggerDetailViewModel;
-using CentralLogger::Core::LoggerFormController;
-using CentralLogger::Core::LoggerListModel;
-using CentralLogger::Core::SensorMonitoringTableModel;
-using CentralLogger::Data::Database;
-using CentralLogger::Data::LoggerSensor;
-using CentralLogger::Data::SensorCatalogRepository;
-using CentralLogger::Network::AnalogSample;
-using CentralLogger::Network::PollSnapshot;
+using TtvStudio::Core::DashboardController;
+using TtvStudio::Core::LoggerDetailViewModel;
+using TtvStudio::Core::LoggerFormController;
+using TtvStudio::Core::LoggerListModel;
+using TtvStudio::Core::SensorMonitoringTableModel;
+using TtvStudio::Data::Database;
+using TtvStudio::Data::LoggerSensor;
+using TtvStudio::Data::SensorCatalogRepository;
+using TtvStudio::Network::AnalogSample;
+using TtvStudio::Network::PollSnapshot;
 
 namespace {
 

@@ -9,13 +9,13 @@
 #include <QObject>
 #include <QSqlDatabase>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 class Database;
 class SensorReading;
 class SensorCatalogRepository;
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data
 
-namespace CentralLogger::Network {
+namespace TtvStudio::Network {
 
 /// Persists Modbus poll data into SQLite and re-emits UI-friendly signals.
 /// `applyLiveSnapshot` runs on its own dedicated thread (audit H-A — moved
@@ -50,21 +50,21 @@ public slots:
 
     /// Live pipeline: update logger status/catalog and notify UI. Readings
     /// are persisted asynchronously via applyBatch on the writer thread.
-    void applyLiveSnapshot(const CentralLogger::Network::PollSnapshot &snapshot);
+    void applyLiveSnapshot(const TtvStudio::Network::PollSnapshot &snapshot);
 
 public:
     /// History pipeline: batch-insert sensor_reading rows for many snapshots
     /// inside a single transaction. Caller must pass the dedicated
     /// QSqlDatabase connection that belongs to the calling thread
     /// (e.g. HistoryWriterWorker::m_db) — never the main-thread connection.
-    void applyBatch(const QList<CentralLogger::Network::PollSnapshot> &batch,
+    void applyBatch(const QList<TtvStudio::Network::PollSnapshot> &batch,
                     QSqlDatabase db);
 
 signals:
     /// Audit H-A: carries the already-fetched catalog rows so the main
     /// thread consumer (DashboardController) does not re-query the DB.
     /// Empty vector when @p snapshot.success is false.
-    void snapshotApplied(const CentralLogger::Network::PollSnapshot &snapshot,
+    void snapshotApplied(const TtvStudio::Network::PollSnapshot &snapshot,
                          int sensorCount,
                          const QVector<Data::LoggerSensor> &catalogRows);
 
@@ -105,4 +105,4 @@ private:
     static constexpr qint64 kHeartbeatMs = Defaults::kModbusHeartbeatMs;
 };
 
-} // namespace CentralLogger::Network
+} // namespace TtvStudio::Network

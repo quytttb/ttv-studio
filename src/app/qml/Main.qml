@@ -5,9 +5,9 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 import QtQuick.Window
 
-import CentralLogger.Components
-import CentralLogger.Core
-import CentralLogger.Theme
+import TtvStudio.Components
+import TtvStudio.Core
+import TtvStudio.Theme
 import LoggerKit.Theme
 import LoggerKit.Components
 
@@ -43,7 +43,7 @@ ApplicationWindow {
         // Bind the shared kit's theme mode to this app's settings controller.
         ThemeMode.mode = Qt.binding(() => SettingsController.theme)
         centerOnTargetScreen()
-    }    title: qsTr("Central Logger")
+    }    title: qsTr("TTV Studio")
     flags: Qt.Window | (Qt.platform.os === "windows" ? 0 : Qt.FramelessWindowHint) | Qt.WindowSystemMenuHint
 
     Material.theme:   AppTheme.materialTheme

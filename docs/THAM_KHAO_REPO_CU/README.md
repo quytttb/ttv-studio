@@ -1,7 +1,7 @@
 # Tham khảo — khảo sát app cũ (PySide6)
 
 Tài liệu trong thư mục này **không** phải source of truth cho repo C++ mới.  
-Chỉ dùng để hiểu hành vi app legacy `central-logger-app` và danh sách feature.
+Chỉ dùng để hiểu hành vi app legacy `ttv-studio-app` và danh sách feature.
 
 Các mục “Handoff to Phase 2”, “Phase 2 ADR” trong `phase1/` là **quy trình dự án cũ** — repo Qt mới **không** có `docs/phase2/` và không bắt buộc làm theo các phase đó.
 
@@ -28,9 +28,9 @@ Các mục “Handoff to Phase 2”, “Phase 2 ADR” trong `phase1/` là **quy
 Repo PySide6 cũ ở ngoài workspace, dùng để đối chiếu **layout** sidebar/top bar /
 opacity crossfade khi viết QML mới (đã port pattern vào Task 2):
 
-- [`/home/haiquy/Documents/Projects/central-logger-app/src/central_logger/ui/main.qml`](file:///home/haiquy/Documents/Projects/central-logger-app/src/central_logger/ui/main.qml)
-- [`/home/haiquy/Documents/Projects/central-logger-app/src/central_logger/ui/components/navigation/`](file:///home/haiquy/Documents/Projects/central-logger-app/src/central_logger/ui/components/navigation)
-- [`/home/haiquy/Documents/Projects/central-logger-app/src/central_logger/ui/views/`](file:///home/haiquy/Documents/Projects/central-logger-app/src/central_logger/ui/views)
+- [`/home/haiquy/Documents/Projects/ttv-studio-app/src/ttv_studio/ui/main.qml`](file:///home/haiquy/Documents/Projects/ttv-studio-app/src/ttv_studio/ui/main.qml)
+- [`/home/haiquy/Documents/Projects/ttv-studio-app/src/ttv_studio/ui/components/navigation/`](file:///home/haiquy/Documents/Projects/ttv-studio-app/src/ttv_studio/ui/components/navigation)
+- [`/home/haiquy/Documents/Projects/ttv-studio-app/src/ttv_studio/ui/views/`](file:///home/haiquy/Documents/Projects/ttv-studio-app/src/ttv_studio/ui/views)
 
 **Không** port: `Colors.qml`, `UiMotion.qml`, `*.js` logic, `LoggerFormDialog`, charts, tray.
 Task 2 dùng Material light/dark thẳng từ `QtQuick.Controls.Material` thay cho `Colors`.

@@ -6,11 +6,11 @@
 #include <QVector>
 #include <QtQmlIntegration/qqmlintegration.h>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 class Database;
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 /// Read-only list model over the most recent rows in `system_event`,
 /// joined with `logger_info.name`. Owned by `DashboardController` and
@@ -58,4 +58,4 @@ private:
     QVector<Data::SystemEventListItem>    m_rows;
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

@@ -3,7 +3,7 @@
 #include <QTest>
 #include <QTimeZone>
 
-using namespace CentralLogger::Core;
+using namespace TtvStudio::Core;
 
 class TestChartPresentation : public QObject
 {

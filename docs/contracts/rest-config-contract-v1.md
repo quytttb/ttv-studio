@@ -178,4 +178,4 @@ Không log `api_token` — [provision-qr-v1.md](provision-qr-v1.md).
 
 ## Reference (legacy Python)
 
-`central-logger-app`: `rest_coordinator.py` poll `/readings` cho DI/DO — **không** port sang C++ v1.
+`ttv-studio-app`: `rest_coordinator.py` poll `/readings` cho DI/DO — **không** port sang C++ v1.

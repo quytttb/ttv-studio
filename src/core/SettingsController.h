@@ -9,16 +9,16 @@
 class QJSEngine;
 class QQmlEngine;
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 class Database;
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 /// Bridges `app_settings` (singleton row, id=1) to QML. Owns the live values
 /// while the app runs; persists them via SettingsRepository on save().
 ///
-/// Registered as a QML singleton (`CentralLogger.Core.SettingsController`).
+/// Registered as a QML singleton (`TtvStudio.Core.SettingsController`).
 /// Single instance created in main.cpp and handed to the QML factory via
 /// setInstance() — same pattern as AppState.
 class SettingsController : public QObject
@@ -94,4 +94,4 @@ private:
     QString          m_logFilePath;
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

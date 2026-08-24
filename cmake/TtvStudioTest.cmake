@@ -2,7 +2,7 @@
 # Reduces boilerplate: target_link_libraries + Qt6::Test + add_test in one call.
 #
 # Usage:
-#   add_central_logger_test(
+#   add_ttv_studio_test(
 #       NAME    test_database_repositories
 #       SOURCES test_database_repositories.cpp
 #       LIBS    data            # target name; multiple allowed
@@ -11,17 +11,17 @@
 # After the macro, the test is built as `cmake --build build --target test_<name>`
 # and registered with `add_test(NAME <name> COMMAND <name>)`.
 
-function(add_central_logger_test)
+function(add_ttv_studio_test)
     set(options)
     set(oneValueArgs NAME)
     set(multiValueArgs SOURCES LIBS)
     cmake_parse_arguments(_ACT "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     if(NOT _ACT_NAME)
-        message(FATAL_ERROR "add_central_logger_test: NAME is required")
+        message(FATAL_ERROR "add_ttv_studio_test: NAME is required")
     endif()
     if(NOT _ACT_SOURCES)
-        message(FATAL_ERROR "add_central_logger_test: SOURCES is required for ${_ACT_NAME}")
+        message(FATAL_ERROR "add_ttv_studio_test: SOURCES is required for ${_ACT_NAME}")
     endif()
 
     qt_add_executable(${_ACT_NAME} ${_ACT_SOURCES})

@@ -2,7 +2,7 @@
 
 #include "network/workers/HistoryWriterWorker.h"
 
-namespace CentralLogger::Network {
+namespace TtvStudio::Network {
 
 ModbusDataDispatcher::ModbusDataDispatcher(QObject *parent)
     : QObject(parent)
@@ -18,4 +18,4 @@ void ModbusDataDispatcher::onPollFinished(const PollSnapshot &snapshot)
     }
 }
 
-} // namespace CentralLogger::Network
+} // namespace TtvStudio::Network

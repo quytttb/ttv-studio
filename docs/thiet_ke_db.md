@@ -1,6 +1,6 @@
-# Thiết kế cơ sở dữ liệu — Central Logger
+# Thiết kế cơ sở dữ liệu — TTV Studio
 
-**Ứng dụng:** Central Logger (Qt 6, C++/QML)  
+**Ứng dụng:** TTV Studio (Qt 6, C++/QML)  
 **Lưu trữ:** SQLite trên máy người dùng  
 **Stack C++:** `QSqlDatabase` + driver `QSQLITE` (`Qt6::Sql`) — xem [`adr/0001-db.md`](adr/0001-db.md)  
 **Cập nhật:** 2026-05-24
@@ -9,14 +9,14 @@
 
 ## Tổng quan
 
-Central Logger quản lý nhiều **Data Logger** (Modbus TCP + REST). Dữ liệu được chia hai tầng:
+TTV Studio quản lý nhiều **Data Logger** (Modbus TCP + REST). Dữ liệu được chia hai tầng:
 
 | Tầng | Vai trò |
 |------|---------|
 | **SQLite** | Cấu hình trạm, catalog cảm biến, lịch sử đo, sự kiện, cài đặt app |
 | **RAM** | Trạng thái realtime (poll Modbus), form cấu hình tạm (REST), merge hiển thị bảng sensor |
 
-**Đường dẫn DB mặc định:** `~/.central-logger/central-logger.db` (có thể override bằng cấu hình app).
+**Đường dẫn DB mặc định:** `~/.ttv-studio/ttv-studio.db` (có thể override bằng cấu hình app).
 
 ---
 
@@ -335,7 +335,7 @@ flowchart TB
 
 Lần chạy app đầu tiên (file DB chưa tồn tại):
 
-1. Tạo file SQLite tại đường dẫn cấu hình (`~/.central-logger/central-logger.db`)
+1. Tạo file SQLite tại đường dẫn cấu hình (`~/.ttv-studio/ttv-studio.db`)
 2. Thực thi [`src/data/db/schema/001_initial.sql`](src/data/db/schema/001_initial.sql) — `CREATE TABLE`, index, seed `app_settings` (`id=1`)
 3. Gán `PRAGMA user_version = <kSchemaVersion>` (version hiện tại — xem `Database.cpp`)
 

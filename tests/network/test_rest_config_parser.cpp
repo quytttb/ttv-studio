@@ -3,7 +3,7 @@
 #include <QByteArray>
 #include <QTest>
 
-using namespace CentralLogger::Network;
+using namespace TtvStudio::Network;
 
 class TestRestConfigParser : public QObject
 {
@@ -195,7 +195,7 @@ void TestRestConfigParser::formatRestErrorMaps422MissingFieldsNotRevision()
     const QString msg = RestConfigParser::formatRestError(422, body);
     QVERIFY(!msg.contains(QStringLiteral("Configuration changed on device")));
     QCOMPARE(msg, QStringLiteral(
-        "Device rejected config request (missing fields). Update Central Logger."));
+        "Device rejected config request (missing fields). Update TTV Studio."));
 }
 
 void TestRestConfigParser::formatRestErrorMaps422MissingApiVersion()

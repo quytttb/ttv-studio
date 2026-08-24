@@ -7,7 +7,7 @@
 #include <QHash>
 #include <QVector>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 /// Per-logger latest merged sensor rows. Plain in-memory cache fed by
 /// `DashboardController::onSnapshotApplied`; consumed by
@@ -40,4 +40,4 @@ private:
     QHash<qint64, QVector<SensorLiveRow>> m_rows;
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

@@ -3,7 +3,7 @@
 #include <QSortFilterProxyModel>
 #include <QtQmlIntegration/qqmlintegration.h>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 /// Search proxy over LoggerListModel (DashboardController.loggers).
 /// Filters on stationCode, name, and host roles.  FE-004.
@@ -34,4 +34,4 @@ private:
     QString m_filterText;
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

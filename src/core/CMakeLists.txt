@@ -1,11 +1,11 @@
-# Core layer — C++ singletons/controllers exposed to QML as CentralLogger.Core
+# Core layer — C++ singletons/controllers exposed to QML as TtvStudio.Core
 # AppState + SettingsController only; no Modbus/REST yet (Task 4/5).
 #
 # qt_add_qml_module creates the backing target itself (STATIC) so we must
 # NOT pre-declare it with qt_add_library.
 
-qt_add_qml_module(central_logger_core
-    URI CentralLogger.Core
+qt_add_qml_module(ttv_studio_core
+    URI TtvStudio.Core
     VERSION ${QML_MODULE_VERSION}
     STATIC
     SOURCES
@@ -48,13 +48,13 @@ qt_add_qml_module(central_logger_core
         history/HistoryViewModel.cpp
 )
 
-target_include_directories(central_logger_core
+target_include_directories(ttv_studio_core
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/..
         ${CMAKE_CURRENT_SOURCE_DIR}/history
 )
 
-target_link_libraries(central_logger_core
+target_link_libraries(ttv_studio_core
     PUBLIC
         Qt6::Core
         Qt6::Concurrent
@@ -66,4 +66,4 @@ target_link_libraries(central_logger_core
         utils
 )
 
-add_library(central_logger::core ALIAS central_logger_core)
+add_library(ttv_studio::core ALIAS ttv_studio_core)

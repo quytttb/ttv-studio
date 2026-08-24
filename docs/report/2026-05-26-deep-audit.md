@@ -1,4 +1,4 @@
-# Báo cáo Deep Audit — Central Logger C++ (Qt 6.11)
+# Báo cáo Deep Audit — TTV Studio C++ (Qt 6.11)
 
 > **Source of truth** cho audit/bug backlog (2026-05-26). Các report cũ (`independent-audit`, `code-review`, `walkthrough`, prompt fix P0–P2) đã gỡ — chỉ giữ file này trong `docs/report/`.
 

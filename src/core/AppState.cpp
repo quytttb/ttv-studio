@@ -7,7 +7,7 @@
 #include <QJSEngine>
 #include <QQmlEngine>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 namespace {
 AppState *g_instance = nullptr;
@@ -32,7 +32,7 @@ AppState *AppState::create(QQmlEngine *, QJSEngine *)
 void AppState::refreshFromDatabase()
 {
     if (!m_db || !m_db->isOpen()) {
-        const QString text = QLatin1String(CentralLogger::Format::kErrDatabaseNotOpen);
+        const QString text = QLatin1String(TtvStudio::Format::kErrDatabaseNotOpen);
         if (m_statusText != text) {
             m_statusText = text;
             emit statusTextChanged();
@@ -100,4 +100,4 @@ void AppState::removeLogger(qint64 loggerId)
     refreshFromDatabase();
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

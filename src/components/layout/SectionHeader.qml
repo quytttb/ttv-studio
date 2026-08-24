@@ -4,7 +4,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import CentralLogger.Theme
+import TtvStudio.Theme
 import LoggerKit.Theme
 
 // Section title row — titleMedium + optional trailing actions slot.

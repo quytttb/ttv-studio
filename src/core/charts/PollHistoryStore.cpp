@@ -5,7 +5,7 @@
 #include "utils/SensorConstants.h"
 #include "utils/UiConstants.h"
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 void PollHistoryStore::append(const Network::PollSnapshot &snapshot)
 {
@@ -47,27 +47,27 @@ QVariantList PollHistoryStore::seriesForLogger(qint64 loggerId) const
         points.reserve(static_cast<QList<QVariant>::size_type>(deque.size()));
         for (const auto &pt : deque) {
             QVariantMap p;
-            p.insert(QLatin1String(CentralLogger::Ui::kChartX),
+            p.insert(QLatin1String(TtvStudio::Ui::kChartX),
                      static_cast<double>(pt.timestamp.toMSecsSinceEpoch()));
-            p.insert(QLatin1String(CentralLogger::Ui::kChartY), static_cast<double>(pt.value));
-            p.insert(QLatin1String(CentralLogger::Ui::kChartTime),
+            p.insert(QLatin1String(TtvStudio::Ui::kChartY), static_cast<double>(pt.value));
+            p.insert(QLatin1String(TtvStudio::Ui::kChartTime),
                      pt.timestamp.toLocalTime()
-                         .toString(QLatin1String(CentralLogger::Format::kTimeHhMmSs)));
+                         .toString(QLatin1String(TtvStudio::Format::kTimeHhMmSs)));
             points.append(p);
         }
 
         QVariantMap series;
-        series.insert(QLatin1String(CentralLogger::Ui::kChartEdgeSensorId), edgeSensorId);
+        series.insert(QLatin1String(TtvStudio::Ui::kChartEdgeSensorId), edgeSensorId);
         // L-21: prefer the catalog name stored via updateSensorNames();
         // fall back to "Sensor #N" when name is unavailable.
         const QString label = m_sensorNames.value(loggerId).value(
             edgeSensorId,
-            QString(QLatin1String(CentralLogger::Sensor::kFallbackNameFmt)).arg(edgeSensorId));
-        series.insert(QLatin1String(CentralLogger::Ui::kChartLabel), label);
-        series.insert(QLatin1String(CentralLogger::Ui::kChartDecimals),
+            QString(QLatin1String(TtvStudio::Sensor::kFallbackNameFmt)).arg(edgeSensorId));
+        series.insert(QLatin1String(TtvStudio::Ui::kChartLabel), label);
+        series.insert(QLatin1String(TtvStudio::Ui::kChartDecimals),
                       m_sensorDecimals.value(loggerId).value(
-                          edgeSensorId, CentralLogger::Defaults::kDecimalsDefault));
-        series.insert(QLatin1String(CentralLogger::Ui::kChartPoints), points);
+                          edgeSensorId, TtvStudio::Defaults::kDecimalsDefault));
+        series.insert(QLatin1String(TtvStudio::Ui::kChartPoints), points);
         result.append(series);
     }
 
@@ -112,4 +112,4 @@ int PollHistoryStore::pointCount(qint64 loggerId, int edgeSensorId) const
     return static_cast<int>(sensorIt->size());
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

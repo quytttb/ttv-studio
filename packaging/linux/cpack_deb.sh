@@ -6,9 +6,9 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 if [[ -n "${BUILD_DIR:-}" ]]; then
   BUILD="$BUILD_DIR"
 elif [[ -n "${RUNNER_TEMP:-}" ]]; then
-  BUILD="${RUNNER_TEMP}/central-logger-deb"
+  BUILD="${RUNNER_TEMP}/ttv-studio-deb"
 else
-  BUILD="/tmp/central-logger-deb-$$"
+  BUILD="/tmp/ttv-studio-deb-$$"
 fi
 DIST="${ROOT}/dist"
 rm -rf "$BUILD"
@@ -16,7 +16,7 @@ mkdir -p "$DIST"
 
 cmake_args=(
   -DCMAKE_BUILD_TYPE=Release
-  -DCMAKE_INSTALL_PREFIX=/opt/central-logger
+  -DCMAKE_INSTALL_PREFIX=/opt/ttv-studio
   -DCMAKE_INSTALL_LIBDIR=lib
 )
 if [[ -f "${ROOT}/.ci_qt_root" ]]; then

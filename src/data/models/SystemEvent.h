@@ -6,7 +6,7 @@
 #include <QString>
 #include <optional>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 struct SystemEvent
 {
@@ -18,4 +18,4 @@ struct SystemEvent
     QDateTime             createdAt;
 };
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

@@ -13,10 +13,10 @@
 
 #include <algorithm>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
-using CentralLogger::Defaults::kDecimalsMax;
-using CentralLogger::Defaults::kDecimalsMin;
+using TtvStudio::Defaults::kDecimalsMax;
+using TtvStudio::Defaults::kDecimalsMin;
 
 namespace {
 
@@ -127,10 +127,10 @@ qint64 SensorCatalogRepository::ensureExists(qint64 loggerId,
         "  (logger_id, edge_sensor_id, sensor_type, name, unit, active) "
         "VALUES (:logger_id, :edge_sensor_id, :sensor_type, '', '', 1) "
         "ON CONFLICT(logger_id, sensor_type, edge_sensor_id) DO UPDATE SET active = 1")
-        .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerSensor)));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLoggerId),      loggerId);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindEdgeSensorId), edgeSensorId);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindSensorType),    sensorType);
+        .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerSensor)));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLoggerId),      loggerId);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindEdgeSensorId), edgeSensorId);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindSensorType),    sensorType);
     if (!q.exec()) {
         setErr(errorOut, q, "SensorCatalogRepository::ensureExists");
         return 0;
@@ -170,26 +170,26 @@ bool SensorCatalogRepository::upsert(LoggerSensor &sensor, QString *errorOut)
         "  parent_edge_sensor_id = excluded.parent_edge_sensor_id,"
         "  di_type               = excluded.di_type,"
         "  all_parent_ids        = excluded.all_parent_ids")
-        .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerSensor)));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLoggerId),      sensor.loggerId);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindEdgeSensorId), sensor.edgeSensorId);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindSensorType),    sensor.sensorType);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindName),           sensor.name);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindUnit),           sensor.unit);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindMinThreshold),  optDouble(sensor.minThreshold));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindMaxThreshold),  optDouble(sensor.maxThreshold));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindDecimals),
+        .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerSensor)));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLoggerId),      sensor.loggerId);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindEdgeSensorId), sensor.edgeSensorId);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindSensorType),    sensor.sensorType);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindName),           sensor.name);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindUnit),           sensor.unit);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindMinThreshold),  optDouble(sensor.minThreshold));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindMaxThreshold),  optDouble(sensor.maxThreshold));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindDecimals),
                 std::clamp(sensor.decimals, kDecimalsMin, kDecimalsMax));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindActive),         sensor.active ? 1 : 0);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindParentEdgeSensorId),
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindActive),         sensor.active ? 1 : 0);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindParentEdgeSensorId),
                 sensor.parentEdgeSensorId.has_value()
                     ? QVariant(*sensor.parentEdgeSensorId)
                     : QVariant(QMetaType(QMetaType::Int)));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindDiType),
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindDiType),
                 sensor.diType.isEmpty() ? QVariant() : sensor.diType);
     {
         const QString ids = serializeParentIds(sensor.allParentIds);
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindAllParentIds), ids.isEmpty() ? QVariant() : ids);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindAllParentIds), ids.isEmpty() ? QVariant() : ids);
     }
 
     if (!q.exec()) {
@@ -217,10 +217,10 @@ SensorCatalogRepository::findByLoggerAndEdgeId(qint64 loggerId,
     q.prepare(QStringLiteral(
         "SELECT * FROM %1 "
         "WHERE logger_id = :lid AND edge_sensor_id = :eid AND sensor_type = :stype")
-        .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerSensor)));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLid),   loggerId);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindEid),   edgeSensorId);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindStype), sensorType);
+        .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerSensor)));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLid),   loggerId);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindEid),   edgeSensorId);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindStype), sensorType);
     if (!q.exec()) {
         setErr(errorOut, q);
         return std::nullopt;
@@ -238,8 +238,8 @@ SensorCatalogRepository::listByLoggerId(qint64 loggerId, QString *errorOut) cons
     QSqlQuery q(m_db);
     q.prepare(QStringLiteral(
         "SELECT * FROM %1 WHERE logger_id = :lid ORDER BY edge_sensor_id")
-        .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerSensor)));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLid), loggerId);
+        .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerSensor)));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLid), loggerId);
     if (!q.exec()) {
         setErr(errorOut, q);
         return result;
@@ -269,13 +269,13 @@ int SensorCatalogRepository::pruneOrphanSensors(qint64 loggerId,
             "UPDATE %1 SET active = 0 "
             "WHERE logger_id = :lid AND sensor_type = '%2' AND active != 0 "
             "AND edge_sensor_id NOT IN (%3)")
-            .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerSensor),
-                 CentralLogger::Sensor::kTypeAnalog,
+            .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerSensor),
+                 TtvStudio::Sensor::kTypeAnalog,
                  placeholders.join(QLatin1Char(',')));
 
         QSqlQuery q(m_db);
         q.prepare(sql);
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLid), loggerId);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLid), loggerId);
         for (int i = 0; i < liveAnalogEdgeIds.size(); ++i) {
             q.bindValue(QStringLiteral(":a%1").arg(i), liveAnalogEdgeIds.at(i));
         }
@@ -288,8 +288,8 @@ int SensorCatalogRepository::pruneOrphanSensors(qint64 loggerId,
 
     struct TypeLimit { const char *type; int max; };
     const TypeLimit digitalLimits[] = {
-        { CentralLogger::Sensor::kTypeDi, maxDi },
-        { CentralLogger::Sensor::kTypeDo, maxDo },
+        { TtvStudio::Sensor::kTypeDi, maxDi },
+        { TtvStudio::Sensor::kTypeDo, maxDo },
     };
 
     // C-8 fix: set active=0 instead of DELETE to preserve sensor_reading history.
@@ -302,10 +302,10 @@ int SensorCatalogRepository::pruneOrphanSensors(qint64 loggerId,
             "UPDATE %1 SET active = 0 "
             "WHERE logger_id = :lid AND sensor_type = :stype AND edge_sensor_id >= :max"
             "  AND active != 0")
-            .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableLoggerSensor)));
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindLid),   loggerId);
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindStype), QString::fromLatin1(tl.type));
-        q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindMax),   tl.max);
+            .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableLoggerSensor)));
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindLid),   loggerId);
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindStype), QString::fromLatin1(tl.type));
+        q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindMax),   tl.max);
         if (!q.exec()) {
             setErr(errorOut, q);
             return -1;
@@ -315,4 +315,4 @@ int SensorCatalogRepository::pruneOrphanSensors(qint64 loggerId,
     return totalDeactivated;
 }
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

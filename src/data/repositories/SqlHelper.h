@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QString>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 /// Maps a raw SQLite driver error into a user-facing message.
 ///
@@ -18,4 +18,4 @@ inline QString humanizeSqlError(const QString &raw, const QString &stationCode) 
   return raw;
 }
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

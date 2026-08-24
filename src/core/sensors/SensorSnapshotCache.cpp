@@ -2,7 +2,7 @@
 
 #include "core/sensors/SensorMerger.h"
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 void SensorSnapshotCache::apply(const Network::PollSnapshot &snapshot,
                                 const QVector<Data::LoggerSensor> &catalog)
@@ -20,4 +20,4 @@ QVector<SensorLiveRow> SensorSnapshotCache::rowsFor(qint64 loggerId) const
     return it != m_rows.constEnd() ? *it : QVector<SensorLiveRow>{};
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

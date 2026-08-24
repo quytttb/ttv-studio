@@ -4,7 +4,7 @@
 
 #include <QObject>
 
-namespace CentralLogger::Network {
+namespace TtvStudio::Network {
 
 class HistoryWriterWorker;
 
@@ -21,14 +21,14 @@ public:
     void setHistoryWriter(HistoryWriterWorker *worker) { m_historyWorker = worker; }
 
 public slots:
-    void onPollFinished(const CentralLogger::Network::PollSnapshot &snapshot);
+    void onPollFinished(const TtvStudio::Network::PollSnapshot &snapshot);
 
 signals:
     /// Main-thread live path: status, catalog sync, UI cache refresh.
-    void liveSnapshotReady(const CentralLogger::Network::PollSnapshot &snapshot);
+    void liveSnapshotReady(const TtvStudio::Network::PollSnapshot &snapshot);
 
 private:
     HistoryWriterWorker *m_historyWorker = nullptr;
 };
 
-} // namespace CentralLogger::Network
+} // namespace TtvStudio::Network

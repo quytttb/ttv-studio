@@ -1,4 +1,4 @@
-# Packages the Central Logger application with the Qt Installer Framework (QTIFW).
+# Packages the TTV Studio application with the Qt Installer Framework (QTIFW).
 # Supported OS: Windows (PowerShell)
 
 $ErrorActionPreference = "Stop"
@@ -32,8 +32,8 @@ Write-Host "==========================================================" -Foregro
 
 # ==================== ENVIRONMENT CHECKS ====================
 Write-Host "[1/6] Checking environment..." -ForegroundColor Yellow
-if (-not (Test-Path "$BUILD_RELEASE_DIR\bin\central_logger.exe")) {
-    Write-Error "Release binary central_logger.exe not found at: $BUILD_RELEASE_DIR\bin\central_logger.exe. Please build the Release target in Qt Creator first."
+if (-not (Test-Path "$BUILD_RELEASE_DIR\bin\ttv_studio.exe")) {
+    Write-Error "Release binary ttv_studio.exe not found at: $BUILD_RELEASE_DIR\bin\ttv_studio.exe. Please build the Release target in Qt Creator first."
 }
 if (-not (Test-Path "$QT_DIR\bin\windeployqt.exe")) {
     Write-Error "windeployqt.exe not found at: $QT_DIR\bin\windeployqt.exe"
@@ -54,7 +54,7 @@ if (Test-Path $TEMP_DEPLOY_DIR) {
 }
 New-Item -ItemType Directory -Path $TEMP_DEPLOY_DIR -Force | Out-Null
 
-$DATA_DIR = "$INSTALLER_BUILD_DIR\packages\com.central_logger.app\data"
+$DATA_DIR = "$INSTALLER_BUILD_DIR\packages\com.ttv_studio.app\data"
 if (Test-Path $DATA_DIR) {
     Remove-Item -Path $DATA_DIR -Recurse -Force
 }
@@ -63,11 +63,11 @@ Write-Host " Directories ready." -ForegroundColor Green
 
 # ==================== COPY EXE AND DEPLOY DEPENDENCIES ====================
 Write-Host "[3/6] Copying the main executable..." -ForegroundColor Yellow
-Copy-Item -Path "$BUILD_RELEASE_DIR\bin\central_logger.exe" -Destination "$TEMP_DEPLOY_DIR\"
-Write-Host " Copied central_logger.exe to the temp directory." -ForegroundColor Green
+Copy-Item -Path "$BUILD_RELEASE_DIR\bin\ttv_studio.exe" -Destination "$TEMP_DEPLOY_DIR\"
+Write-Host " Copied ttv_studio.exe to the temp directory." -ForegroundColor Green
 
 Write-Host "[4/6] Running windeployqt to collect DLL dependencies..." -ForegroundColor Yellow
-& "$QT_DIR\bin\windeployqt.exe" --qmldir "$PROJECT_ROOT\src" --compiler-runtime "$TEMP_DEPLOY_DIR\central_logger.exe"
+& "$QT_DIR\bin\windeployqt.exe" --qmldir "$PROJECT_ROOT\src" --compiler-runtime "$TEMP_DEPLOY_DIR\ttv_studio.exe"
 Write-Host " windeployqt finished successfully." -ForegroundColor Green
 
 # ==================== MOVE COLLECTED DATA INTO THE PACKAGE ====================
@@ -77,7 +77,7 @@ Write-Host " Copy finished." -ForegroundColor Green
 
 # ==================== BUILD THE SETUP INSTALLER ====================
 Write-Host "[6/6] Building the installer with binarycreator..." -ForegroundColor Yellow
-$OUTPUT_INSTALLER = "$INSTALLER_BUILD_DIR\CentralLoggerSetup.exe"
+$OUTPUT_INSTALLER = "$INSTALLER_BUILD_DIR\TtvStudioSetup.exe"
 if (Test-Path $OUTPUT_INSTALLER) {
     Remove-Item -Path $OUTPUT_INSTALLER -Force
 }

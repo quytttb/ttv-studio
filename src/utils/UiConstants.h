@@ -1,7 +1,7 @@
 #pragma once
 
 // Centralized UI strings shared by C++ models and QML delegates:
-// - QML role names (must match `import CentralLogger.Core`)
+// - QML role names (must match `import TtvStudio.Core`)
 // - chart data keys for QVariantMap payloads (Dashboard + LoggerDetail charts)
 // - theme values
 //
@@ -9,7 +9,7 @@
 // directly to `QStringLiteral`/`QLatin1StringView` (which require literal
 // arguments at the call site).
 
-namespace CentralLogger::Ui {
+namespace TtvStudio::Ui {
 
 // --- QML role names (must stay in lockstep with roleNames() in *.cpp) -------
 inline constexpr char kRoleDisplay[]           = "display";
@@ -82,4 +82,4 @@ inline constexpr char kThemeDark[]  = "dark";
 // --- Fallback logger/sensor display strings ----------------------------------
 inline constexpr char kDefaultTimezone[] = "Asia/Ho_Chi_Minh";
 
-} // namespace CentralLogger::Ui
+} // namespace TtvStudio::Ui

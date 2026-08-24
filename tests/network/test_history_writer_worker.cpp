@@ -2,7 +2,7 @@
 
 #include <QtTest>
 
-using CentralLogger::Network::HistoryWriterWorker;
+using TtvStudio::Network::HistoryWriterWorker;
 
 class TestHistoryWriterWorker : public QObject
 {
@@ -23,7 +23,7 @@ void TestHistoryWriterWorker::enqueue_isThreadSafeBeforeStart()
 {
     HistoryWriterWorker worker;
     worker.setFlushIntervalSeconds(15);
-    CentralLogger::Network::PollSnapshot snap;
+    TtvStudio::Network::PollSnapshot snap;
     snap.loggerId = 1;
     snap.success  = true;
     worker.enqueue(snap);

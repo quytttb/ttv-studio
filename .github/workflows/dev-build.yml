@@ -41,7 +41,7 @@ jobs:
       - name: Read version
         id: meta
         run: |
-          VERSION=$(grep -E '^project\(central_logger VERSION' CMakeLists.txt \
+          VERSION=$(grep -E '^project\(ttv_studio VERSION' CMakeLists.txt \
             | sed -E 's/.*VERSION ([0-9.]+).*/\1/')
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
@@ -79,8 +79,8 @@ jobs:
       - name: Upload .deb artifact
         uses: actions/upload-artifact@v7
         with:
-          name: central-logger-dev-deb-${{ github.sha }}
-          path: dist/central-logger-app_${{ steps.meta.outputs.version }}_amd64.deb
+          name: ttv-studio-dev-deb-${{ github.sha }}
+          path: dist/ttv-studio-app_${{ steps.meta.outputs.version }}_amd64.deb
           if-no-files-found: error
           retention-days: 7
 
@@ -141,7 +141,7 @@ jobs:
       - name: Upload installer artifact
         uses: actions/upload-artifact@v7
         with:
-          name: central-logger-dev-exe-${{ github.sha }}
-          path: packaging/windows/installer_build/CentralLoggerSetup.exe
+          name: ttv-studio-dev-exe-${{ github.sha }}
+          path: packaging/windows/installer_build/TtvStudioSetup.exe
           if-no-files-found: error
           retention-days: 7

@@ -13,7 +13,7 @@
 #include <QTemporaryDir>
 #include <QtTest>
 
-using namespace CentralLogger::Data;
+using namespace TtvStudio::Data;
 
 /// Audit M-10 / #14: two separate connections to the SAME WAL file must be
 /// able to write without one failing with SQLITE_BUSY. applyPerformancePragmas

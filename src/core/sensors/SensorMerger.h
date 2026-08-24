@@ -6,7 +6,7 @@
 
 #include <QVector>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 /// Pure merge: catalog rows + Modbus snapshot → display rows.
 /// No DB, no REST, no QML. See docs/thiet_ke_db.md §3.3 and
@@ -26,4 +26,4 @@ public:
         const QVector<Data::LoggerSensor> &catalog);
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

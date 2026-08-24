@@ -6,11 +6,11 @@
 #include <QTest>
 #include <QVector>
 
-using CentralLogger::Core::ChartQueryService;
-using CentralLogger::Core::ReadingBucketPoint;
-using CentralLogger::Data::Database;
-using CentralLogger::Data::SensorReading;
-using CentralLogger::Data::SensorReadingRepository;
+using TtvStudio::Core::ChartQueryService;
+using TtvStudio::Core::ReadingBucketPoint;
+using TtvStudio::Data::Database;
+using TtvStudio::Data::SensorReading;
+using TtvStudio::Data::SensorReadingRepository;
 
 class TestChartQueryService : public QObject
 {

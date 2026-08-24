@@ -5,7 +5,7 @@
 #include <QVector>
 #include <cstdint>
 
-namespace CentralLogger::Network {
+namespace TtvStudio::Network {
 
 /// One Modbus PDU planned for the current poll cycle.
 struct PollPdu
@@ -33,11 +33,11 @@ inline bool operator==(const PollPdu &a, const PollPdu &b)
 /// previous header for predictability).
 inline QVector<PollPdu> planPollReads(uint16_t na, uint16_t ndi, uint16_t ndo)
 {
-    using CentralLogger::Defaults::kMaxAnalogChunk;
+    using TtvStudio::Defaults::kMaxAnalogChunk;
     constexpr int kHeaderQty       = 10;
     constexpr int kAnalogStart     = 10;
     constexpr int kRegistersPerBlk = 8;
-    // kMaxAnalogChunk lives in CentralLogger::Defaults — 15 blocks × 8 regs = 120 ≤ 125-reg FC03 limit.
+    // kMaxAnalogChunk lives in TtvStudio::Defaults — 15 blocks × 8 regs = 120 ≤ 125-reg FC03 limit.
 
     QVector<PollPdu> out;
     out.append(PollPdu{ PollPdu::Function::Fc03, 0, kHeaderQty });
@@ -64,4 +64,4 @@ inline QVector<PollPdu> planPollReads(uint16_t na, uint16_t ndi, uint16_t ndo)
     return out;
 }
 
-} // namespace CentralLogger::Network
+} // namespace TtvStudio::Network

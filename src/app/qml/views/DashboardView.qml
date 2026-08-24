@@ -4,9 +4,9 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import CentralLogger.Core
-import CentralLogger.Components
-import CentralLogger.Theme
+import TtvStudio.Core
+import TtvStudio.Components
+import TtvStudio.Theme
 import LoggerKit.Theme
 import LoggerKit.Components
 

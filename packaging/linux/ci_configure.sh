@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Configure central_logger for CI — must use aqt Qt 6.11, not runner Qt 6.10.
+# Configure ttv_studio for CI — must use aqt Qt 6.11, not runner Qt 6.10.
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../.." && pwd)"

@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 
-import CentralLogger.Theme
+import TtvStudio.Theme
 import LoggerKit.Components
 
 /// Sensor table Status column: operational chip + active attach-DI type chips.

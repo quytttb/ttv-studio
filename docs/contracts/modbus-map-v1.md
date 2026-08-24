@@ -1,6 +1,6 @@
 # Modbus TCP Map v1 (frozen)
 
-Hợp đồng đọc giữa **Central Logger** và **Data Logger** edge firmware.
+Hợp đồng đọc giữa **TTV Studio** và **Data Logger** edge firmware.
 
 | Thuộc tính | Giá trị |
 |------------|---------|
@@ -196,4 +196,4 @@ Thứ tự **bắt buộc** trong cùng `poll_interval_s`:
 
 ## Reference (legacy Python)
 
-`central-logger-app`: holding-only + REST cho DI/DO — **không** port sang repo C++ v1; tuân map v1 ở trên.
+`ttv-studio-app`: holding-only + REST cho DI/DO — **không** port sang repo C++ v1; tuân map v1 ở trên.

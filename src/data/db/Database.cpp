@@ -13,15 +13,15 @@
 #include <QSqlQuery>
 #include <QStringList>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 namespace {
 
-using CentralLogger::Defaults::kSqliteBusyTimeoutMs;
-using CentralLogger::Defaults::kSqliteMmapSize;
-using CentralLogger::Version::kSchemaVersion;
+using TtvStudio::Defaults::kSqliteBusyTimeoutMs;
+using TtvStudio::Defaults::kSqliteMmapSize;
+using TtvStudio::Version::kSchemaVersion;
 
-constexpr auto kSchemaResource = CentralLogger::Data::Db::kSchemaResource;
+constexpr auto kSchemaResource = TtvStudio::Data::Db::kSchemaResource;
 
 QString readResourceSql(const char *resourcePath, QString *errorOut)
 {
@@ -84,7 +84,7 @@ bool ensureAutoVacuumIncremental(QSqlDatabase db, QString *errorOut)
 
 int Database::schemaVersion()
 {
-    return CentralLogger::Version::kSchemaVersion;
+    return TtvStudio::Version::kSchemaVersion;
 }
 
 Database::~Database()
@@ -95,17 +95,17 @@ Database::~Database()
 QString Database::defaultPath()
 {
     // Place the database alongside the log file (AppDataLocation) so users
-    // only have to look in one place for Central Logger's per-user data.
-    // On Linux this is ~/.local/share/4M Technologies/Central Logger/
+    // only have to look in one place for TTV Studio's per-user data.
+    // On Linux this is ~/.local/share/quytttb/TTV Studio/
     // (matching main.cpp's log file path); on Windows it is %APPDATA%.
     const QString appData =
         QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     if (appData.isEmpty()) {
         // Fallback for restricted environments without AppDataLocation.
         const QString home = QDir::homePath();
-        return QDir(home).filePath(QStringLiteral(".central-logger/central-logger.db"));
+        return QDir(home).filePath(QStringLiteral(".ttv-studio/ttv-studio.db"));
     }
-    return QDir(appData).filePath(QStringLiteral("central-logger.db"));
+    return QDir(appData).filePath(QStringLiteral("ttv-studio.db"));
 }
 
 bool Database::open(const QString &connectionName,
@@ -127,7 +127,7 @@ bool Database::open(const QString &connectionName,
     const bool freshBefore = !QFileInfo::exists(databasePath)
                              || databasePath == memoryPath();
 
-    m_db = QSqlDatabase::addDatabase(QLatin1String(CentralLogger::Data::Db::kSqliteDriver), connectionName);
+    m_db = QSqlDatabase::addDatabase(QLatin1String(TtvStudio::Data::Db::kSqliteDriver), connectionName);
     m_db.setDatabaseName(databasePath);
     if (!m_db.open()) {
         if (errorOut) {
@@ -243,7 +243,7 @@ bool Database::isFreshDatabase() const
     QSqlQuery query(m_db);
     if (!query.exec(QStringLiteral(
             "SELECT name FROM sqlite_master WHERE type='table' AND name='%1'")
-            .arg(QString::fromLatin1(CentralLogger::Data::Db::kTableAppSettings)))) {
+            .arg(QString::fromLatin1(TtvStudio::Data::Db::kTableAppSettings)))) {
         return true;
     }
     return !query.next();
@@ -313,7 +313,7 @@ bool Database::reopenConnection(const QString &databasePath,
                                 QString *errorOut)
 {
     m_connectionName = connectionName;
-    m_db = QSqlDatabase::addDatabase(QLatin1String(CentralLogger::Data::Db::kSqliteDriver), connectionName);
+    m_db = QSqlDatabase::addDatabase(QLatin1String(TtvStudio::Data::Db::kSqliteDriver), connectionName);
     m_db.setDatabaseName(databasePath);
     if (!m_db.open()) {
         if (errorOut) {
@@ -410,4 +410,4 @@ bool Database::applyInitialSchema(QString *errorOut)
     return true;
 }
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

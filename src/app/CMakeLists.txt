@@ -1,5 +1,5 @@
-# Desktop shell — QML module URI CentralLogger.App.
-# Binary "central_logger", target "app" (so the OUTPUT_NAME does not collide
+# Desktop shell — QML module URI TtvStudio.App.
+# Binary "ttv_studio", target "app" (so the OUTPUT_NAME does not collide
 # with the QML module folder).
 
 qt_add_executable(app
@@ -7,7 +7,7 @@ qt_add_executable(app
 )
 
 qt_add_qml_module(app
-    URI CentralLogger.App
+    URI TtvStudio.App
     VERSION ${QML_MODULE_VERSION}
     QML_FILES
         qml/Main.qml
@@ -20,9 +20,9 @@ qt_add_qml_module(app
     DEPENDENCIES
         LoggerKit.Theme
         LoggerKit.Components
-        central_logger_core
-        central_logger_theme
-        central_logger_components
+        ttv_studio_core
+        ttv_studio_theme
+        ttv_studio_components
 )
 
 # ThemeSetup.h now ships with the shared kit (LoggerKit.Theme).
@@ -31,7 +31,7 @@ target_include_directories(app PRIVATE
 )
 
 set_target_properties(app PROPERTIES
-    OUTPUT_NAME central_logger
+    OUTPUT_NAME ttv_studio
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -47,9 +47,9 @@ target_link_libraries(app
         Qt6::SerialBus
         Qt6::Graphs
         Qt6::Svg
-        central_logger_coreplugin
-        central_logger_componentsplugin
-        central_logger_themeplugin
+        ttv_studio_coreplugin
+        ttv_studio_componentsplugin
+        ttv_studio_themeplugin
         logger_ui_kit_themeplugin
         logger_ui_kit_componentsplugin
         LoggerKit::theme_setup
@@ -83,17 +83,17 @@ install(SCRIPT ${deploy_script})
 
 # System-integration files use absolute destinations so they land under
 # /usr/share and /usr/bin regardless of CPACK_PACKAGING_INSTALL_PREFIX.
-# This keeps the Qt bundle fully isolated in /opt/central-logger while still
+# This keeps the Qt bundle fully isolated in /opt/ttv-studio while still
 # giving the desktop environment and PATH the hooks they need.
-install(PROGRAMS ${CMAKE_SOURCE_DIR}/packaging/linux/central-logger
+install(PROGRAMS ${CMAKE_SOURCE_DIR}/packaging/linux/ttv-studio
     DESTINATION /usr/bin
 )
 
-install(FILES ${CMAKE_SOURCE_DIR}/packaging/linux/central-logger.desktop
+install(FILES ${CMAKE_SOURCE_DIR}/packaging/linux/ttv-studio.desktop
     DESTINATION /usr/share/applications
 )
 
 install(FILES ${CMAKE_SOURCE_DIR}/resources/icons/brand_4m_technologies_blue.svg
     DESTINATION /usr/share/icons/hicolor/scalable/apps
-    RENAME central-logger.svg
+    RENAME ttv-studio.svg
 )

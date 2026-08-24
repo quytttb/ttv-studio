@@ -3,7 +3,7 @@
 #include <QMetaType>
 #include <QTimeZone>
 
-namespace CentralLogger::Utils {
+namespace TtvStudio::Utils {
 
 QDateTime parseUtc(const QString &iso)
 {
@@ -30,4 +30,4 @@ QVariant isoUtcOrNull(const QDateTime &dt)
     return dt.isValid() ? QVariant(isoUtc(dt)) : QVariant(QMetaType(QMetaType::QString));
 }
 
-} // namespace CentralLogger::Utils
+} // namespace TtvStudio::Utils

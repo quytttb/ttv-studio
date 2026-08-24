@@ -6,7 +6,7 @@
 #include <QSqlQuery>
 #include <QTest>
 
-using namespace CentralLogger::Data;
+using namespace TtvStudio::Data;
 
 namespace {
 

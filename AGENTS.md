@@ -1,4 +1,4 @@
-# Agent instructions — Central Logger C++
+# Agent instructions — TTV Studio C++
 
 ## Context
 
@@ -18,7 +18,7 @@ Greenfield **Qt 6 + C++ + QML** desktop app. Behavior tham khảo app PySide6 c�
 
 ## Tham khảo repo cũ (tuỳ chọn — không phải SoT)
 
-[`docs/THAM_KHAO_REPO_CU/phase1/`](docs/THAM_KHAO_REPO_CU/phase1/) — khảo sát app `central-logger-app` (chỉ markdown, **không** port code):
+[`docs/THAM_KHAO_REPO_CU/phase1/`](docs/THAM_KHAO_REPO_CU/phase1/) — khảo sát app `ttv-studio-app` (chỉ markdown, **không** port code):
 
 | File | Mục đích |
 |------|----------|
@@ -45,11 +45,11 @@ Do not change edge API without explicit user approval.
 
 - Token M3 + component generic nằm trong **`LoggerKit.Theme` / `LoggerKit.Components`**
   (git submodule, static QML modules). **Cấm** copy/duplicate component về local.
-- App chỉ giữ component đặc thù trong `CentralLogger.Components` (rail/topbar,
+- App chỉ giữ component đặc thù trong `TtvStudio.Components` (rail/topbar,
   StatCard, SensorStatusChip wrapper, LoggerFormDialog…) + singleton domain
-  `OperationalStatus`/`AttachDiType` trong `CentralLogger.Theme`.
+  `OperationalStatus`/`AttachDiType` trong `TtvStudio.Theme`.
 - Theme mode bind 1 lần trong `Main.qml`: `ThemeMode.mode = Qt.binding(() => SettingsController.theme)`.
-- Đổi API của kit ⇒ update cả central_logger và data-logger (commit kit trước, bump submodule pointer sau).
+- Đổi API của kit ⇒ update cả ttv_studio và data-logger (commit kit trước, bump submodule pointer sau).
 - UI guideline: [`docs/ui/material3-component-guidelines.md`](docs/ui/material3-component-guidelines.md).
 
 ## Architecture rules
@@ -87,7 +87,7 @@ Write **new** Qt Test / CTest in this repo — do not reference legacy pytest.
 - Qt 6.11 (`qt_standard_project_setup(REQUIRES 6.11)`)
 - `find_package` Qt6 components: Quick, Qml, Sql, Network, **SerialBus** (Modbus FC01/02/03), **Graphs** (thay Qt Charts — deprecated 6.11)
 - Enable `CMAKE_AUTOMOC`, `CMAKE_AUTORCC` when adding C++ types
-- CMake target `app` in `src/app` (binary `central_logger`); static lib `data` in `src/data` (alias `central_logger::data`)
+- CMake target `app` in `src/app` (binary `ttv_studio`); static lib `data` in `src/data` (alias `ttv_studio::data`)
 - Bump `QT_VERSION_REQUIRED` / `QML_MODULE_VERSION` in root `CMakeLists.txt` — they propagate to `find_package`, `qt_standard_project_setup`, and every `qt_add_qml_module(VERSION ...)`. Patch versions in packaging scripts must match.
 
 ## Constants — single source of truth
@@ -98,15 +98,15 @@ hardcode in source.
 
 | Header | What |
 |--------|------|
-| `utils/AppConstants.h`     | Operational defaults — `CentralLogger::Defaults::*` (ports, intervals, batch sizes, decimals, log rotation, retention) |
-| `utils/Version.h`          | Protocol / schema versions — `CentralLogger::Version::*` (DB schema, REST API, Modbus map) |
-| `utils/DbConstants.h`      | SQL table + bind-param names — `CentralLogger::Data::Db::*` |
-| `utils/UiConstants.h`      | QML role names + chart payload keys — `CentralLogger::Ui::*` |
-| `utils/FormatConstants.h`  | Date/time formats + reusable error messages — `CentralLogger::Format::*` |
-| `utils/SensorConstants.h`  | Sensor / status / alarm type / event level strings — `CentralLogger::Sensor::*` |
+| `utils/AppConstants.h`     | Operational defaults — `TtvStudio::Defaults::*` (ports, intervals, batch sizes, decimals, log rotation, retention) |
+| `utils/Version.h`          | Protocol / schema versions — `TtvStudio::Version::*` (DB schema, REST API, Modbus map) |
+| `utils/DbConstants.h`      | SQL table + bind-param names — `TtvStudio::Data::Db::*` |
+| `utils/UiConstants.h`      | QML role names + chart payload keys — `TtvStudio::Ui::*` |
+| `utils/FormatConstants.h`  | Date/time formats + reusable error messages — `TtvStudio::Format::*` |
+| `utils/SensorConstants.h`  | Sensor / status / alarm type / event level strings — `TtvStudio::Sensor::*` |
 
 QML-side defaults come from the `AppDefaults` QML singleton in
 `src/core/AppDefaults.{h,cpp}` (auto-generated, registered as
-`CentralLogger.Core.AppDefaults`); QML code should reference
+`TtvStudio.Core.AppDefaults`); QML code should reference
 `AppDefaults.modbusPort`, `AppDefaults.chartDisplayPointCount`, etc.
 instead of hardcoded literals.

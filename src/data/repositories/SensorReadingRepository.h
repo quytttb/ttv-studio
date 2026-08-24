@@ -9,7 +9,7 @@
 #include <QString>
 #include <QVector>
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 
 class SensorReadingRepository
 {
@@ -63,4 +63,4 @@ private:
     QSqlDatabase m_db;
 };
 
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data

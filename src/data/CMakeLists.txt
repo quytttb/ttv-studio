@@ -33,7 +33,7 @@ qt_add_library(data STATIC
     ${DATA_REPOSITORY_FILES}
 )
 
-add_library(central_logger::data ALIAS data)
+add_library(ttv_studio::data ALIAS data)
 
 # Keep db/, models/, repositories/ as sibling folders in Qt Creator / VS.
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}

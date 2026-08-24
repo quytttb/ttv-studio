@@ -10,12 +10,12 @@
 #include <QVariant>
 #include <QtDebug>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 QVector<ReadingBucketPoint> ChartQueryService::readingCountsLast24h(int bucketMinutes, QTimeZone tz) const
 {
     QVector<ReadingBucketPoint> result;
-    if (bucketMinutes < 1) bucketMinutes = CentralLogger::Defaults::kChartDefaultBucketMin;
+    if (bucketMinutes < 1) bucketMinutes = TtvStudio::Defaults::kChartDefaultBucketMin;
     if (!tz.isValid()) tz = QTimeZone::systemTimeZone();
 
     // recorded_at is stored as ISO-8601 UTC (see SensorReadingRepository).
@@ -23,7 +23,7 @@ QVector<ReadingBucketPoint> ChartQueryService::readingCountsLast24h(int bucketMi
     // "YYYY-MM-DD HH:MM:SS" and breaks lexicographic filtering.
     const QString cutoffUtc =
         QDateTime::currentDateTimeUtc()
-            .addSecs(-24 * CentralLogger::Defaults::kSecondsPerHour)
+            .addSecs(-24 * TtvStudio::Defaults::kSecondsPerHour)
             .toString(Qt::ISODateWithMs);
     const int bucketSec = bucketMinutes * 60;
 
@@ -47,9 +47,9 @@ QVector<ReadingBucketPoint> ChartQueryService::readingCountsLast24h(int bucketMi
         "GROUP BY (%1 / :bucket) "
         "ORDER BY (%1 / :bucket) ASC")
         .arg(QString::fromLatin1(kNorm),
-             QString::fromLatin1(CentralLogger::Data::Db::kTableSensorReading)));
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindBucket), bucketSec);
-    q.bindValue(QLatin1String(CentralLogger::Data::Db::kBindCutoff), cutoffUtc);
+             QString::fromLatin1(TtvStudio::Data::Db::kTableSensorReading)));
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindBucket), bucketSec);
+    q.bindValue(QLatin1String(TtvStudio::Data::Db::kBindCutoff), cutoffUtc);
 
     if (!q.exec()) {
         qWarning() << "ChartQueryService::readingCountsLast24h SQL error:"
@@ -61,9 +61,9 @@ QVector<ReadingBucketPoint> ChartQueryService::readingCountsLast24h(int bucketMi
         ReadingBucketPoint pt;
         const qint64 bucketTs = q.value(0).toLongLong();
         // Convert UTC unix timestamp to the target timezone for display.
-        pt.bucketMs = bucketTs * CentralLogger::Defaults::kMsPerSecond;
+        pt.bucketMs = bucketTs * TtvStudio::Defaults::kMsPerSecond;
         pt.label = QDateTime::fromSecsSinceEpoch(bucketTs, tz)
-                       .toString(QLatin1String(CentralLogger::Format::kTimeHhMm));
+                       .toString(QLatin1String(TtvStudio::Format::kTimeHhMm));
         pt.count = q.value(1).toInt();
         result.append(pt);
     }
@@ -71,4 +71,4 @@ QVector<ReadingBucketPoint> ChartQueryService::readingCountsLast24h(int bucketMi
     return result;
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

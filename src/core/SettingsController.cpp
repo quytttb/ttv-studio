@@ -11,7 +11,7 @@
 #include <QTimeZone>
 #include <QtGlobal>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 namespace {
 SettingsController *g_instance = nullptr;
@@ -76,7 +76,7 @@ void SettingsController::load()
     setError(QString{});
 
     if (!m_db || !m_db->isOpen()) {
-        setError(QLatin1String(CentralLogger::Format::kErrDatabaseNotOpen));
+        setError(QLatin1String(TtvStudio::Format::kErrDatabaseNotOpen));
         return;
     }
     Data::SettingsRepository repo(m_db->connection());
@@ -98,7 +98,7 @@ void SettingsController::load()
 bool SettingsController::save()
 {
     if (!m_db || !m_db->isOpen()) {
-        setError(QLatin1String(CentralLogger::Format::kErrDatabaseNotOpen));
+        setError(QLatin1String(TtvStudio::Format::kErrDatabaseNotOpen));
         return false;
     }
     Data::SettingsRepository repo(m_db->connection());
@@ -123,7 +123,7 @@ QString SettingsController::formatTimestamp(const QDateTime &dt) const
     if (!dt.isValid()) return QString();
     QTimeZone tz(m_settings.systemTimezone.toUtf8());
     const QDateTime local = tz.isValid() ? dt.toTimeZone(tz) : dt.toLocalTime();
-    return local.toString(QLatin1String(CentralLogger::Format::kDateYyyyMmDdHms));
+    return local.toString(QLatin1String(TtvStudio::Format::kDateYyyyMmDdHms));
 }
 
 void SettingsController::setError(const QString &message)
@@ -136,4 +136,4 @@ void SettingsController::setError(const QString &message)
     }
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

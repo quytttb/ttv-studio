@@ -1,12 +1,12 @@
-# Packaging — Central Logger (Qt 6 C++)
+# Packaging — TTV Studio (Qt 6 C++)
 
-Version lấy từ `project(central_logger VERSION …)` trong [`CMakeLists.txt`](../CMakeLists.txt).  
+Version lấy từ `project(ttv_studio VERSION …)` trong [`CMakeLists.txt`](../CMakeLists.txt).  
 CPack DEB: [`cmake/CPackOptions.cmake`](../cmake/CPackOptions.cmake).
 
 | Thư mục | Script chính | Artifact |
 |---------|----------------|----------|
-| [`linux/`](linux/) | `cpack_deb.sh`, `deploy.sh` | `dist/central-logger-app_<ver>_amd64.deb` |
-| [`windows/`](windows/) | `build_installer.ps1`, `deploy.ps1` | `installer_build/CentralLoggerSetup.exe` |
+| [`linux/`](linux/) | `cpack_deb.sh`, `deploy.sh` | `dist/ttv-studio-app_<ver>_amd64.deb` |
+| [`windows/`](windows/) | `build_installer.ps1`, `deploy.ps1` | `installer_build/TtvStudioSetup.exe` |
 
 **CI:** push `main` → `dev-build.yml` (artifact dev); tag `v*.*.*` → `build-release.yml` (GitHub Release).
 
@@ -48,54 +48,54 @@ Re-build khi tag đã có (không đổi git): GitHub → Actions → **Build Re
 ```bash
 export CMAKE_PREFIX_PATH=~/Qt/6.11.2/gcc_64
 ./packaging/linux/cpack_deb.sh
-# → dist/central-logger-app_<version>_amd64.deb
+# → dist/ttv-studio-app_<version>_amd64.deb
 ```
 
 Script: Release CMake → `cpack -G DEB` (Qt `qt_generate_deploy_app_script` khi `cmake --install` trong CPack).  
-Desktop entry: `linux/central-logger.desktop` + icon SVG từ `resources/icons/`.
+Desktop entry: `linux/ttv-studio.desktop` + icon SVG từ `resources/icons/`.
 
 ### Cài đặt
 
 ```bash
-sudo apt install ./dist/central-logger-app_*_amd64.deb
+sudo apt install ./dist/ttv-studio-app_*_amd64.deb
 ```
 
-Chạy: `central_logger` hoặc launcher **Central Logger** trong menu ứng dụng.
+Chạy: `ttv_studio` hoặc launcher **TTV Studio** trong menu ứng dụng.
 
 ---
 
 ## Windows — QTIFW installer
 
-Đóng gói **Qt Installer Framework** (offline `CentralLoggerSetup.exe`), ~100MB+, chạy trên Windows sạch không cần Qt.
+Đóng gói **Qt Installer Framework** (offline `TtvStudioSetup.exe`), ~100MB+, chạy trên Windows sạch không cần Qt.
 
 ### Cấu trúc `windows/installer_build/`
 
 ```text
 packaging/windows/installer_build/
 ├── config/
-│   ├── config.xml      # Tên app, publisher 4M Technologies, TargetDir, wizard
+│   ├── config.xml      # Tên app, publisher quytttb, TargetDir, wizard
 │   ├── style.qss       # Giao diện installer (dark + Teal)
 │   ├── logo.png
 │   ├── window_icon.png
 │   └── app_icon.ico
-├── packages/com.central_logger.app/
+├── packages/com.ttv_studio.app/
 │   ├── meta/package.xml, installscript.qs   # Shortcuts Desktop / Start Menu
 │   └── data/                                 # Nội dung sau windeployqt (build tạo)
-└── CentralLoggerSetup.exe                    # Đầu ra
+└── TtvStudioSetup.exe                    # Đầu ra
 ```
 
 Logo/icon sinh từ `resources/icons/brand_4m_technologies_blue.svg` qua [`windows/convert_tool/`](windows/convert_tool/).
 
 ### Build local
 
-1. Build **Release** trong Qt Creator (target `app` → `central_logger.exe`).
+1. Build **Release** trong Qt Creator (target `app` → `ttv_studio.exe`).
 2. Từ root repo:
 
 ```powershell
 .\packaging\windows\build_installer.ps1
 ```
 
-Script: kiểm tra `central_logger.exe` + `windeployqt` + `binarycreator` → deploy QML/DLL vào `installer_build/.../data` → tạo `CentralLoggerSetup.exe`.
+Script: kiểm tra `ttv_studio.exe` + `windeployqt` + `binarycreator` → deploy QML/DLL vào `installer_build/.../data` → tạo `TtvStudioSetup.exe`.
 
 **CI:** `CL_PROJECT_ROOT`, `CL_QT_DIR`, `CL_BUILD_DIR`, `CL_MINGW_DIR`; `CL_IFW_DIR` tuỳ chọn (tự tìm `binarycreator.exe` dưới `IQTA_TOOLS`).
 
@@ -103,8 +103,8 @@ Mặc định exe Release: `build/Desktop_Qt_6_11_1_MinGW_64_bit-Release/bin/` h
 
 ### Cài đặt cho người dùng
 
-1. Chạy `CentralLoggerSetup.exe`.
-2. Thư mục mặc định thường `C:\CentralLogger`.
+1. Chạy `TtvStudioSetup.exe`.
+2. Thư mục mặc định thường `C:\TtvStudio`.
 3. Installer tạo shortcut Desktop và Start Menu.
 
 ---

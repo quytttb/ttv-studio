@@ -8,11 +8,11 @@
 class QNetworkAccessManager;
 class QNetworkReply;
 
-namespace CentralLogger::Data {
+namespace TtvStudio::Data {
 class Database;
-} // namespace CentralLogger::Data
+} // namespace TtvStudio::Data
 
-namespace CentralLogger::Network {
+namespace TtvStudio::Network {
 
 /// Talks to the per-logger REST API per docs/contracts/rest-config-contract-v1.md.
 /// One instance lives on the main thread (single QNetworkAccessManager).
@@ -101,4 +101,4 @@ private:
     QSet<qint64> m_reportInFlight; // per-logger; allows concurrent downloads to different loggers
 };
 
-} // namespace CentralLogger::Network
+} // namespace TtvStudio::Network

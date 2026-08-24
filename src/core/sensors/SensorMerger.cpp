@@ -9,18 +9,18 @@
 #include <QSet>
 #include <algorithm>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
-using CentralLogger::Utils::AttachDiTypeHelper;
+using TtvStudio::Utils::AttachDiTypeHelper;
 
 namespace {
 
-using CentralLogger::Defaults::kDecimalsMax;
-using CentralLogger::Defaults::kDecimalsMin;
-using CentralLogger::Sensor::kTypeAnalog;
-using CentralLogger::Sensor::kTypeDi;
-using CentralLogger::Sensor::kTypeDo;
-using CentralLogger::Sensor::kTypeUnknown;
+using TtvStudio::Defaults::kDecimalsMax;
+using TtvStudio::Defaults::kDecimalsMin;
+using TtvStudio::Sensor::kTypeAnalog;
+using TtvStudio::Sensor::kTypeDi;
+using TtvStudio::Sensor::kTypeDo;
+using TtvStudio::Sensor::kTypeUnknown;
 
 QString formatAnalog(float value, int decimals) {
   // Per-sensor precision (synced from edge `decimals`, default 4). Keeps the
@@ -32,10 +32,10 @@ QString formatAnalog(float value, int decimals) {
 
 QString fallbackName(const QString &sensorType, int edgeSensorId) {
   if (!sensorType.isEmpty() && sensorType != kTypeUnknown) {
-    return QString(QLatin1String(CentralLogger::Sensor::kFallbackTypeFmt))
+    return QString(QLatin1String(TtvStudio::Sensor::kFallbackTypeFmt))
         .arg(sensorType).arg(edgeSensorId);
   }
-  return QString(QLatin1String(CentralLogger::Sensor::kFallbackNameFmt)).arg(edgeSensorId);
+  return QString(QLatin1String(TtvStudio::Sensor::kFallbackNameFmt)).arg(edgeSensorId);
 }
 
 struct ThresholdBreach {
@@ -69,16 +69,16 @@ QString computeAlarmType(double value, bool alarmBit,
   const ThresholdBreach breach =
       checkThresholdBreach(value, minThreshold, maxThreshold);
   if (breach.min && breach.max) {
-    return QLatin1String(CentralLogger::Sensor::kAlarmMinMax);
+    return QLatin1String(TtvStudio::Sensor::kAlarmMinMax);
   }
   if (breach.min) {
-    return QLatin1String(CentralLogger::Sensor::kAlarmMin);
+    return QLatin1String(TtvStudio::Sensor::kAlarmMin);
   }
   if (breach.max) {
-    return QLatin1String(CentralLogger::Sensor::kAlarmMax);
+    return QLatin1String(TtvStudio::Sensor::kAlarmMax);
   }
   if (alarmBit) {
-    return QLatin1String(CentralLogger::Sensor::kAlarmDevice);
+    return QLatin1String(TtvStudio::Sensor::kAlarmDevice);
   }
   return {};
 }
@@ -101,7 +101,7 @@ QString catalogNameForAttachCode(const QVector<Data::LoggerSensor> &catalog,
       continue;
     }
     const QString childCode = AttachDiTypeHelper::normalizeCode(
-        child.diType.isEmpty() ? QLatin1String(CentralLogger::Sensor::kAttachCodeMonitoring)
+        child.diType.isEmpty() ? QLatin1String(TtvStudio::Sensor::kAttachCodeMonitoring)
                                : child.diType);
     if (childCode == code) {
       return child.name;
@@ -143,7 +143,7 @@ QStringList resolveAttachDiCodes(const QVector<Data::LoggerSensor> &catalog,
     }
 
     const QString code = AttachDiTypeHelper::normalizeCode(
-        child.diType.isEmpty() ? QLatin1String(CentralLogger::Sensor::kAttachCodeMonitoring)
+        child.diType.isEmpty() ? QLatin1String(TtvStudio::Sensor::kAttachCodeMonitoring)
                                : child.diType);
     if (!AttachDiTypeHelper::isAttachActiveCode(code) || seen.contains(code)) {
       continue;
@@ -176,17 +176,17 @@ void applyAnalogStatus(SensorLiveRow &row, bool active, bool rtuConnected,
   row.alarmType.clear();
 
   if (!active) {
-    row.displayStatus = QLatin1String(CentralLogger::Sensor::kStatusWait);
+    row.displayStatus = QLatin1String(TtvStudio::Sensor::kStatusWait);
     return;
   }
   // Edge sets sensor ERR on connection_lost while polling; HR1=0 during TCP
   // warm-up is not the same as RTU disconnected.
   if (!valid || (!rtuConnected && pollingActive)) {
-    row.displayStatus = QLatin1String(CentralLogger::Sensor::kStatusErr);
+    row.displayStatus = QLatin1String(TtvStudio::Sensor::kStatusErr);
     return;
   }
   if (stale) {
-    row.displayStatus = QLatin1String(CentralLogger::Sensor::kStatusStale);
+    row.displayStatus = QLatin1String(TtvStudio::Sensor::kStatusStale);
     return;
   }
 
@@ -195,10 +195,10 @@ void applyAnalogStatus(SensorLiveRow &row, bool active, bool rtuConnected,
   if (alarm) {
     row.alarmType =
         computeAlarmType(value, alarmBit, minThreshold, maxThreshold);
-    row.displayStatus = QLatin1String(CentralLogger::Sensor::kStatusAlarm);
+    row.displayStatus = QLatin1String(TtvStudio::Sensor::kStatusAlarm);
     return;
   }
-  row.displayStatus = QLatin1String(CentralLogger::Sensor::kStatusOk);
+  row.displayStatus = QLatin1String(TtvStudio::Sensor::kStatusOk);
 }
 
 } // namespace
@@ -224,7 +224,7 @@ SensorMerger::buildRows(qint64 loggerId, const Network::PollSnapshot &snapshot,
 
   const QString timestamp =
       snapshot.measuredAt.isValid()
-          ? snapshot.measuredAt.toUTC().toString(QLatin1String(CentralLogger::Format::kTimeHhMmSs))
+          ? snapshot.measuredAt.toUTC().toString(QLatin1String(TtvStudio::Format::kTimeHhMmSs))
           : QString();
 
   QVector<SensorLiveRow> rows;
@@ -241,7 +241,7 @@ SensorMerger::buildRows(qint64 loggerId, const Network::PollSnapshot &snapshot,
 
     SensorLiveRow row;
     row.edgeSensorId = sample.edgeSensorId;
-    row.sensorType = cat ? cat->sensorType : QLatin1String(CentralLogger::Sensor::kTypeUnknown);
+    row.sensorType = cat ? cat->sensorType : QLatin1String(TtvStudio::Sensor::kTypeUnknown);
     row.unit = cat ? cat->unit : QString();
     row.name = (cat && !cat->name.isEmpty())
                    ? cat->name
@@ -250,7 +250,7 @@ SensorMerger::buildRows(qint64 loggerId, const Network::PollSnapshot &snapshot,
     row.alarm = sample.isAlarm();
     row.stale = sample.isStale();
     row.value = formatAnalog(sample.value, cat ? cat->decimals
-                                              : CentralLogger::Defaults::kDecimalsDefault);
+                                              : TtvStudio::Defaults::kDecimalsDefault);
     row.timestamp = timestamp;
 
     const bool active = cat ? cat->active : true;
@@ -284,8 +284,8 @@ SensorMerger::buildRows(qint64 loggerId, const Network::PollSnapshot &snapshot,
     row.name = sensor.name.isEmpty()
                    ? fallbackName(sensor.sensorType, sensor.edgeSensorId)
                    : sensor.name;
-    row.value = QString::fromUtf8(CentralLogger::Sensor::kValuePlaceholder);
-    row.displayStatus = QLatin1String(CentralLogger::Sensor::kStatusWait);
+    row.value = QString::fromUtf8(TtvStudio::Sensor::kValuePlaceholder);
+    row.displayStatus = QLatin1String(TtvStudio::Sensor::kStatusWait);
     row.timestamp = QString();
     row.valid = false;
     row.alarm = false;
@@ -310,15 +310,15 @@ SensorMerger::buildRows(qint64 loggerId, const Network::PollSnapshot &snapshot,
     row.valid = true;
     row.alarm = false;
     row.stale = false;
-    row.value = on ? QLatin1String(CentralLogger::Sensor::kBitOn)
-                   : QLatin1String(CentralLogger::Sensor::kBitOff);
+    row.value = on ? QLatin1String(TtvStudio::Sensor::kBitOn)
+                   : QLatin1String(TtvStudio::Sensor::kBitOff);
     row.timestamp = timestamp;
     if (!cat.active) {
-      row.displayStatus = QLatin1String(CentralLogger::Sensor::kStatusWait);
+      row.displayStatus = QLatin1String(TtvStudio::Sensor::kStatusWait);
     } else if (!rtuConnected && pollingActive) {
-      row.displayStatus = QLatin1String(CentralLogger::Sensor::kStatusErr);
+      row.displayStatus = QLatin1String(TtvStudio::Sensor::kStatusErr);
     } else {
-      row.displayStatus = QLatin1String(CentralLogger::Sensor::kStatusOk);
+      row.displayStatus = QLatin1String(TtvStudio::Sensor::kStatusOk);
     }
     rows.append(row);
   };
@@ -402,8 +402,8 @@ QVector<SensorLiveRow> SensorMerger::buildCatalogPlaceholders(
     row.name = cat.name.isEmpty()
                    ? fallbackName(cat.sensorType, cat.edgeSensorId)
                    : cat.name;
-    row.value = QString::fromUtf8(CentralLogger::Sensor::kValuePlaceholder);
-    row.displayStatus = QLatin1String(CentralLogger::Sensor::kStatusWait);
+    row.value = QString::fromUtf8(TtvStudio::Sensor::kValuePlaceholder);
+    row.displayStatus = QLatin1String(TtvStudio::Sensor::kStatusWait);
     row.timestamp = QString();
     row.valid = false;
     row.alarm = false;
@@ -435,4 +435,4 @@ QVector<SensorLiveRow> SensorMerger::buildCatalogPlaceholders(
   return rows;
 }
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

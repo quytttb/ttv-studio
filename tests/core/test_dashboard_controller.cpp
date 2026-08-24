@@ -10,8 +10,8 @@
 #include <QTest>
 #include <QVariantMap>
 
-using namespace CentralLogger::Core;
-using namespace CentralLogger::Data;
+using namespace TtvStudio::Core;
+using namespace TtvStudio::Data;
 
 namespace {
 

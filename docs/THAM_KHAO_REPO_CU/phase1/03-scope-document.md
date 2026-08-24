@@ -1,4 +1,4 @@
-# Scope Document — Central Logger App Rewrite
+# Scope Document — TTV Studio App Rewrite
 
 **Version:** 1.0 | **Date:** 2026-05-23 | **Status:** Draft (awaiting Phase 1 sign-off)
 
@@ -6,7 +6,7 @@
 
 ## 1. Problem Statement
 
-Central Logger quản lý tập trung nhiều **Modbus TCP Data Logger** công nghiệp trên LAN nhà máy. App hiện tại (PySide6 + Python) hoạt động nhưng có giới hạn về hiệu năng (GIL, asyncio complexity), khó maintain (logic nghiệp vụ trong QML `.js`), và deploy phức tạp (Nuitka + ZBar DLL Windows).
+TTV Studio quản lý tập trung nhiều **Modbus TCP Data Logger** công nghiệp trên LAN nhà máy. App hiện tại (PySide6 + Python) hoạt động nhưng có giới hạn về hiệu năng (GIL, asyncio complexity), khó maintain (logic nghiệp vụ trong QML `.js`), và deploy phức tạp (Nuitka + ZBar DLL Windows).
 
 Mục tiêu rewrite: Dùng **Qt 6 C++/QML** để đạt native performance, MVVM sạch (logic trong C++ ViewModel), và deploy đơn giản hơn qua Qt Installer Framework.
 

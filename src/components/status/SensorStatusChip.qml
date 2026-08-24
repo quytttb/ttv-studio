@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 
 import LoggerKit.Components
-import CentralLogger.Theme
+import TtvStudio.Theme
 
 /// Domain wrapper over the generic StatusChip: operational status, attach-DI
 /// type, or connection indicator. Feeds computed text/colors from the

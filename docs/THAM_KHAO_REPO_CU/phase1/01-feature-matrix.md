@@ -1,4 +1,4 @@
-# Feature Matrix — Central Logger App
+# Feature Matrix — TTV Studio App
 
 Song ngữ: mô tả Tiếng Việt, cột kỹ thuật Tiếng Anh.
 
@@ -284,7 +284,7 @@ Song ngữ: mô tả Tiếng Việt, cột kỹ thuật Tiếng Anh.
 | Backend_Entry | `DashboardController.importProvisionFromQrImageWithDialog()` → `QFileDialog.getOpenFileName` → `qr_provision.import_provision_from_qr_image(path)` → `pyzbar.decode` |
 | Data_Tables | — |
 | External_Deps | `libzbar0` (Linux) or ZBar DLLs (Windows native bundle); `pyzbar`, `Pillow` |
-| Primary_Flow | 1. Scan QR → file picker. 2. Decode PNG/JPG → JSON schema `central-logger-provision/v1`. 3. Fill host, token, ports, station fields. |
+| Primary_Flow | 1. Scan QR → file picker. 2. Decode PNG/JPG → JSON schema `ttv-studio-provision/v1`. 3. Fill host, token, ports, station fields. |
 | Pain_Point | P-02 (ZBar DLL Windows; pyzbar Python binding; native bundle complexity) |
 | Notes_for_Cpp | Replace with `QZXing` or `ZBar` Qt wrapper; no Python binding needed |
 

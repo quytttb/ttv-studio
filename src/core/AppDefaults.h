@@ -1,11 +1,11 @@
 #pragma once
 
-// QML-facing wrapper around CentralLogger::Defaults + UI constants.
+// QML-facing wrapper around TtvStudio::Defaults + UI constants.
 // Centralizes ports, intervals, decimals, retention, history limits so QML
 // views (LoggerFormDialog SpinBox defaults, AppNotifier copy, etc.) match
 // the C++ defaults exactly without hardcoding literals.
 //
-// Registered as a QML_SINGLETON under CentralLogger.Core.AppDefaults.
+// Registered as a QML_SINGLETON under TtvStudio.Core.AppDefaults.
 
 #include "utils/AppConstants.h"
 #include "utils/UiConstants.h"
@@ -14,7 +14,7 @@
 #include <QString>
 #include <QtQmlIntegration/qqmlintegration.h>
 
-namespace CentralLogger::Core {
+namespace TtvStudio::Core {
 
 class AppDefaults : public QObject
 {
@@ -112,4 +112,4 @@ public:
     QString defaultTimezone() const { return QString::fromUtf8(Ui::kDefaultTimezone); }
 };
 
-} // namespace CentralLogger::Core
+} // namespace TtvStudio::Core

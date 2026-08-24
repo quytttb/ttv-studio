@@ -11,7 +11,7 @@
 
 #include <QtGlobal>
 
-namespace CentralLogger::Defaults {
+namespace TtvStudio::Defaults {
 
 // --- Network defaults --------------------------------------------------------
 inline constexpr int kDefaultModbusPort   = 5020;
@@ -81,4 +81,4 @@ inline constexpr int kRecentEventsLimit = 20;
 inline constexpr qint64 kLogMaxBytes    = 5LL * 1024 * 1024; // 5 MB
 inline constexpr int    kLogKeepBackups = 3;                 // app.log.1 … app.log.3
 
-} // namespace CentralLogger::Defaults
+} // namespace TtvStudio::Defaults
