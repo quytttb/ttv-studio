@@ -63,9 +63,12 @@ set(LOGGERKIT_QML_MODULE_VERSION ${QML_MODULE_VERSION})
 add_subdirectory(shared/logger-ui-kit)
 
 # Qt recommended layout — see cmake-get-started.html
-# Layers: utils → components (reusable QML) → app (shell). Pipeline/domain code
-# (providers, job engine, media) will be added here as new layers.
+# Layers: utils → media (external binaries) → jobs (state machine, registry)
+# → components (reusable QML) → app (shell). Provider REST clients and the
+# pipeline engines plug in above jobs.
 add_subdirectory(src/utils)
+add_subdirectory(src/media)
+add_subdirectory(src/jobs)
 add_subdirectory(src/components)
 add_subdirectory(src/app)
 

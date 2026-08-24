@@ -3,6 +3,8 @@
 
 qt_add_library(utils STATIC
     AppConstants.h
+    Paths.h
+    Paths.cpp
     Version.h
     Version.h.in
     UiConstants.h

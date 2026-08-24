@@ -1,0 +1,21 @@
+# Media layer — typed subprocess wrappers around external binaries
+# (ffmpeg / ffprobe / later yt-dlp). No business logic.
+
+qt_add_library(media STATIC
+    Subprocess.h
+    Subprocess.cpp
+    Ffprobe.h
+    Ffprobe.cpp
+)
+
+target_include_directories(media
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
+)
+
+target_link_libraries(media
+    PUBLIC
+        Qt6::Core
+)
+
+add_library(ttv_studio::media ALIAS media)
