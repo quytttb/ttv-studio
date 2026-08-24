@@ -27,7 +27,7 @@ $BUILD_RELEASE_DIR = if ($env:CL_BUILD_DIR) { $env:CL_BUILD_DIR } else { "$PROJE
 $INSTALLER_BUILD_DIR = Join-Path $PackagingWindows "installer_build"
 
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host "BUILDING CENTRAL LOGGER INSTALLER" -ForegroundColor Cyan
+Write-Host "BUILDING TTV STUDIO INSTALLER" -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Cyan
 
 # ==================== ENVIRONMENT CHECKS ====================
