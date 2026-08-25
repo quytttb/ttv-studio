@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=TTV Studio
-Comment=Central management for Modbus TCP Data Loggers
+Comment=AI video production studio — text→video render and video redub
 Exec=ttv-studio
 Icon=ttv-studio
 StartupWMClass=ttv_studio

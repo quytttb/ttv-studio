@@ -7,6 +7,7 @@
 #include <mutex>
 
 #include "media/Ffprobe.h"
+#include "core/SettingsStore.h"
 #include "providers/LlmClient.h"
 #include "providers/QNamTransport.h"
 #include "providers/TtsClient.h"
@@ -24,7 +25,13 @@ namespace {
 
 Render::RenderPipelineConfig pipelineConfig()
 {
-    return Render::RenderPipelineConfig{};
+    Render::RenderPipelineConfig config;
+    // Persisted render-device selection (Settings page); env has no say here.
+    config.videoBackend =
+        SettingsStore::storedValue(QStringLiteral("render_backend"));
+    if (config.videoBackend.isEmpty())
+        config.videoBackend = QLatin1String(Defaults::kDefaultRenderBackend);
+    return config;
 }
 
 } // namespace

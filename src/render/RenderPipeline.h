@@ -12,6 +12,7 @@
 #include "providers/VideoGatewayClient.h"
 #include "render/Captions.h"
 #include "render/SceneManifest.h"
+#include "utils/AppConstants.h"
 
 namespace TtvStudio::Media {
 class MediaEngine;
@@ -35,6 +36,9 @@ struct RenderPipelineConfig
     int videoPollMaxMs = 5'000;
     qint64 videoTaskBudgetMs = 900'000;
     int maxSubmissionsPerScene = 2; // fresh submissions per scene per run
+    // Render device backend id (HardwareEncoder): "cpu" or a hardware encoder
+    // such as h264_nvenc. Resolved to ffmpeg args at encode time.
+    QString videoBackend = QLatin1String(Defaults::kDefaultRenderBackend);
 };
 
 enum class RunOutcome

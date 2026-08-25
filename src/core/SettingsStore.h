@@ -4,6 +4,8 @@
 #include <QString>
 #include <QtQml>
 
+#include "utils/AppConstants.h"
+
 namespace TtvStudio::Core {
 
 // Persisted provider/tool configuration (QSettings under the app identity).
@@ -27,6 +29,8 @@ class SettingsStore : public QObject
     // Tool locations
     Q_PROPERTY(QString whisperBin READ whisperBin WRITE setWhisperBin NOTIFY whisperBinChanged FINAL)
     Q_PROPERTY(QString whisperModel READ whisperModel WRITE setWhisperModel NOTIFY whisperModelChanged FINAL)
+    // Render device backend ("cpu" or a hardware encoder id, see HardwareEncoder)
+    Q_PROPERTY(QString renderBackend READ renderBackend WRITE setRenderBackend NOTIFY renderBackendChanged FINAL)
 
 public:
     explicit SettingsStore(QObject *parent = nullptr);
@@ -42,6 +46,13 @@ public:
     QString videoModel() const { return m_videoModel; }
     QString whisperBin() const { return m_whisperBin; }
     QString whisperModel() const { return m_whisperModel; }
+    // Empty never leaks out — falls back to the CPU profile.
+    QString renderBackend() const
+    {
+        return m_renderBackend.isEmpty()
+                   ? QLatin1String(Defaults::kDefaultRenderBackend)
+                   : m_renderBackend;
+    }
 
     void setLlmBaseUrl(const QString &);
     void setLlmApiKey(const QString &);
@@ -52,6 +63,7 @@ public:
     void setVideoModel(const QString &);
     void setWhisperBin(const QString &);
     void setWhisperModel(const QString &);
+    void setRenderBackend(const QString &);
 
     // Non-QML accessor for C++ callers (RenderController composition).
     static QString storedValue(const QString &key);
@@ -67,12 +79,14 @@ signals:
     void videoModelChanged();
     void whisperBinChanged();
     void whisperModelChanged();
+    void renderBackendChanged();
 
 private:
     void load();
     QString m_llmBaseUrl, m_llmApiKey, m_llmModel;
     QString m_ttsBaseUrl, m_videoGatewayBaseUrl, m_videoGatewayApiKey, m_videoModel;
     QString m_whisperBin, m_whisperModel;
+    QString m_renderBackend;
 };
 
 } // namespace TtvStudio::Core

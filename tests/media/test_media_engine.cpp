@@ -109,7 +109,8 @@ private slots:
 
         const QString fitted = dir.filePath(QStringLiteral("fitted.mp4"));
         QString error;
-        QVERIFY(engine.fitClip(raw, fitted, testTarget(), *decision, &error));
+        QVERIFY(engine.fitClip(raw, fitted, testTarget(), *decision,
+                               VideoEncodeConfig{}, &error));
         QVERIFY(error.isEmpty());
 
         const auto fittedInfo = probe.probe(fitted);
@@ -134,13 +135,14 @@ private slots:
             const QString fitted = dir.filePath(QStringLiteral("fit%1.mp4").arg(i));
             QString error;
             QVERIFY(engine.fitClip(raw, fitted, testTarget(),
-                                   FitDecision{FitAction::Trim, 1.0, 1.0}, &error));
+                                   FitDecision{FitAction::Trim, 1.0, 1.0},
+                                   VideoEncodeConfig{}, &error));
             fittedClips.append(fitted);
         }
 
         const QString concatPath = dir.filePath(QStringLiteral("work/concat.mp4"));
         QString error;
-        QVERIFY(engine.concatClips(fittedClips, concatPath, &error));
+        QVERIFY(engine.concatClips(fittedClips, concatPath, VideoEncodeConfig{}, &error));
         const auto concatInfo = probe.probe(concatPath);
         QVERIFY(concatInfo && concatInfo->hasVideo);
         QVERIFY(concatInfo->durationSec > 1.9); // ≈ sum of the two clips
@@ -167,7 +169,8 @@ private slots:
 
         QTemporaryDir dir;
         QString error;
-        QVERIFY(!engine.concatClips({}, dir.filePath(QStringLiteral("x.mp4")), &error));
+        QVERIFY(!engine.concatClips({}, dir.filePath(QStringLiteral("x.mp4")),
+                                    VideoEncodeConfig{}, &error));
         QVERIFY(!error.isEmpty());
 
         error.clear();

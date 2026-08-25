@@ -49,6 +49,12 @@ void SettingsStore::load()
     m_videoModel = settings.value(QStringLiteral("video_model")).toString();
     m_whisperBin = settings.value(QStringLiteral("whisper_bin")).toString();
     m_whisperModel = settings.value(QStringLiteral("whisper_model")).toString();
+    const QString backend =
+        settings.value(QStringLiteral("render_backend"),
+                       QLatin1String(Defaults::kDefaultRenderBackend))
+            .toString();
+    m_renderBackend = backend.isEmpty() ? QLatin1String(Defaults::kDefaultRenderBackend)
+                                        : backend;
 }
 
 QString SettingsStore::storedValue(const QString &key)
@@ -84,5 +90,6 @@ SETTER_IMPL(VideoGatewayApiKey, videoGatewayApiKey, "video_gateway_api_key")
 SETTER_IMPL(VideoModel, videoModel, "video_model")
 SETTER_IMPL(WhisperBin, whisperBin, "whisper_bin")
 SETTER_IMPL(WhisperModel, whisperModel, "whisper_model")
+SETTER_IMPL(RenderBackend, renderBackend, "render_backend")
 
 } // namespace TtvStudio::Core

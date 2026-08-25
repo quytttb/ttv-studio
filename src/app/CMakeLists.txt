@@ -74,7 +74,7 @@ install(FILES ${CMAKE_SOURCE_DIR}/packaging/linux/ttv-studio.desktop
     DESTINATION /usr/share/applications
 )
 
-install(FILES ${CMAKE_SOURCE_DIR}/resources/icons/brand_4m_technologies_blue.svg
+install(FILES ${CMAKE_SOURCE_DIR}/resources/icons/studio.svg
     DESTINATION /usr/share/icons/hicolor/scalable/apps
     RENAME ttv-studio.svg
 )

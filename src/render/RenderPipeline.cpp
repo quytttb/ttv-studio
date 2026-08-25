@@ -9,6 +9,7 @@
 #include <QSaveFile>
 #include <QThread>
 
+#include "media/HardwareEncoder.h"
 #include "media/MediaEngine.h"
 #include "render/ScenePlanner.h"
 #include "utils/AppConstants.h"
@@ -504,6 +505,11 @@ bool RenderPipeline::postProcessingStage(const Paths &paths, ScenePlan *plan,
     Media::NormalizeTarget target;
     target.fps = m_config.normalizeFps;
 
+    const QStringList encoderArgs =
+        Media::HardwareEncoder::encodingArgs(m_config.videoBackend);
+    // encoderArgs = ["-c:v", <codec>, <quality flags…>]
+    const Media::VideoEncodeConfig encode{encoderArgs.at(1), encoderArgs.mid(2)};
+
     for (Scene &scene : plan->scenes) {
         if (scene.status == SceneStatus::Normalized
             && QFile::exists(paths.normalizedClip(scene.index)))
@@ -527,7 +533,7 @@ bool RenderPipeline::postProcessingStage(const Paths &paths, ScenePlan *plan,
 
         QString engineError;
         if (!engine.fitClip(rawAbs, paths.normalizedClip(scene.index), target, *decision,
-                            &engineError)) {
+                            encode, &engineError)) {
             *error = QStringLiteral("scene %1: %2").arg(scene.index).arg(engineError);
             return false;
         }
@@ -541,7 +547,7 @@ bool RenderPipeline::postProcessingStage(const Paths &paths, ScenePlan *plan,
         normalizedClips.append(paths.normalizedClip(scene.index));
 
     QString engineError;
-    if (!engine.concatClips(normalizedClips, paths.concatMp4, &engineError)) {
+    if (!engine.concatClips(normalizedClips, paths.concatMp4, encode, &engineError)) {
         *error = engineError;
         return false;
     }

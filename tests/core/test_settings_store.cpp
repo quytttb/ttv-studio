@@ -44,6 +44,25 @@ private slots:
         auto endpoints = ProviderEndpoints::fromEnvironment();
         QCOMPARE(endpoints.llmModel, QStringLiteral("gpt-x"));
     }
+
+    void renderBackendRoundTrip() {
+        // Default is the CPU profile; a stored hardware backend survives a
+        // fresh SettingsStore instance (QSettings re-read).
+        QCOMPARE(SettingsStore::storedValue(QStringLiteral("render_backend")),
+                 QString());
+        SettingsStore store;
+        QCOMPARE(store.renderBackend(), QStringLiteral("cpu"));
+
+        store.setRenderBackend(QStringLiteral("h264_nvenc"));
+        QCOMPARE(store.renderBackend(), QStringLiteral("h264_nvenc"));
+        QCOMPARE(SettingsStore::storedValue(QStringLiteral("render_backend")),
+                 QStringLiteral("h264_nvenc"));
+        QCOMPARE(SettingsStore().renderBackend(), QStringLiteral("h264_nvenc"));
+
+        // Empty writes fall back to the default instead of sticking.
+        store.setRenderBackend(QStringLiteral(""));
+        QCOMPARE(store.renderBackend(), QStringLiteral("cpu"));
+    }
 };
 
 QTEST_GUILESS_MAIN(TestSettingsStore)

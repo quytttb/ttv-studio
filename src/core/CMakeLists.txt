@@ -12,6 +12,8 @@ qt_add_qml_module(ttv_studio_core
         JobListModel.cpp
         RenderController.h
         RenderController.cpp
+        RenderDeviceController.h
+        RenderDeviceController.cpp
         SettingsStore.h
         SettingsStore.cpp
     NO_PLUGIN_OPTIONAL

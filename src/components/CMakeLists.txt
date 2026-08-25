@@ -19,9 +19,13 @@ qt_add_qml_module(ttv_studio_components
         # layout
         layout/SectionHeader.qml
         layout/InlineBanner.qml
+        layout/StageStepper.qml
     DEPENDENCIES
         LoggerKit.Theme
         LoggerKit.Components
+        QtQuick.Effects
+    RESOURCES
+        ../../resources/icons/studio.svg
 )
 
 add_library(ttv_studio::components ALIAS ttv_studio_components)

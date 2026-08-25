@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
     app.installNativeEventFilter(&framelessHelper);
 #endif
 
-    app.setWindowIcon(QIcon(QStringLiteral(":/qt/qml/LoggerKit/Components/resources/icons/brand_4m_technologies_blue.svg")));
+    app.setWindowIcon(QIcon(QStringLiteral(":/qt/qml/TtvStudio/Components/resources/icons/studio.svg")));
     QCoreApplication::setOrganizationName(QStringLiteral("quytttb"));
     QCoreApplication::setOrganizationDomain(QStringLiteral("io.github.quytttb"));
     QCoreApplication::setApplicationName(QStringLiteral("TTV Studio"));

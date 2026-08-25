@@ -102,6 +102,7 @@ bool MediaEngine::fitClip(const QString &sourcePath,
                           const QString &destinationPath,
                           const NormalizeTarget &target,
                           const FitDecision &decision,
+                          const VideoEncodeConfig &encode,
                           QString *error) const
 {
     const auto setErr = [error](const QString &message) {
@@ -133,21 +134,21 @@ bool MediaEngine::fitClip(const QString &sourcePath,
     filters.append(QStringLiteral("scale=%1:%2").arg(target.width).arg(target.height));
     filters.append(QStringLiteral("fps=%1").arg(target.fps));
 
+    QStringList fitArgs{QStringLiteral("-y"),
+                        QStringLiteral("-i"), sourcePath,
+                        QStringLiteral("-vf"), filters.join(QChar(',')),
+                        QStringLiteral("-t"),
+                        QString::number(decision.targetDurationSeconds, 'f', 3),
+                        QStringLiteral("-an")};
+    fitArgs << QStringList{QStringLiteral("-c:v"), encode.codec};
+    fitArgs << encode.codecArgs;
+    fitArgs << QStringList{QStringLiteral("-pix_fmt"), QLatin1String(Defaults::kTargetPixFmt),
+                           QStringLiteral("-vsync"), QStringLiteral("cfr"),
+                           destinationPath};
+
     Subprocess subprocess;
-    const SubprocessResult result = subprocess.run(
-        m_ffmpegBin,
-        {QStringLiteral("-y"),
-         QStringLiteral("-i"), sourcePath,
-         QStringLiteral("-vf"), filters.join(QChar(',')),
-         QStringLiteral("-t"), QString::number(decision.targetDurationSeconds, 'f', 3),
-         QStringLiteral("-an"),
-         QStringLiteral("-c:v"), QLatin1String(Defaults::kTargetCodec),
-         QStringLiteral("-preset"), QLatin1String(Defaults::kTargetPreset),
-         QStringLiteral("-crf"), QString::number(Defaults::kTargetCrf),
-         QStringLiteral("-pix_fmt"), QLatin1String(Defaults::kTargetPixFmt),
-         QStringLiteral("-vsync"), QStringLiteral("cfr"),
-         destinationPath},
-        Defaults::kPostProcessTimeoutMs);
+    const SubprocessResult result = subprocess.run(m_ffmpegBin, fitArgs,
+                                                   Defaults::kPostProcessTimeoutMs);
 
     if (!result.started)
         return setErr(QStringLiteral("ffmpeg could not be started"));
@@ -162,6 +163,7 @@ bool MediaEngine::fitClip(const QString &sourcePath,
 
 bool MediaEngine::concatClips(const QStringList &clipPaths,
                               const QString &destinationPath,
+                              const VideoEncodeConfig &encode,
                               QString *error) const
 {
     const auto setErr = [error](const QString &message) {
@@ -189,19 +191,20 @@ bool MediaEngine::concatClips(const QStringList &clipPaths,
     }
     listFile.close();
 
+    QStringList concatArgs{QStringLiteral("-y"),
+                           QStringLiteral("-f"), QStringLiteral("concat"),
+                           QStringLiteral("-safe"), QStringLiteral("0"),
+                           QStringLiteral("-i"), listPath};
+    concatArgs << QStringList{QStringLiteral("-c:v"), encode.codec};
+    concatArgs << encode.codecArgs;
+    concatArgs << QStringList{QStringLiteral("-pix_fmt"), QLatin1String(Defaults::kTargetPixFmt),
+                              QStringLiteral("-vsync"), QStringLiteral("cfr"),
+                              QStringLiteral("-movflags"), QStringLiteral("+faststart"),
+                              destinationPath};
+
     Subprocess subprocess;
-    const SubprocessResult result = subprocess.run(
-        m_ffmpegBin,
-        {QStringLiteral("-y"),
-         QStringLiteral("-f"), QStringLiteral("concat"),
-         QStringLiteral("-safe"), QStringLiteral("0"),
-         QStringLiteral("-i"), listPath,
-         QStringLiteral("-c:v"), QLatin1String(Defaults::kTargetCodec),
-         QStringLiteral("-pix_fmt"), QLatin1String(Defaults::kTargetPixFmt),
-         QStringLiteral("-vsync"), QStringLiteral("cfr"),
-         QStringLiteral("-movflags"), QStringLiteral("+faststart"),
-         destinationPath},
-        Defaults::kPostProcessTimeoutMs);
+    const SubprocessResult result = subprocess.run(m_ffmpegBin, concatArgs,
+                                                   Defaults::kPostProcessTimeoutMs);
     QFile::remove(listPath);
 
     if (!result.started)

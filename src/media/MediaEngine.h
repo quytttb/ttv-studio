@@ -5,6 +5,8 @@
 #include <QString>
 #include <QStringList>
 
+#include "utils/AppConstants.h"
+
 namespace TtvStudio::Media {
 
 class Ffprobe;
@@ -49,6 +51,15 @@ struct NormalizeTarget
     int fps = 24;
 };
 
+// Video encoder selection for re-encoding operations. Default mirrors the
+// historical behavior (CPU libx264, see Defaults::kTarget*); hardware
+// backends come from HardwareEncoder::encodingArgs().
+struct VideoEncodeConfig
+{
+    QString codec = QLatin1String(Defaults::kTargetCodec);
+    QStringList codecArgs; // preset/quality flags following -c:v
+};
+
 // FFmpeg/ffprobe subprocess operations for render post-production. Blocking;
 // run on a worker thread. All outputs are written via .part → rename where
 // the caller passes a final destination path.
@@ -64,12 +75,14 @@ public:
                  const QString &destinationPath,
                  const NormalizeTarget &target,
                  const FitDecision &decision,
+                 const VideoEncodeConfig &encode,
                  QString *error) const;
 
     // Concatenate already-normalized clips with the concat demuxer, H.264 CFR
     // faststart. `clipPaths` must be non-empty.
     bool concatClips(const QStringList &clipPaths,
                      const QString &destinationPath,
+                     const VideoEncodeConfig &encode,
                      QString *error) const;
 
     // Extract mono 16 kHz PCM WAV from a source video for speech processing.

@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Effects
 import QtQuick.Layouts
 import QtQuick.Window
 
@@ -38,10 +39,18 @@ Item {
             Layout.preferredHeight: 76
 
             Image {
+                id: brandImage
+
                 anchors.centerIn: parent
-                source: "qrc:/qt/qml/LoggerKit/Components/resources/icons/brand_4m_technologies_blue.svg"
+                source: "qrc:/qt/qml/TtvStudio/Components/resources/icons/studio.svg"
                 sourceSize: Qt.size(60, 60)
                 fillMode: Image.PreserveAspectFit
+                layer.enabled: true
+                // Source artwork is solid black — tint it for the active theme.
+                layer.effect: MultiEffect {
+                    colorization: 1
+                    colorizationColor: AppColors.isLight ? "#1C1B1F" : "#E3E2E6"
+                }
             }
 
             MouseArea {

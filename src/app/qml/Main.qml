@@ -96,9 +96,8 @@ ApplicationWindow {
                     controller: renderController
                 }
 
-                EmptyStatePlaceholder {
-                    message: qsTr("Provider endpoints, API keys, branding and defaults will be configured here.")
-
+                // Provider endpoints, tools and render device configuration.
+                SettingsPage {
                 }
             }
         }

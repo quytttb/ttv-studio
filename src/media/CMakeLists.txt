@@ -6,6 +6,8 @@ qt_add_library(media STATIC
     Subprocess.cpp
     Ffprobe.h
     Ffprobe.cpp
+    HardwareEncoder.h
+    HardwareEncoder.cpp
     MediaEngine.h
     MediaEngine.cpp
     YtDlp.h

@@ -9,9 +9,18 @@ import LoggerKit.Components
 import TtvStudio.Components
 import TtvStudio.Core
 
-// Provider endpoints, models and tool locations.
+// Provider endpoints, models, tool locations and the render device.
 Item {
     id: root
+
+    function backendLabel(id) {
+        for (let i = 0; i < RenderDeviceController.backends.length; ++i) {
+            const b = RenderDeviceController.backends[i]
+            if (b.id === id)
+                return b.label
+        }
+        return id
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -25,6 +34,7 @@ Item {
 
         RowLayout {
             spacing: 16
+            Layout.fillWidth: true
 
             ElevatedPane {
                 Layout.fillWidth: true
@@ -64,20 +74,6 @@ Item {
                         text: SettingsStore.llmModel
                         onTextEdited: SettingsStore.llmModel = text
                     }
-                }
-            }
-
-            ElevatedPane {
-                Layout.fillWidth: true
-                implicitHeight: ttsColumn.implicitHeight + 32
-
-                ColumnLayout {
-                    id: ttsColumn
-
-                    x: 16
-                    y: 16
-                    width: parent.width - 32
-                    spacing: 10
 
                     Label {
                         text: qsTr("Local TTS (:3900)")
@@ -90,6 +86,20 @@ Item {
                         text: SettingsStore.ttsBaseUrl
                         onTextEdited: SettingsStore.ttsBaseUrl = text
                     }
+                }
+            }
+
+            ElevatedPane {
+                Layout.fillWidth: true
+                implicitHeight: gatewayColumn.implicitHeight + 32
+
+                ColumnLayout {
+                    id: gatewayColumn
+
+                    x: 16
+                    y: 16
+                    width: parent.width - 32
+                    spacing: 10
 
                     Label {
                         text: qsTr("Video gateway (:8765)")
@@ -140,6 +150,101 @@ Item {
             }
         }
 
+        // --- Render device (GPU / CPU) ------------------------------------
+        // Hidden entirely on machines where no hardware encoder passes its
+        // probe encode — CPU is then the only meaningful choice.
+        ElevatedPane {
+            visible: RenderDeviceController.gpuAvailable
+                     || RenderDeviceController.scanning
+            Layout.fillWidth: true
+            implicitHeight: deviceColumn.implicitHeight + 32
+
+            ColumnLayout {
+                id: deviceColumn
+
+                x: 16
+                y: 16
+                width: parent.width - 32
+                spacing: 10
+
+                RowLayout {
+                    Layout.fillWidth: true
+
+                    Label {
+                        text: qsTr("Thiết bị render")
+                        font: AppTypography.titleSmall
+                        Layout.fillWidth: true
+                    }
+
+                    BusyIndicator {
+                        visible: RenderDeviceController.scanning
+                        implicitWidth: 22
+                        implicitHeight: 22
+                    }
+                }
+
+                RowLayout {
+                    spacing: 12
+                    Layout.fillWidth: true
+
+                    ComboBox {
+                        id: backendCombo
+
+                        readonly property int selectedIndex: {
+                            const sel = RenderDeviceController.selectedBackend
+                            for (let i = 0; i < RenderDeviceController.backends.length; ++i)
+                                if (RenderDeviceController.backends[i].id === sel)
+                                    return i
+                            return 0
+                        }
+
+                        currentIndex: selectedIndex
+                        textRole: "label"
+                        model: RenderDeviceController.backends.filter(
+                                   b => b.usable).map(
+                                   b => ({ "id": b.id, "label": b.label }))
+                        implicitWidth: 260
+                        enabled: !RenderDeviceController.scanning
+                                 && !RenderDeviceController.testRunning
+                        onActivated: function (index) {
+                            RenderDeviceController.selectedBackend =
+                                model[index].id
+                        }
+                    }
+
+                    AppButton {
+                        text: RenderDeviceController.testRunning
+                                  ? qsTr("Đang test…")
+                                  : qsTr("Test render")
+                        enabled: !RenderDeviceController.testRunning
+                                 && !RenderDeviceController.scanning
+                        onClicked: RenderDeviceController.testSelected()
+                    }
+
+                    Item { Layout.fillWidth: true }
+                }
+
+                InlineBanner {
+                    visible: RenderDeviceController.testMessage !== ""
+                             && !RenderDeviceController.testRunning
+                    message: qsTr("Encoder %1 · %2")
+                                 .arg(root.backendLabel(
+                                          RenderDeviceController.selectedBackend))
+                                 .arg(RenderDeviceController.testMessage)
+                    semantic: RenderDeviceController.testMessage.startsWith("OK")
+                                  ? "success" : "error"
+                }
+
+                Label {
+                    text: qsTr("Hardware encoder được kiểm tra bằng một lượt encode thử ngắn; chỉ những backend pass mới xuất hiện ở danh sách.")
+                    wrapMode: Label.Wrap
+                    color: AppColors.textSecondary
+                    font: AppTypography.bodySmall
+                    Layout.fillWidth: true
+                }
+            }
+        }
+
         InlineBanner {
             Layout.fillWidth: true
             message: qsTr("Môi trường env (TTV_*) vẫn ưu tiên hơn giá trị lưu tại đây.")
@@ -148,4 +253,6 @@ Item {
 
         Item { Layout.fillHeight: true }
     }
+
+    Component.onCompleted: RenderDeviceController.rescan()
 }

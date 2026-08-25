@@ -54,6 +54,21 @@ inline constexpr const char *kTargetPreset  = "medium";
 inline constexpr int    kTargetCrf          = 18;
 inline constexpr const char *kTargetPixFmt  = "yuv420p";
 
+// --- Render device selection (hardware video encoders) -----------------------
+// Backend ids are ffmpeg encoder names; "cpu" is always available. Hardware
+// candidates are validated at runtime by a throwaway probe encode — being
+// advertised by `ffmpeg -encoders` is necessary but not sufficient.
+inline constexpr const char *kDefaultRenderBackend = "cpu";
+inline constexpr int kEncoderListTimeoutMs  = 8'000;   // `ffmpeg -encoders`
+inline constexpr int kEncoderProbeTimeoutMs = 15'000;  // one throwaway encode
+inline constexpr int kGpuScanTimeoutMs      = 4'000;   // `nvidia-smi -L`
+// Probe clip geometry/duration for the hardware-encoder test.
+inline constexpr int    kEncoderProbeWidth    = 320;
+inline constexpr int    kEncoderProbeHeight   = 240;
+inline constexpr int    kEncoderProbeFps      = 30;
+inline constexpr double kEncoderProbeSeconds  = 0.3;
+inline constexpr int    kEncoderProbeFrames   = 8;
+
 inline constexpr int    kAudioBitrateKbps   = 192;
 
 // ffmpeg budget for normalize / concat / mux operations.
