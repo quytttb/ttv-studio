@@ -20,6 +20,7 @@ find_package(Qt6 ${QT_VERSION_REQUIRED} REQUIRED COMPONENTS
     QuickControls2
     Qml
     Svg
+    Network
     Test
 )
 
@@ -68,6 +69,7 @@ add_subdirectory(shared/logger-ui-kit)
 # pipeline engines plug in above jobs.
 add_subdirectory(src/utils)
 add_subdirectory(src/media)
+add_subdirectory(src/providers)
 add_subdirectory(src/jobs)
 add_subdirectory(src/components)
 add_subdirectory(src/app)

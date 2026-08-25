@@ -81,4 +81,24 @@ inline constexpr int kRecentEventsLimit = 20;
 inline constexpr qint64 kLogMaxBytes    = 5LL * 1024 * 1024; // 5 MB
 inline constexpr int    kLogKeepBackups = 3;                 // app.log.1 … app.log.3
 
+// --- Provider REST clients (P2) -----------------------------------------------
+// Retry budget shared by all providers (jittered exponential backoff).
+inline constexpr int kProviderMaxAttempts   = 3;
+
+// LLM (OpenAI-compatible /chat/completions)
+inline constexpr int kLlmTimeoutMs          = 120'000;
+
+// Local voice TTS (multipart POST /generate, long-form narration)
+inline constexpr int    kTtsTimeoutMs       = 300'000;
+inline constexpr qint64 kTtsMinAudioBytes   = 512;     // implausible-body guard
+inline constexpr double kMinAudioDurationS  = 0.05;    // ffprobe fail-closed floor
+
+// Video generation gateway (submit / poll / download webhook API)
+inline constexpr int    kVideoTaskTimeoutMs      = 900'000; // whole-task budget
+inline constexpr int    kVideoRequestTimeoutMs   = 30'000;  // per HTTP request
+inline constexpr int    kVideoDownloadTimeoutMs   = 600'000; // clip streaming budget
+inline constexpr int    kVideoPollMinMs          = 3'000;   // jittered poll spacing
+inline constexpr int    kVideoPollMaxMs          = 5'000;
+inline constexpr qint64 kVideoMaxDownloadBytes   = 2'000'000'000LL; // 2 GB cap
+
 } // namespace TtvStudio::Defaults
