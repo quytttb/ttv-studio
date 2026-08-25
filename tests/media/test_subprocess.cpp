@@ -17,8 +17,12 @@ private slots:
         const QString shell = QStandardPaths::findExecutable(QStringLiteral("cmd"));
         if (shell.isEmpty())
             QSKIP("cmd.exe not available");
+        // Mirror the POSIX command's observable behavior: stdout "hello",
+        // stderr "oops", exit code 3.
         SubprocessResult result = Subprocess().run(
-            shell, {QStringLiteral("/c"), QStringLiteral("echo hello")});
+            shell,
+            {QStringLiteral("/c"),
+             QStringLiteral("echo hello && echo oops 1>&2 && exit 3")});
 #else
         const QString shell = QStandardPaths::findExecutable(QStringLiteral("sh"));
         if (shell.isEmpty())

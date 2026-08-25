@@ -12,9 +12,12 @@ class TestVersionSmoke : public QObject
 private slots:
     void versionConstantsAreWired()
     {
-        static_assert(Version::kAppMajor >= 0, "major version must be generated");
-        QCOMPARE(Version::kAppMinor, 1);
-        QCOMPARE(Version::kAppPatch, 1);
+        // Expected values are injected from project(VERSION) at configure time
+        // (see tests/smoke/CMakeLists.txt) — hardcoding them here would break
+        // every release bump (the release workflow rewrites VERSION from the tag).
+        QCOMPARE(Version::kAppMajor, kProjectVersionMajor);
+        QCOMPARE(Version::kAppMinor, kProjectVersionMinor);
+        QCOMPARE(Version::kAppPatch, kProjectVersionPatch);
     }
 
 };
