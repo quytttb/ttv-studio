@@ -16,9 +16,11 @@ qt_add_qml_module(app
     VERSION ${QML_MODULE_VERSION}
     QML_FILES
         qml/Main.qml
+        qml/RenderPage.qml
     DEPENDENCIES
         LoggerKit.Theme
         LoggerKit.Components
+        TtvStudio.Core
         ttv_studio_components
 )
 
@@ -36,6 +38,7 @@ target_link_libraries(app
         Qt6::Quick
         Qt6::QuickControls2
         ttv_studio_componentsplugin
+        ttv_studio_coreplugin
         logger_ui_kit_themeplugin
         logger_ui_kit_componentsplugin
         LoggerKit::theme_setup

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QFile>
+#include <functional>
 #include <QList>
 #include <QtTest>
 
@@ -28,6 +29,9 @@ public:
     // Per-call override keyed by 0-based call index — lets one scripted
     // session serve different bodies per endpoint (e.g. WAV then MP4).
     QHash<int, QByteArray> sinkPayloadOverrides;
+    // Debug hook: invoked with the call index and URL for every request.
+    std::function<void(int, const QString &)> onCall;
+    std::function<void(int, const QString &)> onResult;
 
     TtvStudio::Providers::HttpResponse send(
         const TtvStudio::Providers::HttpRequest &request, int timeoutMs, qint64 maxBodyBytes,
@@ -40,9 +44,15 @@ public:
         call.sinkPath = sinkFilePath;
         calls.append(call);
         const int callIndex = calls.size() - 1;
+        if (onCall)
+            onCall(callIndex, request.url.toString());
 
         TtvStudio::Providers::HttpResponse response;
         if (script.isEmpty()) {
+            if (onResult) {
+                onResult(callIndex,
+                         QStringLiteral("EXHAUSTED at call %1").arg(callIndex));
+            }
             response.networkOk = false;
             response.errorText = QStringLiteral("script exhausted");
             return response;
@@ -50,6 +60,7 @@ public:
         response = script.takeFirst();
 
         QByteArray payload = sinkPayload;
+        QStringList dbgSinkState;
         if (sinkPayloadOverrides.contains(callIndex))
             payload = sinkPayloadOverrides.value(callIndex);
 
@@ -58,10 +69,18 @@ public:
             if (!sink.open(QIODevice::WriteOnly)) {
                 response.networkOk = false;
                 response.errorText = QStringLiteral("fake sink open failed");
-                return response;
+            } else {
+                sink.write(payload);
+                response.bytesReceived = payload.size();
             }
-            sink.write(payload);
-            response.bytesReceived = payload.size();
+        }
+        if (onResult) {
+            onResult(callIndex,
+                     QStringLiteral("netOk=%1 status=%2 bytes=%3 err=%4 sink=%5")
+                         .arg(response.networkOk)
+                         .arg(response.statusCode)
+                         .arg(response.bytesReceived)
+                         .arg(response.errorText, sinkFilePath));
         }
         return response;
     }

@@ -6,11 +6,16 @@ import QtQuick.Layouts
 import QtQuick.Window
 
 import TtvStudio.Components
+import TtvStudio.Core
 import LoggerKit.Theme
 import LoggerKit.Components
 
 ApplicationWindow {
     id: root
+
+    RenderController {
+        id: renderController
+    }
 
     readonly property var targetScreen: root.screen || Screen
     readonly property real windowScreenFraction: 0.8
@@ -80,11 +85,9 @@ ApplicationWindow {
                             : root.currentView === "settings" ? 2
                             : 0
 
-                // Render pipeline (text -> new video) — placeholder until the
-                // C++ pipeline lands.
-                EmptyStatePlaceholder {
-                    message: qsTr("<b>Render</b> — Text script → TTS → scene planning → Veo / Imagen clips → MP4.<br>Pipeline UI will appear here.")
-
+                // Render pipeline (text -> new video).
+                RenderPage {
+                    controller: renderController
                 }
 
                 // Redub pipeline (existing video -> new narration).

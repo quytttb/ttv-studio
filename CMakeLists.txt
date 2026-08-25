@@ -72,6 +72,7 @@ add_subdirectory(src/media)
 add_subdirectory(src/providers)
 add_subdirectory(src/jobs)
 add_subdirectory(src/render)
+add_subdirectory(src/core)
 add_subdirectory(src/components)
 add_subdirectory(src/app)
 

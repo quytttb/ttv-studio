@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <QRandomGenerator>
 #include <QSaveFile>
+#include <QThread>
 
 #include "media/MediaEngine.h"
 #include "render/ScenePlanner.h"
@@ -115,6 +116,8 @@ RenderPipeline::RenderPipeline(Jobs::JobStore &store,
       m_config(std::move(config)),
       m_sleep(std::move(sleepFn))
 {
+    if (!m_sleep) // production default; tests inject an instant no-op
+        m_sleep = [](qint64 ms) { QThread::msleep(quint64(ms)); };
 }
 
 void RenderPipeline::requestCancel()

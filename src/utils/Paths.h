@@ -14,4 +14,9 @@ QString storageRoot();
 QString jobsRoot();
 QString jobDir(const QString &jobId);
 
+// ffmpeg binary resolution (shared with Ffprobe's ffprobe lookup):
+//   1. TTV_STUDIO_FFMPEG_BIN_DIR env var (directory holding the binaries),
+//   2. PATH lookup. Empty string when nothing is found — callers fail closed.
+QString ffmpegBinary();
+
 } // namespace TtvStudio::Paths

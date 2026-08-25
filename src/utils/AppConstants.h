@@ -123,6 +123,11 @@ inline constexpr int    kAudioBitrateKbps   = 192;
 // ffmpeg budget for normalize / concat / mux operations.
 inline constexpr int    kPostProcessTimeoutMs = 600'000;
 
+// --- Provider endpoint defaults (overridable via env, see ProviderEndpoints) -
+inline constexpr const char *kDefaultLlmBaseUrl          = "https://api.vilao.ai/v1";
+inline constexpr const char *kDefaultTtsBaseUrl          = "http://127.0.0.1:3900";
+inline constexpr const char *kDefaultVideoGatewayBaseUrl = "http://127.0.0.1:8765";
+
 // Supported discrete generation durations (gateway contract default "4,6,8").
 inline constexpr double kDefaultClipDurations[] = {4.0, 6.0, 8.0};
 

@@ -27,4 +27,19 @@ QString jobDir(const QString &jobId)
     return jobsRoot() + QLatin1Char('/') + jobId;
 }
 
+QString ffmpegBinary()
+{
+    const QString binDir = qEnvironmentVariable("TTV_STUDIO_FFMPEG_BIN_DIR");
+    if (!binDir.isEmpty()) {
+#ifdef Q_OS_WIN
+        const QString candidate = QDir(binDir).filePath(QStringLiteral("ffmpeg.exe"));
+#else
+        const QString candidate = QDir(binDir).filePath(QStringLiteral("ffmpeg"));
+#endif
+        if (QFileInfo::exists(candidate))
+            return candidate;
+    }
+    return QStandardPaths::findExecutable(QStringLiteral("ffmpeg"));
+}
+
 } // namespace TtvStudio::Paths
