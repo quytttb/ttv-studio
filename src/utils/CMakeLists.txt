@@ -7,8 +7,6 @@ qt_add_library(utils STATIC
     Paths.cpp
     Version.h
     Version.h.in
-    UiConstants.h
-    FormatConstants.h
     time/DateTimeUtils.h
     time/DateTimeUtils.cpp
     os/WindowsFramelessHelper.h

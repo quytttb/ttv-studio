@@ -1,112 +1,70 @@
-# Agent instructions — TTV Studio C++
+# Agent instructions — TTV Studio
 
 ## Context
 
-Greenfield **Qt 6 + C++ + QML** desktop app. Behavior tham khảo app PySide6 cũ — **không** copy source hay tests Python.
+Desktop app **Qt 6.11 / C++20 / QML** cho sản xuất video AI, hai pipeline:
 
-## Read first (bắt buộc)
+- **Render**: text script → TTS (master clock) → LLM chia cảnh → Veo clips → MP4
+- **Redub**: URL/MP4 → Whisper local STT → LLM dịch duration-aware → TTS dub → assembly original-clock
 
-1. [`HANDOFF.md`](HANDOFF.md)
-2. [`docs/thiet_ke_db.md`](docs/thiet_ke_db.md) — schema DB + RAM (spec chính thức)
-3. [`docs/README.md`](docs/README.md)
-4. [`docs/contracts/`](docs/contracts/) — REST, Modbus (FC01/02/03), QR **frozen v1**
+Tham khảo behavior chi tiết: repo `text_to_video` (Python) — `docs/REDUB-PIPELINE.md`.
+**Cấm** port source/tests Python; chỉ tham khảo contract hành vi.
 
-## Repo greenfield
+## Kiến trúc (bắt buộc)
 
-- **Không** có `docs/phase2/` hay quy trình phase của repo PySide6 cũ.
-- Implement theo `docs/contracts/` + `docs/thiet_ke_db.md` từ đầu.
+```
+src/media      Subprocess/Ffprobe/MediaEngine/YtDlp/WhisperStt — wrapper typed, không business logic
+src/providers  REST clients + Retry + ProviderError (Transient/Permanent/AmbiguousTimeout) + redact secrets
+src/jobs       State chart (JobTypes) + JobRecord/JobStore — persist atomic .part→rename
+src/render     ScenePlanner/DurationOptimizer/SceneManifest/Captions/RenderPipeline
+src/redub      Transcript/Translator/DubPlanner/RedubPipeline
+src/core       RenderController (QML facade, kind-dispatch), JobListModel, SettingsStore, ProviderEndpoints
+src/components TtvStudio.Components (chỉ component đặc thù)
+src/app        Shell QML: Render / Redub / Settings
+```
 
-## Tham khảo repo cũ (tuỳ chọn — không phải SoT)
-
-[`docs/THAM_KHAO_REPO_CU/phase1/`](docs/THAM_KHAO_REPO_CU/phase1/) — khảo sát app `ttv-studio-app` (chỉ markdown, **không** port code):
-
-| File | Mục đích |
-|------|----------|
-| `01-feature-matrix.md` | Danh sách FE (khảo sát cũ); **MVP repo này = FE-001…FE-016** — xem mục MVP scope bên dưới |
-| `03-scope-document.md` | Users, in/out scope |
-| `05-python-cpp-migration-map.md` | Gợi ý `src/` layout — **điều chỉnh theo contracts hiện tại** |
-| `06-qml-logic-inventory.md` | ViewModel methods (thay `.js` QML cũ) |
-| `02-pain-points.md`, `04-non-functional-requirements.md` | Bài học + baseline NFR |
-| `07-manual-test-with-hardware.md` | Test hardware |
-
-**Khi mâu thuẫn:** `docs/contracts/` + `docs/thiet_ke_db.md` **thắng** (vd. DI/DO qua **FC02/FC01**, không float holding; không poll `/readings` live).
-
-**Cấm:** port Python, pytest cũ, hoặc coi Phase 1 contracts links trong `phase1/README.md` là đường dẫn chuẩn (contracts nằm ở `docs/contracts/`).
-
-## Frozen contracts
-
-- [`docs/contracts/rest-config-contract-v1.md`](docs/contracts/rest-config-contract-v1.md)
-- [`docs/contracts/provision-qr-v1.md`](docs/contracts/provision-qr-v1.md)
-- [`docs/contracts/modbus-map-v1.md`](docs/contracts/modbus-map-v1.md) — FC03 analog + FC02 DI + FC01 DO
-
-Do not change edge API without explicit user approval.
-
-## Shared UI kit (`shared/logger-ui-kit` — submodule)
-
-- Token M3 + component generic nằm trong **`LoggerKit.Theme` / `LoggerKit.Components`**
-  (git submodule, static QML modules). **Cấm** copy/duplicate component về local.
-- App chỉ giữ component đặc thù trong `TtvStudio.Components` (rail/topbar,
-  StatCard, SensorStatusChip wrapper, LoggerFormDialog…) + singleton domain
-  `OperationalStatus`/`AttachDiType` trong `TtvStudio.Theme`.
-- Theme mode bind 1 lần trong `Main.qml`: `ThemeMode.mode = Qt.binding(() => SettingsController.theme)`.
-- Đổi API của kit ⇒ update cả ttv_studio và data-logger (commit kit trước, bump submodule pointer sau).
-- UI guideline: [`docs/ui/material3-component-guidelines.md`](docs/ui/material3-component-guidelines.md).
-
-## Architecture rules
-
-- MVVM: business logic in C++ ViewModels/Services, not in QML
-- No `.pragma library` `.js` for business logic (see `06-qml-logic-inventory.md` trong THAM_KHAO)
-- Schema DB: **only** [`docs/thiet_ke_db.md`](docs/thiet_ke_db.md)
-- Persistence: **SQLite** via **`QSqlDatabase` / `QSQLITE`** (`Qt6::Sql`) — [`docs/adr/0001-db.md`](docs/adr/0001-db.md); repositories dùng `QSqlQuery`; không `libsqlite3` trực tiếp
-- Modbus: `ModbusService` poll FC03 → FC02 → FC01 per [`modbus-map-v1.md`](docs/contracts/modbus-map-v1.md)
-- REST: config + reports; `GET /readings` **debug only** (one-shot per button, raw JSON — never merge into live table)
-- QML module via `qt_add_qml_module`; register types with `QML_ELEMENT` / `QML_SINGLETON`
-- Prefer manual composition root (`ApplicationContext`) + interface boundaries for tests — no DI framework
-
-## MVP scope
-
-**MVP Core (repo này — đã implement):** FE-001 … FE-016, **trừ FE-014** (không merge `/readings` live). Mapping task: Tasks **1–17** + **19** trong [`docs/plan/tasks-6-24-agent-prompts.md`](docs/plan/tasks-6-24-agent-prompts.md); **Task 18** đã làm lại một nửa (xem FE-017 bên dưới).
-
-| FE | Trạng thái |
-|----|------------|
-| FE-001 … FE-013, FE-015, FE-016 | Done (Tasks 1–16, 19) |
-| FE-004 (search) | Done (Task 17 — `LoggerSearchProxyModel`) |
-| FE-014 | **Out of scope** — `/readings` chỉ debug |
-| FE-017 (tray + frameless) | **Frameless: đã implement** (chốt 2026-08 theo audit H-D/M-9); **system tray: không làm** — Close thoát app |
-
-**FE-017 đã chốt lại (2026-08-17):** cửa sổ **frameless** là chuẩn hiện tại — `Main.qml` đặt `Qt.FramelessWindowHint` (non-Windows), Windows dùng `utils/os/WindowsFramelessHelper` (native event filter: `WM_NCCALCSIZE` bỏ title bar, `WM_NCHITTEST` giữ viền resize) + mở maximized mặc định; **không dùng** `QSystemTrayIcon`, Close vẫn thoát app (không minimize-to-tray).
-
-**Nice-to-have (Tasks 20–24):** Done trừ các task dropped. **Dropped:** Task **21** (FE-020 QR). Task **18** (FE-017): tray vẫn không làm, frameless đã implement — xem hàng FE-017 ở trên. Khảo sát cũ ghi FE-001…FE-017 — **khi mâu thuẫn, theo `HANDOFF.md`.**
-
-## Testing
-
-Write **new** Qt Test / CTest in this repo — do not reference legacy pytest.
-
-## CMake
-
-- Qt 6.11 (`qt_standard_project_setup(REQUIRES 6.11)`)
-- `find_package` Qt6 components: Quick, Qml, Sql, Network, **SerialBus** (Modbus FC01/02/03), **Graphs** (thay Qt Charts — deprecated 6.11)
-- Enable `CMAKE_AUTOMOC`, `CMAKE_AUTORCC` when adding C++ types
-- CMake target `app` in `src/app` (binary `ttv_studio`); static lib `data` in `src/data` (alias `ttv_studio::data`)
-- Bump `QT_VERSION_REQUIRED` / `QML_MODULE_VERSION` in root `CMakeLists.txt` — they propagate to `find_package`, `qt_standard_project_setup`, and every `qt_add_qml_module(VERSION ...)`. Patch versions in packaging scripts must match.
+Quy tắc:
+- **MVVM**: logic trong C++ (pipeline/service/controller), QML chỉ binding + view
+- Không `.js` logic nghiệp vụ; QML module qua `qt_add_qml_module`, type via `QML_ELEMENT`
+- **Không exception** qua biên layer: result struct tường minh (`ok` + `error`)
+- Mọi stage transition phải đi qua `JobStore::updateJob` (validate `canTransition`)
+- Artifact ghi atomic (`QSaveFile` hoặc `.part→rename`); ffmpeg **không tự tạo dir** — caller `mkpath`
+- HTTP client phải được tạo trên thread chạy nó (QNAM affinity) — xem `RenderController::startRun`
+- Secrets (API key) luôn redact trước khi vào error message/log
 
 ## Constants — single source of truth
 
-All magic numbers and duplicated string literals live under `src/utils/`. When
-adding a new constant, put it in the right header and include it. Don't
-hardcode in source.
+Toàn bộ hằng số vận hành nằm trong `src/utils/AppConstants.h`
+(`TtvStudio::Defaults::*`) — ports/timeouts/poll intervals/retry budget/
+dubbing band/render knobs. Không hardcode số trong source.
 
-| Header | What |
-|--------|------|
-| `utils/AppConstants.h`     | Operational defaults — `TtvStudio::Defaults::*` (ports, intervals, batch sizes, decimals, log rotation, retention) |
-| `utils/Version.h`          | Protocol / schema versions — `TtvStudio::Version::*` (DB schema, REST API, Modbus map) |
-| `utils/DbConstants.h`      | SQL table + bind-param names — `TtvStudio::Data::Db::*` |
-| `utils/UiConstants.h`      | QML role names + chart payload keys — `TtvStudio::Ui::*` |
-| `utils/FormatConstants.h`  | Date/time formats + reusable error messages — `TtvStudio::Format::*` |
-| `utils/SensorConstants.h`  | Sensor / status / alarm type / event level strings — `TtvStudio::Sensor::*` |
+Env vars người dùng: `TTV_LLM_*`, `TTV_TTS_BASE_URL`, `TTV_VIDEO_GATEWAY_*`,
+`TTV_YTDLP_BIN`, `TTV_INGEST_COOKIES_FILE`, `TTV_STUDIO_FFMPEG_BIN_DIR`,
+`TTV_STUDIO_WHISPER_BIN`, `TTV_STUDIO_WHISPER_MODEL`,
+`TTV_STUDIO_STORAGE_ROOT`. Thứ tự resolve: env → SettingsStore (QSettings) → default.
 
-QML-side defaults come from the `AppDefaults` QML singleton in
-`src/core/AppDefaults.{h,cpp}` (auto-generated, registered as
-`TtvStudio.Core.AppDefaults`); QML code should reference
-`AppDefaults.modbusPort`, `AppDefaults.chartDisplayPointCount`, etc.
-instead of hardcoded literals.
+## CMake
+
+- `find_package(Qt6 6.11 …)` components: Quick, QuickControls2, Qml, Svg, Network, Test
+- Targets: `app` (binary `ttv_studio`) · static libs `utils media providers jobs render redub core components`
+- Test helper: `add_ttv_studio_test(NAME … SOURCES … LIBS …)` trong `cmake/TtvStudioTest.cmake`
+
+## Testing
+
+Qt Test mới trong repo này. Quy ước:
+- Logic deterministic (planner/optimizer/coverage) test thuần không I/O
+- REST clients test qua `FakeTransport` (`tests/providers/FakeTransport.h`) — script theo thứ tự call,
+  `sinkPayloadOverrides` theo chỉ số call khi cần nhiều body khác nhau
+- Pipeline integration: stub binaries (shell script giả yt-dlp/whisper) + ffmpeg thật;
+  `QSKIP` khi runner thiếu ffmpeg/ffprobe
+- Sau khi sửa code: `cmake --build build && cd build && ctest --output-on-failure`
+  và `cmake --build build --target qmllint`; boot offscreen phải không có warning:
+  `QT_QPA_PLATFORM=offscreen timeout 12 ./build/bin/ttv_studio`
+
+## Trạng thái hiện tại
+
+P1–P5 đã hoàn tất (xem `HANDOFF.md`). Việc còn mở: bundle ffmpeg/yt-dlp/whisper
+vào deb/installer, concurrent scene generation, original-audio ducking cho Redub,
+providers Gemini/Imagen.
+
+## Conventional Commits; không commit trừ khi được yêu cầu.

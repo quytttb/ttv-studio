@@ -1,7 +1,7 @@
 #include <QtTest>
 
 #include "Version_generated.h"
-#include "utils/AppConstants.h"
+
 
 using namespace TtvStudio;
 
@@ -17,12 +17,6 @@ private slots:
         QCOMPARE(Version::kAppPatch, 1);
     }
 
-    void intervalBoundsAreSane()
-    {
-        QVERIFY(Defaults::kMinIntervalSec < Defaults::kMaxIntervalSec);
-        QVERIFY(Defaults::kLogMaxBytes > 0);
-        QVERIFY(Defaults::kLogKeepBackups >= 1);
-    }
 };
 
 QTEST_MAIN(TestVersionSmoke)

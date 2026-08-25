@@ -14,15 +14,11 @@ qt_add_qml_module(ttv_studio_components
         # shell
         shell/NavItem.qml
         shell/AppNavigationRail.qml
-        shell/AppTopBar.qml
         shell/RailCircleButton.qml
         shell/WindowControls.qml
         # layout
-        layout/StatCard.qml
         layout/SectionHeader.qml
         layout/InlineBanner.qml
-        layout/AlertDialog.qml
-        layout/FormNotice.qml
     DEPENDENCIES
         LoggerKit.Theme
         LoggerKit.Components
