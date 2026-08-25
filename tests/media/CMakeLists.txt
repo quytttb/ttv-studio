@@ -9,3 +9,8 @@ add_ttv_studio_test(
     SOURCES test_ffprobe.cpp
     LIBS    media
 )
+add_ttv_studio_test(
+    NAME    test_media_engine
+    SOURCES test_media_engine.cpp
+    LIBS    media
+)

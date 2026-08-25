@@ -6,6 +6,8 @@ qt_add_library(media STATIC
     Subprocess.cpp
     Ffprobe.h
     Ffprobe.cpp
+    MediaEngine.h
+    MediaEngine.cpp
 )
 
 target_include_directories(media
@@ -16,6 +18,8 @@ target_include_directories(media
 target_link_libraries(media
     PUBLIC
         Qt6::Core
+    PRIVATE
+        ttv_studio::utils
 )
 
 add_library(ttv_studio::media ALIAS media)

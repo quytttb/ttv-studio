@@ -101,4 +101,29 @@ inline constexpr int    kVideoPollMinMs          = 3'000;   // jittered poll spa
 inline constexpr int    kVideoPollMaxMs          = 5'000;
 inline constexpr qint64 kVideoMaxDownloadBytes   = 2'000'000'000LL; // 2 GB cap
 
+// --- Render pipeline: planning & timing (P3) ---------------------------------
+inline constexpr double kMinSceneSeconds    = 0.5;   // scenes shorter merge into the previous one
+inline constexpr double kClipCountPenalty   = 0.05;  // DP objective penalty per generated clip
+inline constexpr double kOptimizerEpsilon   = 1e-6;
+
+// Retime policy: stretching a clip beyond this factor needs freeze-fill or
+// regeneration; trimming is always safe.
+inline constexpr double kMaxRetimeFactor    = 1.10;
+inline constexpr double kMaxFreezeSeconds   = 0.5;
+
+// Normalized-clip encoding target (libx264, CFR).
+inline constexpr int    kTargetFps          = 24;
+inline constexpr const char *kTargetCodec   = "libx264";
+inline constexpr const char *kTargetPreset  = "medium";
+inline constexpr int    kTargetCrf          = 18;
+inline constexpr const char *kTargetPixFmt  = "yuv420p";
+
+inline constexpr int    kAudioBitrateKbps   = 192;
+
+// ffmpeg budget for normalize / concat / mux operations.
+inline constexpr int    kPostProcessTimeoutMs = 600'000;
+
+// Supported discrete generation durations (gateway contract default "4,6,8").
+inline constexpr double kDefaultClipDurations[] = {4.0, 6.0, 8.0};
+
 } // namespace TtvStudio::Defaults
