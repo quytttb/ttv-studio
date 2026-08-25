@@ -15,3 +15,18 @@ add_ttv_studio_test(
     SOURCES test_scene_manifest.cpp
     LIBS    render
 )
+add_ttv_studio_test(
+    NAME    test_captions
+    SOURCES test_captions.cpp
+    LIBS    render
+)
+add_ttv_studio_test(
+    NAME    test_scene_planner
+    SOURCES test_scene_planner.cpp
+    LIBS    render
+)
+add_ttv_studio_test(
+    NAME    test_render_pipeline
+    SOURCES test_render_pipeline.cpp
+    LIBS    render
+)

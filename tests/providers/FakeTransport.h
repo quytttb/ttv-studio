@@ -25,6 +25,9 @@ public:
     // When set and the scripted response claims success, the transport writes
     // this payload into the sink file (simulating a streamed body).
     QByteArray sinkPayload;
+    // Per-call override keyed by 0-based call index — lets one scripted
+    // session serve different bodies per endpoint (e.g. WAV then MP4).
+    QHash<int, QByteArray> sinkPayloadOverrides;
 
     TtvStudio::Providers::HttpResponse send(
         const TtvStudio::Providers::HttpRequest &request, int timeoutMs, qint64 maxBodyBytes,
@@ -36,6 +39,7 @@ public:
         call.maxBodyBytes = maxBodyBytes;
         call.sinkPath = sinkFilePath;
         calls.append(call);
+        const int callIndex = calls.size() - 1;
 
         TtvStudio::Providers::HttpResponse response;
         if (script.isEmpty()) {
@@ -45,15 +49,19 @@ public:
         }
         response = script.takeFirst();
 
-        if (!sinkFilePath.isEmpty() && response.networkOk && !sinkPayload.isEmpty()) {
+        QByteArray payload = sinkPayload;
+        if (sinkPayloadOverrides.contains(callIndex))
+            payload = sinkPayloadOverrides.value(callIndex);
+
+        if (!sinkFilePath.isEmpty() && response.networkOk && !payload.isEmpty()) {
             QFile sink(sinkFilePath);
             if (!sink.open(QIODevice::WriteOnly)) {
                 response.networkOk = false;
                 response.errorText = QStringLiteral("fake sink open failed");
                 return response;
             }
-            sink.write(sinkPayload);
-            response.bytesReceived = sinkPayload.size();
+            sink.write(payload);
+            response.bytesReceived = payload.size();
         }
         return response;
     }
