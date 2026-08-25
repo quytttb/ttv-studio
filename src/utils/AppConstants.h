@@ -128,6 +128,16 @@ inline constexpr const char *kDefaultLlmBaseUrl          = "https://api.vilao.ai
 inline constexpr const char *kDefaultTtsBaseUrl          = "http://127.0.0.1:3900";
 inline constexpr const char *kDefaultVideoGatewayBaseUrl = "http://127.0.0.1:8765";
 
+// --- Redub translation (duration-aware dubbing) -------------------------------
+// Spoken-language pacing used to convert a segment's original window into a
+// target character count for the translator.
+inline constexpr double kDubCharsPerSecond        = 14.0;
+// Accepted narration length band around the target (translator guidance).
+inline constexpr double kDubLengthFloorRatio      = 0.6;
+inline constexpr double kDubLengthCeilRatio       = 1.4;
+// Transcript segments per LLM translation batch.
+inline constexpr int    kTranslationBatchSize     = 10;
+
 // Supported discrete generation durations (gateway contract default "4,6,8").
 inline constexpr double kDefaultClipDurations[] = {4.0, 6.0, 8.0};
 

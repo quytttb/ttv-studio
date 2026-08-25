@@ -1,0 +1,11 @@
+# Redub core tests — transcript artifacts and the duration-aware translator.
+add_ttv_studio_test(
+    NAME    test_transcript
+    SOURCES test_transcript.cpp
+    LIBS    redub
+)
+add_ttv_studio_test(
+    NAME    test_translator
+    SOURCES test_translator.cpp
+    LIBS    redub
+)
