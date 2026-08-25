@@ -9,3 +9,8 @@ add_ttv_studio_test(
     SOURCES test_translator.cpp
     LIBS    redub
 )
+add_ttv_studio_test(
+    NAME    test_dub_planner
+    SOURCES test_dub_planner.cpp
+    LIBS    redub
+)

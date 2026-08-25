@@ -72,6 +72,11 @@ public:
                      const QString &destinationPath,
                      QString *error) const;
 
+    // Extract mono 16 kHz PCM WAV from a source video for speech processing.
+    bool extractAudio(const QString &sourcePath,
+                      const QString &destinationPath,
+                      QString *error) const;
+
     // Mux the master narration onto the concatenated video as AAC; video
     // stream is copied untouched.
     bool muxNarration(const QString &videoPath,

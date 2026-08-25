@@ -6,6 +6,8 @@ qt_add_library(redub STATIC
     Transcript.cpp
     Translator.h
     Translator.cpp
+    DubPlanner.h
+    DubPlanner.cpp
 )
 
 target_include_directories(redub
@@ -17,8 +19,7 @@ target_link_libraries(redub
     PUBLIC
         Qt6::Core
         ttv_studio::providers   # LlmClient for the translator
-    PRIVATE
-        ttv_studio::utils       # AppConstants defaults
+        ttv_studio::utils       # AppConstants dubbing defaults
 )
 
 add_library(ttv_studio::redub ALIAS redub)

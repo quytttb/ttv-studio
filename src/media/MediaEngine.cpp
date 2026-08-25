@@ -215,6 +215,47 @@ bool MediaEngine::concatClips(const QStringList &clipPaths,
     return true;
 }
 
+bool MediaEngine::extractAudio(const QString &sourcePath,
+                               const QString &destinationPath,
+                               QString *error) const
+{
+    const auto setErr = [error](const QString &message) {
+        if (error)
+            *error = message;
+        return false;
+    };
+
+    QDir().mkpath(QFileInfo(destinationPath).absolutePath());
+    const QString partPath = destinationPath + QStringLiteral(".part");
+
+    Subprocess subprocess;
+    const SubprocessResult result = subprocess.run(
+        m_ffmpegBin,
+        {QStringLiteral("-y"),
+         QStringLiteral("-i"), sourcePath,
+         QStringLiteral("-vn"),
+         QStringLiteral("-ac"), QStringLiteral("1"),
+         QStringLiteral("-ar"), QStringLiteral("16000"),
+         QStringLiteral("-acodec"), QStringLiteral("pcm_s16le"),
+         QStringLiteral("-f"), QStringLiteral("wav"),
+         partPath},
+        Defaults::kPostProcessTimeoutMs);
+
+    if (!result.started)
+        return setErr(QStringLiteral("ffmpeg could not be started"));
+    if (result.timedOut)
+        return setErr(QStringLiteral("ffmpeg timed out extracting audio"));
+    if (!result.ok())
+        return setErr(QStringLiteral("ffmpeg extract failed (%1): %2")
+                          .arg(result.exitCode)
+                          .arg(result.stderrText.section(QChar('\n'), -1)));
+    if (!QFile::rename(partPath, destinationPath)) {
+        QFile::remove(partPath);
+        return setErr(QStringLiteral("cannot publish extracted audio"));
+    }
+    return true;
+}
+
 bool MediaEngine::muxNarration(const QString &videoPath,
                                const QString &narrationPath,
                                const QString &destinationPath,

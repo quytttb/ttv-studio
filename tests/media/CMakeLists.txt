@@ -14,3 +14,9 @@ add_ttv_studio_test(
     SOURCES test_media_engine.cpp
     LIBS    media
 )
+
+add_ttv_studio_test(
+    NAME    test_ytdlp
+    SOURCES test_ytdlp.cpp
+    LIBS    media
+)

@@ -138,6 +138,19 @@ inline constexpr double kDubLengthCeilRatio       = 1.4;
 // Transcript segments per LLM translation batch.
 inline constexpr int    kTranslationBatchSize     = 10;
 
+// --- Redub ingest (yt-dlp) -----------------------------------------------------
+inline constexpr int    kIngestProbeTimeoutMs      = 120'000;   // metadata dump
+inline constexpr int    kIngestDownloadTimeoutMs   = 1'800'000; // whole download
+inline constexpr qint64 kIngestMaxDownloadBytes    = 2'000'000'000LL;
+
+// --- Redub assembly (original-clock dub) ---------------------------------------
+// Narration playback-speed band when fitting a dub line into its original
+// window (atempo factors).
+inline constexpr double kDubMinRate                = 0.85;
+inline constexpr double kDubMaxRate                = 1.25;
+// Silence padding floor between consecutive dub lines (seconds).
+inline constexpr double kDubWindowEpsilonS         = 0.01;
+
 // Supported discrete generation durations (gateway contract default "4,6,8").
 inline constexpr double kDefaultClipDurations[] = {4.0, 6.0, 8.0};
 

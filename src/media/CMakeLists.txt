@@ -8,6 +8,8 @@ qt_add_library(media STATIC
     Ffprobe.cpp
     MediaEngine.h
     MediaEngine.cpp
+    YtDlp.h
+    YtDlp.cpp
 )
 
 target_include_directories(media
