@@ -14,3 +14,9 @@ add_ttv_studio_test(
     SOURCES test_dub_planner.cpp
     LIBS    redub
 )
+
+add_ttv_studio_test(
+    NAME    test_redub_pipeline
+    SOURCES test_redub_pipeline.cpp
+    LIBS    redub
+)

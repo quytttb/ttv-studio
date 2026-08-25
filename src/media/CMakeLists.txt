@@ -10,6 +10,8 @@ qt_add_library(media STATIC
     MediaEngine.cpp
     YtDlp.h
     YtDlp.cpp
+    WhisperStt.h
+    WhisperStt.cpp
 )
 
 target_include_directories(media

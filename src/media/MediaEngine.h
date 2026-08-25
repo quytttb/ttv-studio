@@ -77,6 +77,19 @@ public:
                       const QString &destinationPath,
                       QString *error) const;
 
+    // Retime one narration clip into its dub window: atempo playback-speed
+    // factor, silence-padded, hard-trimmed to exactly `windowSeconds`.
+    bool fitNarration(const QString &sourcePath,
+                      const QString &destinationPath,
+                      double atempoRate,
+                      double windowSeconds,
+                      QString *error) const;
+
+    // Concatenate PCM WAV clips with the concat demuxer (pcm_s16le out).
+    bool concatAudio(const QStringList &clipPaths,
+                     const QString &destinationPath,
+                     QString *error) const;
+
     // Mux the master narration onto the concatenated video as AAC; video
     // stream is copied untouched.
     bool muxNarration(const QString &videoPath,

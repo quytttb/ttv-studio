@@ -8,6 +8,8 @@ qt_add_library(redub STATIC
     Translator.cpp
     DubPlanner.h
     DubPlanner.cpp
+    RedubPipeline.h
+    RedubPipeline.cpp
 )
 
 target_include_directories(redub
@@ -19,6 +21,8 @@ target_link_libraries(redub
     PUBLIC
         Qt6::Core
         ttv_studio::providers   # LlmClient for the translator
+        ttv_studio::media       # YtDlp / WhisperStt / MediaEngine / Ffprobe
+        ttv_studio::jobs        # state chart + JobStore
         ttv_studio::utils       # AppConstants dubbing defaults
 )
 

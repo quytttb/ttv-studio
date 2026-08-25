@@ -256,6 +256,100 @@ bool MediaEngine::extractAudio(const QString &sourcePath,
     return true;
 }
 
+bool MediaEngine::fitNarration(const QString &sourcePath,
+                               const QString &destinationPath,
+                               double atempoRate,
+                               double windowSeconds,
+                               QString *error) const
+{
+    const auto setErr = [error](const QString &message) {
+        if (error)
+            *error = message;
+        return false;
+    };
+
+    QDir().mkpath(QFileInfo(destinationPath).absolutePath());
+    const QString partPath = destinationPath + QStringLiteral(".part");
+
+    Subprocess subprocess;
+    const SubprocessResult result = subprocess.run(
+        m_ffmpegBin,
+        {QStringLiteral("-y"),
+         QStringLiteral("-i"), sourcePath,
+         QStringLiteral("-af"),
+         QStringLiteral("atempo=%1,apad").arg(atempoRate, 0, 'f', 4),
+         QStringLiteral("-t"), QString::number(windowSeconds, 'f', 3),
+         QStringLiteral("-ar"), QStringLiteral("16000"),
+         QStringLiteral("-ac"), QStringLiteral("1"),
+         QStringLiteral("-acodec"), QStringLiteral("pcm_s16le"),
+         QStringLiteral("-f"), QStringLiteral("wav"),
+         partPath},
+        Defaults::kPostProcessTimeoutMs);
+
+    if (!result.started)
+        return setErr(QStringLiteral("ffmpeg could not be started"));
+    if (result.timedOut)
+        return setErr(QStringLiteral("ffmpeg timed out fitting narration"));
+    if (!result.ok())
+        return setErr(QStringLiteral("ffmpeg fit failed (%1): %2")
+                          .arg(result.exitCode)
+                          .arg(result.stderrText.trimmed().section(QChar('\n'), -1)));
+    if (!QFile::rename(partPath, destinationPath)) {
+        QFile::remove(partPath);
+        return setErr(QStringLiteral("cannot publish fitted narration"));
+    }
+    return true;
+}
+
+bool MediaEngine::concatAudio(const QStringList &clipPaths,
+                              const QString &destinationPath,
+                              QString *error) const
+{
+    const auto setErr = [error](const QString &message) {
+        if (error)
+            *error = message;
+        return false;
+    };
+
+    if (clipPaths.isEmpty())
+        return setErr(QStringLiteral("no audio clips to concatenate"));
+    QDir().mkpath(QFileInfo(destinationPath).absolutePath());
+
+    const QString listPath = destinationPath + QStringLiteral(".concat.txt");
+    QFile listFile(listPath);
+    if (!listFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        return setErr(QStringLiteral("cannot write concat list"));
+    for (const QString &clip : clipPaths) {
+        listFile.write(QStringLiteral("file '%1'\n")
+                           .arg(QFileInfo(clip).absoluteFilePath().replace(
+                               QLatin1Char('\''), QStringLiteral("'\\''")))
+                           .toUtf8());
+    }
+    listFile.close();
+
+    Subprocess subprocess;
+    const SubprocessResult result = subprocess.run(
+        m_ffmpegBin,
+        {QStringLiteral("-y"),
+         QStringLiteral("-f"), QStringLiteral("concat"),
+         QStringLiteral("-safe"), QStringLiteral("0"),
+         QStringLiteral("-i"), listPath,
+         QStringLiteral("-c:a"), QStringLiteral("pcm_s16le"),
+         destinationPath},
+        Defaults::kPostProcessTimeoutMs);
+    QFile::remove(listPath);
+
+    if (!result.started)
+        return setErr(QStringLiteral("ffmpeg could not be started"));
+    if (result.timedOut)
+        return setErr(QStringLiteral("ffmpeg timed out during audio concat"));
+    if (!result.ok())
+        return setErr(QStringLiteral("audio concat failed (%1): %2")
+                          .arg(result.exitCode)
+                          .arg(result.stderrText.trimmed().section(QChar('\n'), -1)));
+    return true;
+}
+
 bool MediaEngine::muxNarration(const QString &videoPath,
                                const QString &narrationPath,
                                const QString &destinationPath,
