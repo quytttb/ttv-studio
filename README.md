@@ -1,56 +1,75 @@
-# TTV Studio (Qt 6 C++)
+# TTV Studio
 
-Desktop app quản lý Data Logger qua Modbus TCP + REST.
+Desktop app **Qt 6.11 / C++20 / QML** cho sản xuất video bằng AI, với hai pipeline:
 
-## Bắt đầu
+| Pipeline | Luồng | Kết quả |
+|----------|-------|---------|
+| **Render** | Text script → TTS (master clock) → LLM chia cảnh → sinh clip (Veo gateway) → normalize/concat/mux | `output/final_video.mp4` |
+| **Redub** | URL (Douyin/XHS/TikTok/YT qua yt-dlp) hoặc MP4 local → Whisper STT → LLM dịch duration-aware → TTS lồng tiếng → assembly original-clock (atempo) | `output/final_video.mp4` |
 
-- **Thiết kế DB:** [`docs/thiet_ke_db.md`](docs/thiet_ke_db.md)
-- **Tổng quan:** [HANDOFF.md](HANDOFF.md)
-- **Agent / AI:** [AGENTS.md](AGENTS.md)
+Nguyên tắc bất biến: **audio là đồng hồ chủ đạo** — clip/narration được retime để khớp timeline, không bao giờ ngược lại.
+
+## Kiến trúc
+
+```
+src/
+├── media/      Subprocess runner, Ffprobe, MediaEngine (ffmpeg ops), YtDlp, WhisperStt
+├── providers/  REST clients: LLM (OpenAI-compatible), TTS :3900, video gateway :8765
+│               Retry + phân loại lỗi Transient / Permanent / AmbiguousTimeout
+├── jobs/       State chart Render/Redub + JobStore ghi atomic (.part → rename)
+├── render/     Scene planning, coverage verification, duration optimizer (DP),
+│               captions VTT, RenderPipeline orchestrator
+├── redub/      Transcript domain, duration-aware Translator, DubPlanner,
+│               RedubPipeline orchestrator
+├── core/       RenderController (QML facade), JobListModel, SettingsStore
+├── components/ QML components riêng của app (rail/topbar, banners…)
+└── app/        Shell QML: Render / Redub / Settings
+shared/logger-ui-kit/   UI kit dùng chung (git submodule)
+```
+
+**Độ bền (durability):** mỗi stage transition được persist qua `JobStore`; artifact nằm ở
+`<storage>/jobs/<id>/{input,work,output}`. Crash/restart → job resume từ stage cuối;
+provider task id của video generation được lưu ngay sau submit ("never pay twice").
+
+### State chart
+
+```text
+RENDER: CREATED → VALIDATING → TTS_RUNNING → TTS_READY → PLANNING → SCENES_READY
+        → VIDEO_RUNNING → CLIPS_READY → POST_PROCESSING → VERIFYING → COMPLETED
+
+REDUB:  CREATED → VALIDATING → INGESTING → SOURCE_READY → TRANSCRIBING
+        → TRANSCRIPT_READY → TRANSLATING → TRANSLATION_READY → (đường chung từ TTS_RUNNING)
+
+Terminal/recovery: FAILED · CANCELLED · WAITING_FOR_PROVIDER · UNKNOWN_PROVIDER_STATE
+```
+
+## Dịch vụ ngoài & công cụ
+
+| Thành phần | Mặc định | Ghi chú |
+|------------|----------|---------|
+| LLM (planning/dịch) | `https://api.vilao.ai/v1` | Bất kỳ endpoint OpenAI-compatible nào |
+| Local voice TTS | `http://127.0.0.1:3900` | `POST /generate` multipart |
+| Video gateway (Veo) | `http://127.0.0.1:8765` | Webhook API submit/poll/download |
+| ffmpeg / ffprobe | PATH hoặc `TTV_STUDIO_FFMPEG_BIN_DIR` | |
+| yt-dlp | PATH hoặc `TTV_YTDLP_BIN` (fallback `python -m yt_dlp`) | |
+| whisper.cpp | `TTV_STUDIO_WHISPER_BIN` + `TTV_STUDIO_WHISPER_MODEL` (ggml .bin) | |
+
+Cấu hình endpoints/keys/models: **tab Settings** trong app (lưu QSettings) hoặc env vars
+(`TTV_LLM_*`, `TTV_TTS_BASE_URL`, `TTV_VIDEO_GATEWAY_*`) — **env ưu tiên hơn**.
+Secrets trong error message/log luôn được redact.
 
 ## Build
 
-Yêu cầu: **Qt 6.11**, CMake 3.16+. Cài qua [Qt Online Installer](https://doc.qt.io/qt-6/get-and-install-qt.html) + **Maintenance Tool** (không dùng Qt Charts — deprecated; dùng **Qt Graphs**).
-
-### Qt components (Maintenance Tool)
-
-| Cần cho repo | Tên trong Maintenance Tool | Ghi chú |
-|--------------|----------------------------|---------|
-| Bắt buộc | **Qt 6.11.2** → *Desktop* → **GCC 64-bit** | Quick, Qml, Sql, Network, Test, … |
-| Modbus | **Qt Serial Bus** | |
-| (phụ thuộc) | **Qt Serial Port** | Bắt buộc khi cài Serial Bus |
-| Biểu đồ | **Qt Graphs** | Thay **Qt Charts** (deprecated 6.11) |
-| Dev | **Qt Creator** (tuỳ chọn) | Đã có trong `~/Qt/Tools` |
-
-**Đã cài nhưng repo không dùng** (có thể gỡ nếu muốn gọn): Qt Multimedia, Qt Quick 3D, Qt Quick Timeline, Qt Shader Tools, Qt Task Tree.
-
-**Không cài / gỡ nếu còn:** **Qt Charts** — deprecated; dùng Qt Graphs.
-
-ID gói (CLI `MaintenanceTool search`): `qt.qt6.6112.linux_gcc_64`, `qt.qt6.6112.addons.qtserialbus.linux_gcc_64`, `qt.qt6.6112.addons.qtserialport.linux_gcc_64`, `qt.qt6.6112.addons.qtgraphs.linux_gcc_64`.
-
-Cài Qt (ví dụ `~/Qt/6.11.2/gcc_64`), rồi:
+Yêu cầu: **Qt 6.11**, CMake 3.16+, Qt modules: Quick, QuickControls2, Qml, Svg, Network, Test
+(cài qua [Qt Online Installer](https://doc.qt.io/qt-6/get-and-install-qt.html)).
 
 ```bash
 export CMAKE_PREFIX_PATH=~/Qt/6.11.2/gcc_64${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}
 
 cmake -B build -DCMAKE_BUILD_TYPE=Debug
-cmake --build build
+cmake --build build -j"$(nproc)"
 ./build/bin/ttv_studio
 ```
-
-Trên máy chỉ có Qt **6.10** từ apt: vẫn có thể thử build nếu hạ `REQUIRES` tạm thời — toolchain chuẩn của repo là **6.11**.
-
-Cấu trúc CMake theo [Qt CMake Get Started](https://doc.qt.io/qt-6/cmake-get-started.html): `src/app` (QML + executable), `src/data` (database layer).
-
-### Qt Creator
-
-1. Mở `CMakeLists.txt` → kit **Desktop** → build dir `build/Desktop-Debug` (hoặc tương đương).
-2. **Run configuration:** chọn target **`app`** (executable `ttv_studio`), không phải test.
-3. **Deploy:** dùng **Default** (không deploy) — **không** chọn *Application Manager* / *Install Application Manager package*.  
-   Nếu Run báo `appman-controller` does not exist: **Projects → Run → Deploy** → chọn cấu hình **Default** (index 0), bỏ *Application Manager*.
-4. Sau khi đổi `CMakeLists.txt` (vd. `QT_QML_OUTPUT_DIRECTORY`): **Run CMake** rồi **Rebuild**.
-
-Chạy ngoài IDE: `./build/Desktop-Debug/bin/ttv_studio` (hoặc `./build/bin/ttv_studio` tùy build dir).
 
 ### Test
 
@@ -58,23 +77,32 @@ Chạy ngoài IDE: `./build/Desktop-Debug/bin/ttv_studio` (hoặc `./build/bin/t
 cd build && ctest --output-on-failure
 ```
 
-### CI / đóng gói
+25 suites: media (subprocess/ffprobe/engine/yt-dlp), providers (retry/error/LLM/TTS/
+gateway/transport), jobs (state machine/store), render (coverage/optimizer/manifest/
+captions/planner/pipeline), redub (transcript/translator/planner/pipeline), core
+(controller/settings). Test integration dùng fake HTTP transport + stub binaries;
+các test cần ffmpeg sẽ tự skip khi thiếu binary trên runner.
+
+### Qt Creator
+
+Mở `CMakeLists.txt` → kit Desktop → run target **`app`** (binary `ttv_studio`).
+Sau khi đổi `CMakeLists.txt`: **Run CMake** rồi **Rebuild**.
+
+## CI / đóng gói
 
 Chi tiết Linux + Windows + phát hành: [`packaging/README.md`](packaging/README.md).
 
 | Workflow | Khi chạy | Kết quả |
 |----------|----------|---------|
-| `ci.yml` | push / PR `main` | `cmake` Debug + `ctest` |
+| `ci.yml` | push / PR `main` | cmake Debug + ctest |
 | `dev-build.yml` | push `main` | artifact `.deb` + `TtvStudioSetup.exe` |
 | `build-release.yml` | tag `v*.*.*` | GitHub Release |
 
-**Release (bump → tag → push):** `./packaging/linux/deploy.sh` hoặc `.\packaging\windows\deploy.ps1`
+**Release:** `./packaging/linux/deploy.sh` hoặc `.\packaging\windows\deploy.ps1`.
 
-## Tài liệu
+## Roadmap
 
-| Path | Nội dung |
-|------|----------|
-| [`docs/thiet_ke_db.md`](docs/thiet_ke_db.md) | Schema SQLite + RAM (spec chính thức) |
-| [`docs/adr/0001-db.md`](docs/adr/0001-db.md) | ADR: `QSqlDatabase` / `QSQLITE` |
-| [`docs/contracts/`](docs/contracts/) | REST / Modbus / QR |
-| [`docs/THAM_KHAO_REPO_CU/`](docs/THAM_KHAO_REPO_CU/) | Khảo sát app cũ — **chỉ tham khảo**, không port Phase 1/2 cũ |
+- [ ] Bundle ffmpeg/yt-dlp/whisper vào `.deb` / installer (app đã đọc các dir cấu hình)
+- [ ] Concurrent scene generation trong video stage
+- [ ] Original-audio sidechain ducking cho Redub (v1 dùng dub-only track)
+- [ ] Providers phụ: Gemini STT, Imagen Ken Burns
