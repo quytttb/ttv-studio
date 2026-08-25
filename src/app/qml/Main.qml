@@ -17,6 +17,7 @@ ApplicationWindow {
         id: renderController
     }
 
+
     readonly property var targetScreen: root.screen || Screen
     readonly property real windowScreenFraction: 0.8
 

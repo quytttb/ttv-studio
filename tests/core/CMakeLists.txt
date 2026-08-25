@@ -4,3 +4,9 @@ add_ttv_studio_test(
     SOURCES test_render_controller.cpp
     LIBS    ttv_studio_core
 )
+
+add_ttv_studio_test(
+    NAME    test_settings_store
+    SOURCES test_settings_store.cpp
+    LIBS    ttv_studio_core
+)

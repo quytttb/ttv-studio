@@ -18,6 +18,7 @@ qt_add_qml_module(app
         qml/Main.qml
         qml/RenderPage.qml
         qml/RedubPage.qml
+        qml/SettingsPage.qml
     DEPENDENCIES
         LoggerKit.Theme
         LoggerKit.Components
