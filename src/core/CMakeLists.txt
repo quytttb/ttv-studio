@@ -25,6 +25,7 @@ target_link_libraries(ttv_studio_core
         Qt6::Quick
         ttv_studio::jobs
         ttv_studio::render
+        ttv_studio::redub
     PRIVATE
         ttv_studio::providers
         ttv_studio::media

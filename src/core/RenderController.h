@@ -1,6 +1,6 @@
 #pragma once
 
-#include <memory>
+#include <functional>
 #include <mutex>
 #include <optional>
 
@@ -17,9 +17,7 @@ namespace TtvStudio::Providers {
 class ITransport;
 }
 
-namespace TtvStudio::Render {
-class RenderPipeline;
-}
+
 
 namespace TtvStudio::Core {
 
@@ -62,6 +60,10 @@ public:
     bool videoConfigured() const { return m_endpoints.videoConfigured(); }
 
     // Returns the new job id (empty on failure).
+    // Creates a Redub job; `source` is an http(s) URL or a local file path.
+    Q_INVOKABLE QString createRedubJob(const QString &source,
+                                       const QString &language = QStringLiteral("vi"));
+
     Q_INVOKABLE QString createRenderJob(const QString &scriptText,
                                      const QString &language = QStringLiteral("vi"),
                                      const QString &aspectRatio = QStringLiteral("16:9"),
@@ -101,10 +103,10 @@ private:
     // Test seam: drive HTTP through an injected transport instead of QNAM.
     Providers::ITransport *m_injectedTransport = nullptr;
 
-    // Non-owning handle to the pipeline running on the worker thread; guarded
-    // because cancelRun() touches it from the GUI thread.
+    // Cancel hooks for the pipelines running on the worker thread; guarded
+    // because cancelRun() touches them from the GUI thread.
     std::mutex m_pipelineMutex;
-    std::shared_ptr<Render::RenderPipeline> m_activePipeline;
+    QVector<std::function<void()>> m_cancelHooks;
 };
 
 } // namespace TtvStudio::Core

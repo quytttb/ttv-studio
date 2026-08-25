@@ -91,9 +91,8 @@ ApplicationWindow {
                 }
 
                 // Redub pipeline (existing video -> new narration).
-                EmptyStatePlaceholder {
-                    message: qsTr("<b>Redub</b> — URL/MP4 → Whisper STT → LLM translate → TTS dub → final_video.mp4.<br>Pipeline UI will appear here.")
-
+                RedubPage {
+                    controller: renderController
                 }
 
                 EmptyStatePlaceholder {

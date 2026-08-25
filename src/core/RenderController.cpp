@@ -11,6 +11,9 @@
 #include "providers/QNamTransport.h"
 #include "providers/TtsClient.h"
 #include "providers/VideoGatewayClient.h"
+#include "media/WhisperStt.h"
+#include "media/YtDlp.h"
+#include "redub/RedubPipeline.h"
 #include "render/RenderPipeline.h"
 #include "utils/AppConstants.h"
 #include "utils/Paths.h"
@@ -58,6 +61,27 @@ void RenderController::setLastError(const QString &message)
         return;
     m_lastError = message;
     Q_EMIT lastErrorChanged();
+}
+
+QString RenderController::createRedubJob(const QString &source, const QString &language)
+{
+    if (source.trimmed().isEmpty()) {
+        setLastError(tr("Source must not be empty"));
+        return {};
+    }
+    const bool isUrl = source.startsWith(QStringLiteral("http://"))
+                       || source.startsWith(QStringLiteral("https://"));
+    const auto result = m_store.createJob(
+        Jobs::Kind::Redub,
+        QJsonObject{{QLatin1String(isUrl ? "source_url" : "source_path"), source},
+                    {QLatin1String("language"), language}});
+    if (!result.ok()) {
+        setLastError(result.error);
+        return {};
+    }
+    setLastError(QString());
+    refreshJobs();
+    return result.record->id;
 }
 
 void RenderController::refreshJobs()
@@ -111,8 +135,8 @@ void RenderController::runJob(const QString &jobId)
 void RenderController::cancelRun()
 {
     std::lock_guard lock(m_pipelineMutex);
-    if (m_activePipeline)
-        m_activePipeline->requestCancel();
+    for (auto &fn : m_cancelHooks)
+        fn();
 }
 
 QString RenderController::finalVideoPath(const QString &jobId) const
@@ -163,23 +187,39 @@ void RenderController::startRun(const QString &jobId)
                                             endpoints.videoGatewayApiKey,
                                             endpoints.videoModel};
 
-        Render::RenderPipeline pipeline{workerStore, tts,  llm,   video,
-                                        ffprobe,     Paths::ffmpegBinary(), pipelineConfig()};
-        {
-            std::lock_guard lock(m_pipelineMutex);
-            // Non-owning handle so cancelRun() can reach it from the GUI thread.
-            m_activePipeline = std::shared_ptr<Render::RenderPipeline>(&pipeline, [](auto *) {});
-        }
+        // Kind dispatch: Redub jobs drive RedubPipeline; others the render one.
+        Media::YtDlp ytdlp;
+        Media::WhisperStt whisper;
+        Render::RenderPipeline renderPipeline{workerStore, tts,  llm,   video,
+                                              ffprobe,     Paths::ffmpegBinary(), pipelineConfig()};
+        Redub::RedubPipeline redubPipeline{workerStore, ytdlp, whisper, llm, tts,
+                                           ffprobe,     Paths::ffmpegBinary()};
+        Jobs::Kind kind = Jobs::Kind::Render;
+        if (const auto record = workerStore.loadJob(jobId))
+            kind = record->kind;
 
-        connect(&pipeline, &Render::RenderPipeline::stageChanged, this,
+        connect(&renderPipeline, &Render::RenderPipeline::stageChanged, this,
                 &RenderController::onStageChanged, Qt::QueuedConnection);
-        connect(&pipeline, &Render::RenderPipeline::sceneProgress, this,
+        connect(&renderPipeline, &Render::RenderPipeline::sceneProgress, this,
+                &RenderController::onSceneProgress, Qt::QueuedConnection);
+        connect(&redubPipeline, &Redub::RedubPipeline::stageChanged, this,
+                &RenderController::onStageChanged, Qt::QueuedConnection);
+        connect(&redubPipeline, &Redub::RedubPipeline::segmentProgress, this,
                 &RenderController::onSceneProgress, Qt::QueuedConnection);
 
+        {
+            std::lock_guard lock(m_pipelineMutex);
+            m_cancelHooks = {[&renderPipeline] { renderPipeline.requestCancel(); },
+                             [&redubPipeline] { redubPipeline.requestCancel(); }};
+        }
+
         QString error;
-        auto outcome = Render::RunOutcome::Failed;
+        bool ok = false;
         try {
-            outcome = pipeline.runJob(jobId, &error);
+            ok = kind == Jobs::Kind::Redub ? redubPipeline.runJob(jobId, &error)
+                                                 == Redub::RunOutcome::Completed
+                                           : renderPipeline.runJob(jobId, &error)
+                                                 == Render::RunOutcome::Completed;
         } catch (const std::exception &e) {
             error = QStringLiteral("worker exception: %1").arg(e.what());
             qCritical() << "Render worker thread exception:" << e.what();
@@ -189,10 +229,10 @@ void RenderController::startRun(const QString &jobId)
 
         {
             std::lock_guard lock(m_pipelineMutex);
-            m_activePipeline.reset();
+            m_cancelHooks.clear();
         }
 
-        const bool ok = outcome == Render::RunOutcome::Completed;
+        // `ok` decided above
         const bool wasCancelled = error == QLatin1String("cancelled");
         QMetaObject::invokeMethod(
             this,
