@@ -245,6 +245,150 @@ Item {
             }
         }
 
+        // --- Application / updates ----------------------------------------
+        ElevatedPane {
+            Layout.fillWidth: true
+            implicitHeight: updateColumn.implicitHeight + 32
+
+            ColumnLayout {
+                id: updateColumn
+
+                x: 16
+                y: 16
+                width: parent.width - 32
+                spacing: 10
+
+                RowLayout {
+                    Layout.fillWidth: true
+
+                    Label {
+                        text: qsTr("Ứng dụng")
+                        font: AppTypography.titleSmall
+                        Layout.fillWidth: true
+                    }
+
+                    Label {
+                        text: qsTr("Phiên bản %1").arg(UpdateController.currentVersion)
+                        font: AppTypography.bodySmall
+                        color: AppColors.onSurfaceVariant
+                    }
+                }
+
+                RowLayout {
+                    spacing: 12
+                    Layout.fillWidth: true
+
+                    AppButton {
+                        text: UpdateController.busy && UpdateController.state === "checking"
+                                  ? qsTr("Đang kiểm tra…")
+                                  : qsTr("Kiểm tra cập nhật")
+                        enabled: !UpdateController.busy
+                        onClicked: UpdateController.checkForUpdates()
+                    }
+
+                    Label {
+                        visible: UpdateController.state === "uptodate"
+                        text: qsTr("Bạn đang dùng bản mới nhất (%1)")
+                                  .arg(UpdateController.currentVersion)
+                        font: AppTypography.bodyMedium
+                        color: AppColors.success
+                    }
+
+                    Item { Layout.fillWidth: true }
+                }
+
+                InlineBanner {
+                    visible: UpdateController.state === "available"
+                    Layout.fillWidth: true
+                    semantic: "info"
+                    message: qsTr("Có phiên bản mới: %1")
+                                 .arg(UpdateController.latestVersion)
+                }
+
+                ColumnLayout {
+                    visible: UpdateController.state === "available"
+                              || UpdateController.state === "downloading"
+                    spacing: 8
+                    Layout.fillWidth: true
+
+                    TextArea {
+                        visible: UpdateController.releaseNotes !== ""
+                                 && UpdateController.state === "available"
+                        text: UpdateController.releaseNotes
+                        readOnly: true
+                        wrapMode: TextArea.Wrap
+                        implicitHeight: Math.min(contentHeight, 120)
+                        font: AppTypography.bodySmall
+                        color: AppColors.primaryText
+                        background: Rectangle {
+                            radius: AppTheme.listItemRadius
+                            color: AppColors.surfaceContainerLow
+                        }
+                    }
+
+                    ProgressBar {
+                        visible: UpdateController.state === "downloading"
+                        Layout.fillWidth: true
+                        from: 0
+                        to: 1
+                        value: UpdateController.downloadProgress < 0 ? 0
+                                                                     : UpdateController.downloadProgress
+                        indeterminate: UpdateController.downloadProgress < 0
+                    }
+
+                    RowLayout {
+                        spacing: 12
+                        Layout.fillWidth: true
+
+                        Label {
+                            visible: UpdateController.state === "downloading"
+                            text: UpdateController.downloadProgress < 0
+                                      ? qsTr("Đang tải…")
+                                      : qsTr("Đang tải… %1%")
+                                            .arg(Math.round(
+                                                     UpdateController.downloadProgress * 100))
+                            font: AppTypography.bodySmall
+                            color: AppColors.onSurfaceVariant
+                        }
+
+                        Item { Layout.fillWidth: true }
+
+                        AppButton {
+                            visible: UpdateController.state === "available"
+                            text: qsTr("Tải bản mới")
+                            onClicked: UpdateController.downloadUpdate()
+                        }
+
+                        AppButton {
+                            visible: UpdateController.state === "downloaded"
+                                     || UpdateController.state === "installed"
+                            text: UpdateController.state === "downloaded"
+                                      ? qsTr("Cài đặt ngay")
+                                      : qsTr("Đã cài — khởi động lại để dùng bản mới")
+                            enabled: UpdateController.state === "downloaded"
+                            onClicked: UpdateController.installUpdate()
+                        }
+                    }
+                }
+
+                InlineBanner {
+                    visible: UpdateController.state === "error"
+                              && UpdateController.errorMessage !== ""
+                    Layout.fillWidth: true
+                    semantic: "error"
+                    message: UpdateController.errorMessage
+                }
+
+                Label {
+                    text: qsTr("Linux: bản cài .deb được nâng cấp qua pkexec/apt. Windows: installer chạy sau khi tải xong và thay thế ứng dụng.")
+                    wrapMode: Label.Wrap
+                    font: AppTypography.bodySmall
+                    color: AppColors.onSurfaceVariant
+                    Layout.fillWidth: true
+                }
+            }
+        }
+
         InlineBanner {
             Layout.fillWidth: true
             message: qsTr("Môi trường env (TTV_*) vẫn ưu tiên hơn giá trị lưu tại đây.")

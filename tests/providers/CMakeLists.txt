@@ -30,3 +30,8 @@ add_ttv_studio_test(
     SOURCES test_qnam_transport.cpp
     LIBS    providers
 )
+add_ttv_studio_test(
+    NAME    test_github_releases_client
+    SOURCES test_github_releases_client.cpp
+    LIBS    providers utils
+)

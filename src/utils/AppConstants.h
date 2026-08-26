@@ -83,6 +83,16 @@ inline constexpr const char *kDefaultVideoGatewayBaseUrl = "http://127.0.0.1:876
 // Spoken-language pacing used to convert a segment's original window into a
 // target character count for the translator.
 inline constexpr double kDubCharsPerSecond        = 14.0;
+
+// --- Remote update check (GitHub Releases) ------------------------------------
+inline constexpr const char *kUpdateRepoOwner = "quytttb";
+inline constexpr const char *kUpdateRepoName  = "ttv-studio";
+inline constexpr int    kUpdateCheckTimeoutMs   = 15'000;
+inline constexpr qint64 kUpdateCheckMaxBodyBytes = 1'000'000; // release JSON cap
+inline constexpr int    kUpdateDownloadTimeoutMs  = 600'000; // installer asset
+inline constexpr qint64 kUpdateMaxDownloadBytes  = 2'000'000'000LL; // 2 GB cap
+// Delay before the silent startup check so launch is never blocked on it.
+inline constexpr int kUpdateStartupCheckDelayMs = 5'000;
 // Accepted narration length band around the target (translator guidance).
 inline constexpr double kDubLengthFloorRatio      = 0.6;
 inline constexpr double kDubLengthCeilRatio       = 1.4;

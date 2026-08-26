@@ -14,6 +14,8 @@ qt_add_qml_module(ttv_studio_core
         RenderController.cpp
         RenderDeviceController.h
         RenderDeviceController.cpp
+        UpdateController.h
+        UpdateController.cpp
         SettingsStore.h
         SettingsStore.cpp
     NO_PLUGIN_OPTIONAL

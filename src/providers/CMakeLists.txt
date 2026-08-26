@@ -16,6 +16,8 @@ qt_add_library(providers STATIC
     TtsClient.cpp
     VideoGatewayClient.h
     VideoGatewayClient.cpp
+    GitHubReleasesClient.h
+    GitHubReleasesClient.cpp
 )
 
 target_include_directories(providers

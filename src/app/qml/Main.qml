@@ -50,7 +50,10 @@ ApplicationWindow {
         y = scr.virtualY + Math.round((scr.availableHeight - height) / 2)
     }
 
-    Component.onCompleted: centerOnTargetScreen()
+    Component.onCompleted: {
+        centerOnTargetScreen()
+        UpdateController.scheduleStartupCheck()
+    }
 
     RowLayout {
         id: shellRow
