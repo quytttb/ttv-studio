@@ -465,21 +465,7 @@ Item {
                     semantic: "error"
                     message: UpdateController.errorMessage
                 }
-
-                Label {
-                    text: qsTr("Linux: bản cài .deb được nâng cấp qua pkexec/apt. Windows: installer chạy sau khi tải xong và thay thế ứng dụng.")
-                    wrapMode: Label.Wrap
-                    font: AppTypography.bodySmall
-                    color: AppColors.onSurfaceVariant
-                    Layout.fillWidth: true
-                }
             }
-        }
-
-        InlineBanner {
-            Layout.fillWidth: true
-            message: qsTr("Môi trường env (TTV_*) vẫn ưu tiên hơn giá trị lưu tại đây.")
-            semantic: "info"
         }
 
         Item { Layout.fillHeight: true }

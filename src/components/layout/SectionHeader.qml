@@ -6,7 +6,7 @@ import QtQuick.Layouts
 
 import LoggerKit.Theme
 
-// Section title row — titleMedium + optional trailing actions slot.
+// Section title row — M3 headline-sized heading + optional actions slot.
 RowLayout {
     id: root
 
@@ -18,7 +18,7 @@ RowLayout {
 
     Label {
         text: root.title
-        font: AppTypography.titleMedium
+        font: AppTypography.headlineSmall
         Layout.fillWidth: true
     }
 
