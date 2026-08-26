@@ -10,13 +10,19 @@ namespace {
 
 constexpr const char *kGroup = "providers";
 
-QString envOr(const char *name, const QString &fallback)
-{
-    const QString v = qEnvironmentVariable(name);
-    return v.isEmpty() ? fallback : v;
-}
-
 } // namespace
+
+QString SettingsStore::resolvedValue(const char *envName, const QString &settingKey,
+                                     const QString &fallback)
+{
+    const QString fromEnv = qEnvironmentVariable(envName);
+    if (!fromEnv.isEmpty())
+        return fromEnv;
+    const QString stored = storedValue(settingKey);
+    if (!stored.isEmpty())
+        return stored;
+    return fallback;
+}
 
 SettingsStore::SettingsStore(QObject *parent)
     : QObject(parent)
@@ -49,6 +55,10 @@ void SettingsStore::load()
     m_videoModel = settings.value(QStringLiteral("video_model")).toString();
     m_whisperBin = settings.value(QStringLiteral("whisper_bin")).toString();
     m_whisperModel = settings.value(QStringLiteral("whisper_model")).toString();
+    m_ffmpegBinDir = settings.value(QStringLiteral("ffmpeg_bin_dir")).toString();
+    m_ytdlpBin = settings.value(QStringLiteral("ytdlp_bin")).toString();
+    m_ingestCookiesFile =
+        settings.value(QStringLiteral("ingest_cookies_file")).toString();
     const QString backend =
         settings.value(QStringLiteral("render_backend"),
                        QLatin1String(Defaults::kDefaultRenderBackend))
@@ -90,6 +100,9 @@ SETTER_IMPL(VideoGatewayApiKey, videoGatewayApiKey, "video_gateway_api_key")
 SETTER_IMPL(VideoModel, videoModel, "video_model")
 SETTER_IMPL(WhisperBin, whisperBin, "whisper_bin")
 SETTER_IMPL(WhisperModel, whisperModel, "whisper_model")
+SETTER_IMPL(FfmpegBinDir, ffmpegBinDir, "ffmpeg_bin_dir")
+SETTER_IMPL(YtdlpBin, ytdlpBin, "ytdlp_bin")
+SETTER_IMPL(IngestCookiesFile, ingestCookiesFile, "ingest_cookies_file")
 SETTER_IMPL(RenderBackend, renderBackend, "render_backend")
 
 } // namespace TtvStudio::Core

@@ -1,35 +1,23 @@
 #include "media/Ffprobe.h"
 
-#include <QDir>
-#include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QStandardPaths>
 
 #include "media/Subprocess.h"
+#include "utils/Paths.h"
 
 namespace TtvStudio::Media {
 
 namespace {
 
+// Explicit full binary path wins; otherwise the shared env→configured→PATH
+// lookup (single source of truth in utils/Paths).
 QString resolveBinary(const QString &explicitPath)
 {
     if (!explicitPath.isEmpty())
         return explicitPath;
-
-    const QString binDir = qEnvironmentVariable("TTV_STUDIO_FFMPEG_BIN_DIR");
-    if (!binDir.isEmpty()) {
-#ifdef Q_OS_WIN
-        const QString candidate = QDir(binDir).filePath(QStringLiteral("ffprobe.exe"));
-#else
-        const QString candidate = QDir(binDir).filePath(QStringLiteral("ffprobe"));
-#endif
-        if (QFileInfo::exists(candidate))
-            return candidate;
-    }
-
-    return QStandardPaths::findExecutable(QStringLiteral("ffprobe"));
+    return Paths::toolBinary("ffprobe");
 }
 
 double streamOrFormatDuration(const QJsonObject &format, const QJsonArray &streams)

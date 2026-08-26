@@ -30,12 +30,13 @@ struct SourceInfo
 //   3. PATH lookup ("yt-dlp"),
 //   4. [current python interpreter, "-m", "yt_dlp"] fallback.
 //
-// Cookies: TTV_INGEST_COOKIES_FILE (Netscape format) is appended when set;
+// Cookies: TTV_INGEST_COOKIES_FILE (Netscape format) is appended when set —
+// or the core-injected `explicitCookiesFile` when the env var is absent;
 // a configured-but-missing file fails closed at command build time.
 class YtDlp
 {
 public:
-    explicit YtDlp(QString explicitBin = {});
+    explicit YtDlp(QString explicitBin = {}, QString explicitCookiesFile = {});
 
     // Metadata probe without downloading.
     bool probe(const QUrl &url, SourceInfo *out, IngestError *error) const;
@@ -47,6 +48,7 @@ private:
     bool buildArguments(QStringList *out, IngestError *error) const;
     QString m_program;     // resolved binary path (or python marker)
     bool m_isPythonModule = false;
+    QString m_cookiesFile; // empty → TTV_INGEST_COOKIES_FILE env
 };
 
 } // namespace TtvStudio::Media

@@ -24,7 +24,8 @@ QString envOrEmpty(const char *name)
 
 } // namespace
 
-YtDlp::YtDlp(QString explicitBin)
+YtDlp::YtDlp(QString explicitBin, QString explicitCookiesFile)
+    : m_cookiesFile(std::move(explicitCookiesFile))
 {
     // 1. explicit configured path (must contain a separator and exist).
     if (!explicitBin.isEmpty()) {
@@ -83,12 +84,15 @@ bool YtDlp::buildArguments(QStringList *out, IngestError *error) const
     if (m_isPythonModule)
         *out << QStringLiteral("-m") << QStringLiteral("yt_dlp");
 
-    const QString cookies = envOrEmpty("TTV_INGEST_COOKIES_FILE");
+    // Contract: env var wins; otherwise the core-injected stored setting.
+    QString cookies = envOrEmpty("TTV_INGEST_COOKIES_FILE");
+    if (cookies.isEmpty())
+        cookies = m_cookiesFile;
     if (!cookies.isEmpty()) {
         // Fail closed: a configured-but-missing cookies file means the
         // operator expected an authenticated download.
         if (!QFileInfo::exists(cookies))
-            return fail(QStringLiteral("TTV_INGEST_COOKIES_FILE does not exist: %1")
+            return fail(QStringLiteral("cookies file does not exist: %1")
                             .arg(cookies));
         *out << QStringLiteral("--cookies") << cookies;
     }

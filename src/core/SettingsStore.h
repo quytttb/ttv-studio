@@ -5,6 +5,7 @@
 #include <QtQml>
 
 #include "utils/AppConstants.h"
+#include "utils/Paths.h"
 
 namespace TtvStudio::Core {
 
@@ -29,8 +30,13 @@ class SettingsStore : public QObject
     // Tool locations
     Q_PROPERTY(QString whisperBin READ whisperBin WRITE setWhisperBin NOTIFY whisperBinChanged FINAL)
     Q_PROPERTY(QString whisperModel READ whisperModel WRITE setWhisperModel NOTIFY whisperModelChanged FINAL)
+    Q_PROPERTY(QString ffmpegBinDir READ ffmpegBinDir WRITE setFfmpegBinDir NOTIFY ffmpegBinDirChanged FINAL)
+    Q_PROPERTY(QString ytdlpBin READ ytdlpBin WRITE setYtdlpBin NOTIFY ytdlpBinChanged FINAL)
+    Q_PROPERTY(QString ingestCookiesFile READ ingestCookiesFile WRITE setIngestCookiesFile NOTIFY ingestCookiesFileChanged FINAL)
     // Render device backend ("cpu" or a hardware encoder id, see HardwareEncoder)
     Q_PROPERTY(QString renderBackend READ renderBackend WRITE setRenderBackend NOTIFY renderBackendChanged FINAL)
+    // Effective jobs/artifacts root (env override or per-user app data).
+    Q_PROPERTY(QString storageRoot READ storageRoot CONSTANT)
 
 public:
     explicit SettingsStore(QObject *parent = nullptr);
@@ -46,6 +52,10 @@ public:
     QString videoModel() const { return m_videoModel; }
     QString whisperBin() const { return m_whisperBin; }
     QString whisperModel() const { return m_whisperModel; }
+    QString ffmpegBinDir() const { return m_ffmpegBinDir; }
+    QString ytdlpBin() const { return m_ytdlpBin; }
+    QString ingestCookiesFile() const { return m_ingestCookiesFile; }
+    QString storageRoot() const { return Paths::storageRoot(); }
     // Empty never leaks out — falls back to the CPU profile.
     QString renderBackend() const
     {
@@ -63,7 +73,17 @@ public:
     void setVideoModel(const QString &);
     void setWhisperBin(const QString &);
     void setWhisperModel(const QString &);
+    void setFfmpegBinDir(const QString &);
+    void setYtdlpBin(const QString &);
+    void setIngestCookiesFile(const QString &);
     void setRenderBackend(const QString &);
+
+    // Single resolution point for the app-wide config contract:
+    //   env var → stored setting (QSettings) → fallback.
+    // Every consumer-facing knob must go through here so the Settings UI and
+    // environment stay two views of one configuration, never divergent copies.
+    static QString resolvedValue(const char *envName, const QString &settingKey,
+                                 const QString &fallback = {});
 
     // Non-QML accessor for C++ callers (RenderController composition).
     static QString storedValue(const QString &key);
@@ -79,6 +99,9 @@ signals:
     void videoModelChanged();
     void whisperBinChanged();
     void whisperModelChanged();
+    void ffmpegBinDirChanged();
+    void ytdlpBinChanged();
+    void ingestCookiesFileChanged();
     void renderBackendChanged();
 
 private:
@@ -86,6 +109,7 @@ private:
     QString m_llmBaseUrl, m_llmApiKey, m_llmModel;
     QString m_ttsBaseUrl, m_videoGatewayBaseUrl, m_videoGatewayApiKey, m_videoModel;
     QString m_whisperBin, m_whisperModel;
+    QString m_ffmpegBinDir, m_ytdlpBin, m_ingestCookiesFile;
     QString m_renderBackend;
 };
 

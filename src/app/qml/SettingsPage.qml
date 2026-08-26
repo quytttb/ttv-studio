@@ -127,25 +127,112 @@ Item {
                         text: SettingsStore.videoModel
                         onTextEdited: SettingsStore.videoModel = text
                     }
+                }
+            }
+        }
+
+        RowLayout {
+            spacing: 16
+            Layout.fillWidth: true
+
+            // --- Tools & directories --------------------------------------
+            ElevatedPane {
+                Layout.fillWidth: true
+                implicitHeight: toolsColumn.implicitHeight + 32
+
+                ColumnLayout {
+                    id: toolsColumn
+
+                    x: 16
+                    y: 16
+                    width: parent.width - 32
+                    spacing: 10
 
                     Label {
-                        text: qsTr("Whisper (STT local)")
+                        text: qsTr("Công cụ & thư mục")
                         font: AppTypography.titleSmall
                     }
 
                     TextField {
                         Layout.fillWidth: true
-                        placeholderText: qsTr("Đường dẫn binary whisper-cli")
+                        placeholderText: qsTr(
+                            "Whisper — đường dẫn binary whisper-cli")
                         text: SettingsStore.whisperBin
                         onTextEdited: SettingsStore.whisperBin = text
                     }
 
                     TextField {
                         Layout.fillWidth: true
-                        placeholderText: qsTr("Đường dẫn model ggml .bin")
+                        placeholderText: qsTr("Whisper — model ggml .bin")
                         text: SettingsStore.whisperModel
                         onTextEdited: SettingsStore.whisperModel = text
                     }
+
+                    TextField {
+                        Layout.fillWidth: true
+                        placeholderText: qsTr(
+                            "Thư mục chứa ffmpeg/ffprobe (tuỳ chọn)")
+                        text: SettingsStore.ffmpegBinDir
+                        onTextEdited: SettingsStore.ffmpegBinDir = text
+                    }
+
+                    TextField {
+                        Layout.fillWidth: true
+                        placeholderText: qsTr("yt-dlp — đường dẫn binary (tuỳ chọn)")
+                        text: SettingsStore.ytdlpBin
+                        onTextEdited: SettingsStore.ytdlpBin = text
+                    }
+
+                    TextField {
+                        Layout.fillWidth: true
+                        placeholderText: qsTr(
+                            "Cookies Netscape cho ingest đăng nhập (tuỳ chọn)")
+                        text: SettingsStore.ingestCookiesFile
+                        onTextEdited: SettingsStore.ingestCookiesFile = text
+                    }
+                }
+            }
+
+            // --- Read-only environment summary ------------------------------
+            ElevatedPane {
+                Layout.fillWidth: true
+                implicitHeight: envColumn.implicitHeight + 32
+
+                ColumnLayout {
+                    id: envColumn
+
+                    x: 16
+                    y: 16
+                    width: parent.width - 32
+                    spacing: 10
+
+                    Label {
+                        text: qsTr("Môi trường")
+                        font: AppTypography.titleSmall
+                    }
+
+                    Label {
+                        text: qsTr("Thư mục dữ liệu (jobs, artifacts)")
+                        color: AppColors.onSurfaceVariant
+                        font: AppTypography.bodySmall
+                    }
+
+                    TextField {
+                        Layout.fillWidth: true
+                        text: SettingsStore.storageRoot
+                        readOnly: true
+                        font: AppTypography.bodySmall
+                    }
+
+                    Label {
+                        text: qsTr("Đường dẫn này chỉ đặt được qua biến môi trường TTV_STUDIO_STORAGE_ROOT trước khi khởi động — đổi sau khi đã có job sẽ làm mất truy cập lịch sử.")
+                        wrapMode: Label.Wrap
+                        font: AppTypography.bodySmall
+                        color: AppColors.textSecondary
+                        Layout.fillWidth: true
+                    }
+
+                    Item { Layout.fillHeight: true }
                 }
             }
         }

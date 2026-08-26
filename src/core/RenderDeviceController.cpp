@@ -22,7 +22,9 @@ RenderDeviceController *RenderDeviceController::create(QQmlEngine *engine,
 
 QString RenderDeviceController::resolveFfmpeg() const
 {
-    return Paths::ffmpegBinary();
+    const QString ffmpegBinDir = SettingsStore::resolvedValue(
+        "TTV_STUDIO_FFMPEG_BIN_DIR", QStringLiteral("ffmpeg_bin_dir"));
+    return Paths::ffmpegBinary(ffmpegBinDir);
 }
 
 QString RenderDeviceController::selectedBackend() const

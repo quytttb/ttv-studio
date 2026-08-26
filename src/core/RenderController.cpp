@@ -177,7 +177,12 @@ void RenderController::startRun(const QString &jobId)
             return;
         }
 
-        Media::Ffprobe ffprobe;
+        // Tool configuration — one resolution point (env → stored → default)
+        // so the Settings UI and the environment stay two views of one config.
+        const QString ffmpegBinDir = SettingsStore::resolvedValue(
+            "TTV_STUDIO_FFMPEG_BIN_DIR", QStringLiteral("ffmpeg_bin_dir"));
+        Media::Ffprobe ffprobe{Paths::toolBinary("ffprobe", ffmpegBinDir)};
+        const QString resolvedFfmpeg = Paths::ffmpegBinary(ffmpegBinDir);
         std::optional<Providers::QNamTransport> ownedTransport;
         if (!injectedTransport)
             ownedTransport.emplace();
@@ -195,12 +200,20 @@ void RenderController::startRun(const QString &jobId)
                                             endpoints.videoModel};
 
         // Kind dispatch: Redub jobs drive RedubPipeline; others the render one.
-        Media::YtDlp ytdlp;
-        Media::WhisperStt whisper;
+        Media::YtDlp ytdlp{
+            SettingsStore::resolvedValue("TTV_YTDLP_BIN", QStringLiteral("ytdlp_bin")),
+            SettingsStore::resolvedValue("TTV_INGEST_COOKIES_FILE",
+                                         QStringLiteral("ingest_cookies_file"))};
+        Media::WhisperStt whisper{Media::WhisperStt::Config{
+            SettingsStore::resolvedValue("TTV_STUDIO_WHISPER_BIN",
+                                         QStringLiteral("whisper_bin")),
+            SettingsStore::resolvedValue("TTV_STUDIO_WHISPER_MODEL",
+                                         QStringLiteral("whisper_model")),
+            {}}};
         Render::RenderPipeline renderPipeline{workerStore, tts,  llm,   video,
-                                              ffprobe,     Paths::ffmpegBinary(), pipelineConfig()};
+                                              ffprobe,     resolvedFfmpeg, pipelineConfig()};
         Redub::RedubPipeline redubPipeline{workerStore, ytdlp, whisper, llm, tts,
-                                           ffprobe,     Paths::ffmpegBinary()};
+                                           ffprobe,     resolvedFfmpeg};
         Jobs::Kind kind = Jobs::Kind::Render;
         if (const auto record = workerStore.loadJob(jobId))
             kind = record->kind;

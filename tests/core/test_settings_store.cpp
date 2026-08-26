@@ -63,6 +63,46 @@ private slots:
         store.setRenderBackend(QStringLiteral(""));
         QCOMPARE(store.renderBackend(), QStringLiteral("cpu"));
     }
+
+    void toolConfigRoundTrip() {
+        SettingsStore store;
+        QVERIFY(store.ffmpegBinDir().isEmpty());
+        QVERIFY(store.ytdlpBin().isEmpty());
+        QVERIFY(store.ingestCookiesFile().isEmpty());
+
+        store.setFfmpegBinDir(QStringLiteral("/opt/ffmpeg/bin"));
+        store.setYtdlpBin(QStringLiteral("/usr/local/bin/yt-dlp"));
+        store.setIngestCookiesFile(QStringLiteral("/home/u/cookies.txt"));
+
+        QCOMPARE(SettingsStore().ffmpegBinDir(), QStringLiteral("/opt/ffmpeg/bin"));
+        QCOMPARE(SettingsStore().ytdlpBin(), QStringLiteral("/usr/local/bin/yt-dlp"));
+        QCOMPARE(SettingsStore().ingestCookiesFile(),
+                 QStringLiteral("/home/u/cookies.txt"));
+    }
+
+    void resolvedValueEnvBeatsStoredBeatsFallback() {
+        const char *env = "TTV_TEST_RESOLVE_VAR";
+        qputenv(env, "from-env");
+        // env wins over stored/fallback.
+        QCOMPARE(SettingsStore::resolvedValue(
+                     env, QStringLiteral("resolve_probe"), QStringLiteral("fb")),
+                 QStringLiteral("from-env"));
+        qunsetenv(env);
+
+        // Stored setting wins over fallback.
+        SettingsStore::setValue(QStringLiteral("resolve_probe"),
+                                QStringLiteral("from-store"));
+        QCOMPARE(SettingsStore::resolvedValue(
+                     env, QStringLiteral("resolve_probe"), QStringLiteral("fb")),
+                 QStringLiteral("from-store"));
+
+        // Empty stored value falls through to the fallback.
+        SettingsStore::setValue(QStringLiteral("resolve_probe"), QString());
+        QCOMPARE(SettingsStore::resolvedValue(
+                     env, QStringLiteral("resolve_probe"), QStringLiteral("fb")),
+                 QStringLiteral("fb"));
+        SettingsStore::setValue(QStringLiteral("resolve_probe"), QString());
+    }
 };
 
 QTEST_GUILESS_MAIN(TestSettingsStore)

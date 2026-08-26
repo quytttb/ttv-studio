@@ -27,19 +27,42 @@ QString jobDir(const QString &jobId)
     return jobsRoot() + QLatin1Char('/') + jobId;
 }
 
-QString ffmpegBinary()
+namespace {
+
+QString dirCandidate(const QString &binDir, const char *toolName)
 {
-    const QString binDir = qEnvironmentVariable("TTV_STUDIO_FFMPEG_BIN_DIR");
-    if (!binDir.isEmpty()) {
 #ifdef Q_OS_WIN
-        const QString candidate = QDir(binDir).filePath(QStringLiteral("ffmpeg.exe"));
+    return QDir(binDir).filePath(QStringLiteral("%1.exe").arg(QLatin1String(toolName)));
 #else
-        const QString candidate = QDir(binDir).filePath(QStringLiteral("ffmpeg"));
+    Q_UNUSED(toolName);
+    return QDir(binDir).filePath(QLatin1String(toolName));
 #endif
+}
+
+} // namespace
+
+QString toolBinary(const char *toolName, const QString &configuredBinDir)
+{
+    // 1. Environment override wins over the stored setting by contract.
+    const QString envDir = qEnvironmentVariable("TTV_STUDIO_FFMPEG_BIN_DIR");
+    if (!envDir.isEmpty()) {
+        const QString candidate = dirCandidate(envDir, toolName);
         if (QFileInfo::exists(candidate))
             return candidate;
     }
-    return QStandardPaths::findExecutable(QStringLiteral("ffmpeg"));
+    // 2. Configured directory (Settings-store value injected by core).
+    if (!configuredBinDir.isEmpty()) {
+        const QString candidate = dirCandidate(configuredBinDir, toolName);
+        if (QFileInfo::exists(candidate))
+            return candidate;
+    }
+    // 3. PATH.
+    return QStandardPaths::findExecutable(QLatin1String(toolName));
+}
+
+QString ffmpegBinary(const QString &configuredBinDir)
+{
+    return toolBinary("ffmpeg", configuredBinDir);
 }
 
 } // namespace TtvStudio::Paths
