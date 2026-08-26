@@ -1,5 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TTV Studio brand badge: teal rounded square + white studio glyph.
+     Glyph from svgrepo.com (studio); background added for contrast on
+     light and dark surfaces alike (rail, window icon, installer). -->
 <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M17 13H13V17H17V13Z" fill="#000000"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M3 3H21V21H3V3ZM5 5H19V19H5V5Z" fill="#000000"/>
+<rect x="0" y="0" width="24" height="24" rx="5" fill="#00796B"/>
+<path d="M17 13H13V17H17V13Z" fill="#FFFFFF"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M3 3H21V21H3V3ZM5 5H19V19H5V5Z" fill="#FFFFFF"/>
 </svg>

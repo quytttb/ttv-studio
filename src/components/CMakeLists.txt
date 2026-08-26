@@ -23,7 +23,6 @@ qt_add_qml_module(ttv_studio_components
     DEPENDENCIES
         LoggerKit.Theme
         LoggerKit.Components
-        QtQuick.Effects
     RESOURCES
         ../../resources/icons/studio.svg
 )

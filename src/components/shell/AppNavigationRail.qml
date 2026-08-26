@@ -1,7 +1,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Effects
 import QtQuick.Layouts
 import QtQuick.Window
 
@@ -45,12 +44,6 @@ Item {
                 source: "qrc:/qt/qml/TtvStudio/Components/resources/icons/studio.svg"
                 sourceSize: Qt.size(60, 60)
                 fillMode: Image.PreserveAspectFit
-                layer.enabled: true
-                // Source artwork is solid black — tint it for the active theme.
-                layer.effect: MultiEffect {
-                    colorization: 1
-                    colorizationColor: AppColors.isLight ? "#1C1B1F" : "#E3E2E6"
-                }
             }
 
             MouseArea {

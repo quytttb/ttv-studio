@@ -5,7 +5,7 @@ set(CPACK_PACKAGE_VENDOR "quytttb")
 set(CPACK_PACKAGE_CONTACT "dev@local")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_${CPACK_PACKAGE_VERSION}_amd64")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "TTV Studio — Modbus TCP data logger desktop client")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "TTV Studio — AI video production studio (text→video render, video redub)")
 set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE amd64)
 set(CPACK_DEBIAN_PACKAGE_SECTION utils)
 # OFF: Qt deploy bundles optional SQL/ODBC plugins; shlibdeps fails on CI without libmysqlclient, libpq, …

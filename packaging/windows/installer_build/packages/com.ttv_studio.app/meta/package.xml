@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package>
     <DisplayName>TTV Studio Application</DisplayName>
-    <Description>Desktop application for centralizing and managing Data Loggers over Modbus TCP and REST API.</Description>
+    <Description>AI video production studio — text-to-video render pipeline and duration-aware video redub.</Description>
     <Version>1.0.0</Version>
     <ReleaseDate>2026-05-28</ReleaseDate>
     <Default>true</Default>
