@@ -10,8 +10,21 @@ import TtvStudio.Components
 import TtvStudio.Core
 
 // Provider endpoints, models, tool locations and the render device.
-Item {
+//
+// Root is a Flickable so the whole page scrolls on short windows — without
+// it the bottom "Ứng dụng / cập nhật" pane (and its action buttons) gets
+// clipped once the update banner + release notes push content past the fold.
+Flickable {
     id: root
+
+    contentWidth: width
+    contentHeight: settingsColumn.implicitHeight + 48
+    clip: true
+    boundsBehavior: Flickable.StopAtBounds
+
+    ScrollBar.vertical: ScrollBar {
+        policy: ScrollBar.AsNeeded
+    }
 
     function backendLabel(id) {
         for (let i = 0; i < RenderDeviceController.backends.length; ++i) {
@@ -23,8 +36,11 @@ Item {
     }
 
     ColumnLayout {
-        anchors.fill: parent
-        anchors.margins: 24
+        id: settingsColumn
+
+        x: 24
+        y: 24
+        width: root.width - 48
         spacing: 16
 
         SectionHeader {
@@ -467,8 +483,6 @@ Item {
                 }
             }
         }
-
-        Item { Layout.fillHeight: true }
     }
 
     Component.onCompleted: RenderDeviceController.rescan()
